@@ -34,3 +34,7 @@ yarn-error.log*
 .vscode/*
 !.vscode/extensions.json
 .idea
+
+# Documentation and docx
+*.docx
+PROJECT_STATUS.md
