@@ -46,9 +46,9 @@ test.describe("Mobile navigation", () => {
     const mobilePanel = page.getByRole("dialog", { name: "Mobile navigation" });
     await expect(mobilePanel).toBeVisible();
 
-    // Verify all primary nav links are visible
+    const nav = mobilePanel.getByRole("navigation", { name: "Mobile" });
     for (const label of ["Services", "Migration Testing", "How It Works", "Industries", "About", "Contact"]) {
-      await expect(mobilePanel.getByRole("link", { name: label, exact: true })).toBeVisible();
+      await expect(nav.getByRole("link", { name: label, exact: true })).toBeVisible();
     }
 
     // Verify dialog height is full height (not squeezed by containing block bug)
