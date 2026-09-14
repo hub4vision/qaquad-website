@@ -11,6 +11,7 @@ type CtaButtonProps = {
   className?: string;
   trackAs: string;
   trackProps?: Record<string, string>;
+  onClick?: () => void;
 };
 
 /**
@@ -20,14 +21,17 @@ type CtaButtonProps = {
  * analytics requirements, without making the base Button component (used in
  * lots of non-tracked places too) always client-side.
  */
-export function CtaButton({ href, children, variant = "primary", size = "md", className, trackAs, trackProps }: CtaButtonProps) {
+export function CtaButton({ href, children, variant = "primary", size = "md", className, trackAs, trackProps, onClick }: CtaButtonProps) {
   return (
     <Button
       href={href}
       variant={variant}
       size={size}
       className={className}
-      onClick={() => trackEvent(trackAs, trackProps)}
+      onClick={() => {
+        trackEvent(trackAs, trackProps);
+        onClick?.();
+      }}
     >
       {children}
     </Button>

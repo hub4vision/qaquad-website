@@ -7,8 +7,8 @@ import { MobileNav } from "./MobileNav";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-700/60 bg-slate-950/95 backdrop-blur-lg shadow-xl shadow-black/40">
-      <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
+    <header className="sticky top-0 z-50 border-b border-slate-700/60 bg-slate-950 shadow-xl shadow-black/40">
+      <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2 group focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-lg" aria-label={`${siteConfig.name}.com home`}>
           <Logo size="md" />
         </Link>

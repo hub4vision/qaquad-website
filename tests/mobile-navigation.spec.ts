@@ -39,4 +39,21 @@ test.describe("Mobile navigation", () => {
     await mobilePanel.getByRole("link", { name: "Book a Free QA Assessment" }).click();
     await expect(page).toHaveURL(/\/contact/);
   });
+
+  test("all mobile links are visible and panel is full-height", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Open menu" }).click();
+    const mobilePanel = page.getByRole("dialog", { name: "Mobile navigation" });
+    await expect(mobilePanel).toBeVisible();
+
+    // Verify all primary nav links are visible
+    for (const label of ["Services", "Migration Testing", "How It Works", "Industries", "About", "Contact"]) {
+      await expect(mobilePanel.getByRole("link", { name: label, exact: true })).toBeVisible();
+    }
+
+    // Verify dialog height is full height (not squeezed by containing block bug)
+    const box = await mobilePanel.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.height).toBeGreaterThan(400);
+  });
 });
