@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Travzilla Pro Backoffice — Test &amp; Defect Summary</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--border:#e0e3e8;--text:#1f2430;--muted:#6b7280;--accent:#2563eb;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+.container{max-width:1100px;margin:0 auto;padding:28px 20px 60px;}
+.topbar{background:#111827;color:#fff;padding:16px 20px;}
+.topbar .brand{font-weight:700;font-size:17px;}
+.topbar .sub{color:#9ca3af;font-size:12.5px;margin-top:2px;}
+h1{font-size:22px;margin:0 0 4px;}
+h2{font-size:16px;margin:0 0 12px;}
+h3{font-size:13px;margin:0 0 10px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
+.muted{color:var(--muted);}
+.small{font-size:12.5px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:18px;margin-bottom:18px;}
+.grid{display:grid;gap:16px;}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+@media(max-width:800px){.grid-4,.grid-2{grid-template-columns:1fr 1fr;}}
+@media(max-width:520px){.grid-4,.grid-2{grid-template-columns:1fr;}}
+.stat{text-align:center;}
+.stat .num{font-size:26px;font-weight:700;}
+.stat .label{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;background:#e5e7eb;color:#374151;}
+.footer-note{text-align:center;color:var(--muted);font-size:12px;margin-top:30px;}
+.progress-bar{background:#e5e7eb;border-radius:20px;height:9px;overflow:hidden;}
+.progress-bar .fill{background:var(--accent);height:100%;}
+</style>
+</head>
+<body>
+<div class="topbar">
+    <div class="brand">Travzilla Pro Backoffice <span class="muted small">(TRVZ)</span></div>
+    <div class="sub">Test &amp; Defect Summary Report &middot; generated 15 Sep 2026, 09:45</div>
+</div>
+<div class="container">
+
+<div class="grid grid-4">
+    <div class="card stat"><div class="num">6</div><div class="label">Total Defects</div></div>
+    <div class="card stat"><div class="num">4</div><div class="label">Open</div></div>
+    <div class="card stat"><div class="num">2</div><div class="label">Closed / Verified</div></div>
+    <div class="card stat"><div class="num">1</div><div class="label">Test Cycles</div></div>
+</div>
+
+<div class="grid grid-2">
+    <div class="card"><h3>Defects by Status</h3><canvas id="statusChart" height="200"></canvas></div>
+    <div class="card"><h3>Defects by Severity</h3><canvas id="severityChart" height="200"></canvas></div>
+</div>
+
+<div class="card">
+    <h3>Defect Burndown (open defects over time)</h3>
+    <canvas id="burndownChart" height="90"></canvas>
+</div>
+
+<div class="card">
+    <h3>Test Cycle Summary</h3>
+    <table>
+        <tr><th>Cycle</th><th>Status</th><th>Executed</th><th>Pass Rate</th><th>% Complete</th></tr>
+        
+        <tr>
+            <td>Sprint 1 Regression</td>
+            <td><span class="badge">In Progress</span></td>
+            <td>11 / 13</td>
+            <td>72.7%</td>
+            <td>
+                <div class="progress-bar" style="width:80px;display:inline-block;vertical-align:middle;margin-right:6px;"><div class="fill" style="width:84.6%"></div></div>
+                84.6%
+            </td>
+        </tr>
+        
+    </table>
+</div>
+
+<div class="card">
+    <h3>Open Defects</h3>
+    <table>
+        <tr><th>Title</th><th>Module</th><th>Severity</th><th>Priority</th><th>Status</th></tr>
+        
+        <tr>
+            <td>Fail: Booking confirmation email is sent</td>
+            <td class="muted">Bookings</td>
+            <td><span class="badge">Medium</span></td>
+            <td><span class="badge">Medium</span></td>
+            <td><span class="badge">New</span></td>
+        </tr>
+        
+        <tr>
+            <td>Fail: Booking confirmation email is sent</td>
+            <td class="muted">Bookings</td>
+            <td><span class="badge">Medium</span></td>
+            <td><span class="badge">Medium</span></td>
+            <td><span class="badge">Assigned</span></td>
+        </tr>
+        
+        <tr>
+            <td>Fail: Cancel an existing booking</td>
+            <td class="muted">Bookings</td>
+            <td><span class="badge">Low</span></td>
+            <td><span class="badge">Medium</span></td>
+            <td><span class="badge">In Progress</span></td>
+        </tr>
+        
+        <tr>
+            <td>Currency symbol missing on invoice PDF</td>
+            <td class="muted">Payments</td>
+            <td><span class="badge">Low</span></td>
+            <td><span class="badge">Medium</span></td>
+            <td><span class="badge">Fixed</span></td>
+        </tr>
+        
+    </table>
+</div>
+
+<p class="footer-note">This is a read-only snapshot generated from the internal QA Tracker. It does not update automatically — it is refreshed and republished periodically.</p>
+</div>
+
+<script>
+const statusData = [{"label": "New", "key": "new", "count": 1}, {"label": "Assigned", "key": "assigned", "count": 1}, {"label": "In Progress", "key": "in_progress", "count": 1}, {"label": "Fixed", "key": "fixed", "count": 1}, {"label": "Retest", "key": "retest", "count": 0}, {"label": "Reopened", "key": "reopened", "count": 0}, {"label": "Closed", "key": "closed", "count": 0}, {"label": "Verified", "key": "verified", "count": 2}];
+const severityData = [{"label": "Low", "key": "low", "count": 2}, {"label": "Medium", "key": "medium", "count": 3}, {"label": "High", "key": "high", "count": 1}, {"label": "Critical", "key": "critical", "count": 0}];
+const burndownData = [{"date": "17 Aug", "open": 0}, {"date": "18 Aug", "open": 0}, {"date": "19 Aug", "open": 0}, {"date": "20 Aug", "open": 0}, {"date": "21 Aug", "open": 0}, {"date": "22 Aug", "open": 0}, {"date": "23 Aug", "open": 0}, {"date": "24 Aug", "open": 0}, {"date": "25 Aug", "open": 0}, {"date": "26 Aug", "open": 0}, {"date": "27 Aug", "open": 0}, {"date": "28 Aug", "open": 0}, {"date": "29 Aug", "open": 1}, {"date": "30 Aug", "open": 1}, {"date": "31 Aug", "open": 1}, {"date": "01 Sep", "open": 3}, {"date": "02 Sep", "open": 3}, {"date": "03 Sep", "open": 5}, {"date": "04 Sep", "open": 5}, {"date": "05 Sep", "open": 5}, {"date": "06 Sep", "open": 5}, {"date": "07 Sep", "open": 5}, {"date": "08 Sep", "open": 5}, {"date": "09 Sep", "open": 5}, {"date": "10 Sep", "open": 5}, {"date": "11 Sep", "open": 5}, {"date": "12 Sep", "open": 5}, {"date": "13 Sep", "open": 4}, {"date": "14 Sep", "open": 4}, {"date": "15 Sep", "open": 4}];
+
+new Chart(document.getElementById('statusChart'), {
+    type: 'doughnut',
+    data: { labels: statusData.map(d => d.label), datasets: [{ data: statusData.map(d => d.count), backgroundColor: ['#94a3b8','#3b82f6','#8b5cf6','#a78bfa','#60a5fa','#f87171','#22c55e','#10b981'] }] },
+    options: { plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } } } }
+});
+new Chart(document.getElementById('severityChart'), {
+    type: 'doughnut',
+    data: { labels: severityData.map(d => d.label), datasets: [{ data: severityData.map(d => d.count), backgroundColor: ['#94a3b8','#60a5fa','#fbbf24','#ef4444'] }] },
+    options: { plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } } } }
+});
+new Chart(document.getElementById('burndownChart'), {
+    type: 'line',
+    data: { labels: burndownData.map(d => d.date), datasets: [{ label: 'Open defects', data: burndownData.map(d => d.open), borderColor: '#dc2626', backgroundColor: 'rgba(220,38,38,.1)', fill: true, tension: .2, pointRadius: 0 }] },
+    options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+});
+</script>
+</body>
+</html>
