@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QA Quad — Master Admin Multi-Client Workspace</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0b0f19;--card:#111827;--border:#1f293d;--text:#f1f5f9;--muted:#94a3b8;--accent:#ff5722;--accent-hover:#e64a19;--sidebar-bg:#192231;--card-light:#1e293b;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;}
+
+/* Header */
+.topbar{background:var(--sidebar-bg);color:#fff;padding:14px 24px;border-bottom:1px solid #2d3748;display:flex;align-items:center;justify-content:space-between;}
+.brand-group{display:flex;align-items:center;gap:12px;}
+.brand-icon{background:var(--accent);color:#fff;font-weight:900;font-size:18px;width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.brand-title{font-weight:700;font-size:17px;letter-spacing:-0.01em;}
+.brand-tag{background:rgba(255,87,34,0.18);color:var(--accent);border:1px solid rgba(255,87,34,0.4);padding:2px 10px;border-radius:12px;font-size:11.5px;font-weight:700;}
+.user-info{display:flex;align-items:center;gap:12px;}
+.btn-logout{background:#2d3748;color:#e2e8f0;border:none;padding:6px 14px;border-radius:6px;font-size:12.5px;cursor:pointer;font-weight:600;transition:all .15s;}
+.btn-logout:hover{background:#4a5568;}
+
+/* Login Overlay (Admin Access) */
+#loginOverlay{position:fixed;inset:0;background:rgba(11,15,25,0.94);backdrop-filter:blur(10px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}
+.login-card{background:#151c2c;border:1px solid #2d3b55;border-radius:14px;max-width:420px;width:100%;padding:36px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.8);text-align:center;}
+.login-brand{display:inline-flex;align-items:center;justify-content:center;background:var(--accent);width:52px;height:52px;border-radius:12px;color:#fff;font-size:28px;font-weight:900;margin-bottom:14px;box-shadow:0 8px 16px rgba(255,87,34,0.3);}
+.login-title{font-size:23px;font-weight:800;color:#fff;margin:0 0 6px;}
+.login-sub{color:var(--muted);font-size:13px;margin:0 0 24px;}
+.login-field{text-align:left;margin-bottom:16px;}
+.login-field label{display:block;font-size:12px;font-weight:600;color:#cbd5e1;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
+.login-field input{width:100%;padding:11px 14px;background:#0d1320;border:1px solid #25334d;border-radius:8px;color:#fff;font-size:14px;outline:none;transition:border-color .2s;}
+.login-field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,87,34,0.2);}
+.btn-login{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;transition:background .2s;}
+.btn-login:hover{background:var(--accent-hover);}
+.login-error{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;padding:10px;border-radius:8px;font-size:12.5px;margin-bottom:16px;display:none;}
+.quick-creds{margin-top:20px;padding-top:16px;border-top:1px solid #232f46;font-size:12px;color:var(--muted);text-align:left;}
+.quick-creds span{color:#93c5fd;font-family:monospace;}
+
+/* Main Dashboard */
+.container{max-width:1220px;margin:0 auto;padding:28px 20px 60px;}
+.project-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:16px;}
+.project-header h1{font-size:26px;margin:0 0 4px;color:#fff;font-weight:800;}
+.project-header .sub{color:var(--muted);font-size:13.5px;}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;}
+.grid{display:grid;gap:18px;}
+.grid-5{grid-template-columns:repeat(5,1fr);}
+@media(max-width:1000px){.grid-5{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:640px){.grid-5{grid-template-columns:1fr 1fr;}}
+
+.stat{text-align:center;padding:20px 12px;}
+.stat .num{font-size:32px;font-weight:800;color:#fff;line-height:1;}
+.stat .label{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;margin-top:8px;font-weight:600;}
+
+h3{font-size:14px;margin:0 0 14px;color:#cbd5e1;text-transform:uppercase;letter-spacing:.04em;font-weight:700;}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--border);}
+th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;background:#0e1626;}
+tr:hover td{background:#151f33;}
+
+.project-pill{background:#1e293b;border:1px solid #334155;color:#38bdf8;padding:2px 8px;border-radius:6px;font-family:monospace;font-weight:700;font-size:12px;}
+.progress-bar{background:#24324d;border-radius:20px;height:8px;overflow:hidden;}
+.progress-bar .fill{background:var(--accent);height:100%;}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-active{background:rgba(34,197,94,0.15);color:#86efac;border:1px solid rgba(34,197,94,0.3);}
+.badge-alert{background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid rgba(239,68,68,0.3);}
+.footer-note{text-align:center;color:var(--muted);font-size:12px;margin-top:36px;}
+</style>
+</head>
+<body>
+
+<!-- ADMIN LOGIN OVERLAY (Default View for QAQuad) -->
+<div id="loginOverlay">
+    <div class="login-card">
+        <div class="login-brand">Q</div>
+        <h2 class="login-title">QAQuad Master Admin</h2>
+        <p class="login-sub">Sign in with Admin credentials to view all client QA reports</p>
+        
+        <div class="login-error" id="loginErrorMsg">Invalid credentials. Admin access required.</div>
+        
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="login-field">
+                <label for="inputUsername">Admin Username</label>
+                <input type="text" id="inputUsername" placeholder="e.g. admin" required autocomplete="username" autofocus>
+            </div>
+            <div class="login-field">
+                <label for="inputPassword">Password</label>
+                <input type="password" id="inputPassword" placeholder="Enter admin password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-login" id="btnLoginSubmit">Access Master Dashboard</button>
+        </form>
+
+        <div class="quick-creds">
+            <strong>Administrator Credentials:</strong><br>
+            Username: <span>admin</span> | <span>lead</span><br>
+            Password: <span>demo1234</span>
+        </div>
+    </div>
+</div>
+
+<!-- TOP HEADER -->
+<div class="topbar">
+    <div class="brand-group">
+        <div class="brand-icon">Q</div>
+        <div class="brand-title">QAQuad Master Overview</div>
+        <span class="brand-tag">All Client Projects</span>
+    </div>
+    <div class="user-info">
+        <span style="color:#cbd5e1;font-size:13px;" id="userDisplayLabel"></span>
+        <button class="btn-logout" onclick="handleLogout()">Log out</button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="project-header">
+        <div>
+            <h1>All Clients QA Report &amp; Defect Directory</h1>
+            <div class="sub">QAQuad Central Management Portal &middot; Last updated 15 Sep 2026, 09:56</div>
+        </div>
+    </div>
+
+    <!-- GRAND TOTAL SUMMARY METRICS -->
+    <div class="grid grid-5">
+        <div class="card stat"><div class="num" style="color:#38bdf8;">7</div><div class="label">Total Client Projects</div></div>
+        <div class="card stat"><div class="num">31</div><div class="label">Total Defects</div></div>
+        <div class="card stat"><div class="num" style="color:#f87171;">24</div><div class="label">Active / Open Defects</div></div>
+        <div class="card stat"><div class="num" style="color:#4ade80;">7</div><div class="label">Resolved &amp; Closed</div></div>
+        <div class="card stat"><div class="num" style="color:#a78bfa;">39</div><div class="label">Test Cases Repository</div></div>
+    </div>
+
+    <!-- CLIENT PROJECTS OVERVIEW TABLE -->
+    <div class="card">
+        <h3>Client Projects Performance &amp; Defect Metrics</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Client / Project</th>
+                    <th>Key</th>
+                    <th>Status</th>
+                    <th>Defects (Open / Total)</th>
+                    <th>Resolution Rate</th>
+                    <th>Test Cycles</th>
+                    <th>Test Cases</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <tr>
+                    <td>
+                        <div style="font-weight:700;color:#fff;font-size:14.5px;">AI Customer Support &amp; Omnichannel CRM</div>
+                        <div style="color:var(--muted);font-size:12px;margin-top:2px;">Generative AI agent routing, WhatsApp &amp; Email integration, sentiment analytics, …</div>
+                    </td>
+                    <td><span class="project-pill">AICRM</span></td>
+                    <td>
+                        
+                            <span class="badge badge-active">Active</span>
+                        
+                    </td>
+                    <td>
+                        
+                            <span style="color:#f87171;font-weight:700;">4 open</span> / <span style="color:var(--muted);">5 total</span>
+                        
+                    </td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div class="progress-bar" style="width:100px;">
+                                <div class="fill" style="width:20%;"></div>
+                            </div>
+                            <span style="font-weight:700;font-size:12.5px;color:#fff;">20%</span>
+                        </div>
+                    </td>
+                    <td><strong style="color:#fff;">1</strong> cycle</td>
+                    <td><strong style="color:#fff;">5</strong> cases</td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <div style="font-weight:700;color:#fff;font-size:14.5px;">Cloud Logistics &amp; Fleet Tracking System</div>
+                        <div style="color:var(--muted);font-size:12px;margin-top:2px;">Real-time GPS truck telematics, driver dispatch, fuel optimization, and delivery …</div>
+                    </td>
+                    <td><span class="project-pill">FLEET</span></td>
+                    <td>
+                        
+                            <span class="badge badge-active">Active</span>
+                        
+                    </td>
+                    <td>
+                        
+                            <span style="color:#f87171;font-weight:700;">4 open</span> / <span style="color:var(--muted);">5 total</span>
+                        
+                    </td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div class="progress-bar" style="width:100px;">
+                                <div class="fill" style="width:20%;"></div>
+                            </div>
+                            <span style="font-weight:700;font-size:12.5px;color:#fff;">20%</span>
+                        </div>
+                    </td>
+                    <td><strong style="color:#fff;">1</strong> cycle</td>
+                    <td><strong style="color:#fff;">5</strong> cases</td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <div style="font-weight:700;color:#fff;font-size:14.5px;">E-Commerce Checkout &amp; Payment Revamp</div>
+                        <div style="color:var(--muted);font-size:12px;margin-top:2px;">Next-gen checkout flow, multi-currency support, stripe integration, and 1-click buy …</div>
+                    </td>
+                    <td><span class="project-pill">SHOP</span></td>
+                    <td>
+                        
+                            <span class="badge badge-active">Active</span>
+                        
+                    </td>
+                    <td>
+                        
+                            <span style="color:#f87171;font-weight:700;">4 open</span> / <span style="color:var(--muted);">5 total</span>
+                        
+                    </td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div class="progress-bar" style="width:100px;">
+                                <div class="fill" style="width:20%;"></div>
+                            </div>
+                            <span style="font-weight:700;font-size:12.5px;color:#fff;">20%</span>
+                        </div>
+                    </td>
+                    <td><strong style="color:#fff;">1</strong> cycle</td>
+                    <td><strong style="color:#fff;">6</strong> cases</td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <div style="font-weight:700;color:#fff;font-size:14.5px;">Fintech Mobile Banking App iOS &amp; Android</div>
+                        <div style="color:var(--muted);font-size:12px;margin-top:2px;">Cross-platform mobile banking app: UPI transfers, KYC verification, card freezing, …</div>
+                    </td>
+                    <td><span class="project-pill">BANK</span></td>
+                    <td>
+                        
+                            <span class="badge badge-active">Active</span>
+                        
+                    </td>
+                    <td>
+                        
+                            <span style="color:#f87171;font-weight:700;">4 open</span> / <span style="color:var(--muted);">5 total</span>
+                        
+                    </td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div class="progress-bar" style="width:100px;">
+                                <div class="fill" style="width:20%;"></div>
+                            </div>
+                            <span style="font-weight:700;font-size:12.5px;color:#fff;">20%</span>
+                        </div>
+                    </td>
+                    <td><strong style="color:#fff;">1</strong> cycle</td>
+                    <td><strong style="color:#fff;">5</strong> cases</td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <div style="font-weight:700;color:#fff;font-size:14.5px;">Healthcare Patient Portal &amp; Telemedicine</div>
+                        <div style="color:var(--muted);font-size:12px;margin-top:2px;">HIPAA-compliant patient booking, lab results viewer, video consultation, and prescription …</div>
+                    </td>
+                    <td><span class="project-pill">CARE</span></td>
+                    <td>
+                        
+                            <span class="badge badge-active">Active</span>
+                        
+                    </td>
+                    <td>
+                        
+                            <span style="color:#f87171;font-weight:700;">4 open</span> / <span style="color:var(--muted);">5 total</span>
+                        
+                    </td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div class="progress-bar" style="width:100px;">
+                                <div class="fill" style="width:20%;"></div>
+                            </div>
+                            <span style="font-weight:700;font-size:12.5px;color:#fff;">20%</span>
+                        </div>
+                    </td>
+                    <td><strong style="color:#fff;">1</strong> cycle</td>
+                    <td><strong style="color:#fff;">5</strong> cases</td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <div style="font-weight:700;color:#fff;font-size:14.5px;">Lifecycle Verification Project</div>
+                        <div style="color:var(--muted);font-size:12px;margin-top:2px;">Active client engagement</div>
+                    </td>
+                    <td><span class="project-pill">DEMO</span></td>
+                    <td>
+                        
+                            <span class="badge badge-active">Active</span>
+                        
+                    </td>
+                    <td>
+                        
+                            <span style="color:#4ade80;font-weight:700;">0 open</span> / <span style="color:var(--muted);">0 total</span>
+                        
+                    </td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div class="progress-bar" style="width:100px;">
+                                <div class="fill" style="width:0%;"></div>
+                            </div>
+                            <span style="font-weight:700;font-size:12.5px;color:#fff;">0%</span>
+                        </div>
+                    </td>
+                    <td><strong style="color:#fff;">0</strong> cycles</td>
+                    <td><strong style="color:#fff;">0</strong> cases</td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <div style="font-weight:700;color:#fff;font-size:14.5px;">QA Quad Backoffice</div>
+                        <div style="color:var(--muted);font-size:12px;margin-top:2px;">QA Quad Defect Management &amp; Test Reporting System</div>
+                    </td>
+                    <td><span class="project-pill">TRVZ</span></td>
+                    <td>
+                        
+                            <span class="badge badge-active">Active</span>
+                        
+                    </td>
+                    <td>
+                        
+                            <span style="color:#f87171;font-weight:700;">4 open</span> / <span style="color:var(--muted);">6 total</span>
+                        
+                    </td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div class="progress-bar" style="width:100px;">
+                                <div class="fill" style="width:33%;"></div>
+                            </div>
+                            <span style="font-weight:700;font-size:12.5px;color:#fff;">33%</span>
+                        </div>
+                    </td>
+                    <td><strong style="color:#fff;">1</strong> cycle</td>
+                    <td><strong style="color:#fff;">13</strong> cases</td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+
+    <!-- RECENT OPEN CRITICAL DEFECTS ACROSS ALL CLIENTS -->
+    <div class="card">
+        <h3>Sample Active Defects Across Clients</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Project</th>
+                    <th>Defect Summary</th>
+                    <th>Severity</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                    
+                    <tr>
+                        <td><span class="project-pill">AICRM</span></td>
+                        <td style="font-weight:600;color:#fff;">Vector embedding re-index causes 100% CPU spike on background worker</td>
+                        <td><span class="badge badge-alert">Critical</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">urgent</span></td>
+                        <td><span class="badge badge-alert">Retest</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">AICRM</span></td>
+                        <td style="font-weight:600;color:#fff;">SLA countdown clock stops ticking when agent tab is minimized</td>
+                        <td><span class="badge badge-alert">Medium</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Low</span></td>
+                        <td><span class="badge badge-alert">Fixed</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">AICRM</span></td>
+                        <td style="font-weight:600;color:#fff;">WhatsApp attachment images fail to preview inside omnichannel inbox</td>
+                        <td><span class="badge badge-alert">Medium</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
+                        <td><span class="badge badge-alert">Assigned</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">AICRM</span></td>
+                        <td style="font-weight:600;color:#fff;">AI bot hallucinates outdated pricing for discontinued enterprise tiers</td>
+                        <td><span class="badge badge-alert">High</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
+                        <td><span class="badge badge-alert">In Progress</span></td>
+                    </tr>
+                    
+                
+                    
+                    <tr>
+                        <td><span class="project-pill">FLEET</span></td>
+                        <td style="font-weight:600;color:#fff;">Geofence polygon editor snaps vertices incorrectly on zoom levels &gt; 18</td>
+                        <td><span class="badge badge-alert">Medium</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Low</span></td>
+                        <td><span class="badge badge-alert">New</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">FLEET</span></td>
+                        <td style="font-weight:600;color:#fff;">Fuel consumption calculates negative mpg during prolonged engine idle</td>
+                        <td><span class="badge badge-alert">Medium</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
+                        <td><span class="badge badge-alert">Fixed</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">FLEET</span></td>
+                        <td style="font-weight:600;color:#fff;">Driver offline sync drops delivery signature when reconnecting to cellular</td>
+                        <td><span class="badge badge-alert">Critical</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">urgent</span></td>
+                        <td><span class="badge badge-alert">In Progress</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">FLEET</span></td>
+                        <td style="font-weight:600;color:#fff;">Map marker clusters overlap and freeze browser when vehicle count &gt; 500</td>
+                        <td><span class="badge badge-alert">High</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
+                        <td><span class="badge badge-alert">Assigned</span></td>
+                    </tr>
+                    
+                
+                    
+                    <tr>
+                        <td><span class="project-pill">SHOP</span></td>
+                        <td style="font-weight:600;color:#fff;">Receipt PDF generation timeout for orders with &gt;20 items</td>
+                        <td><span class="badge badge-alert">Medium</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Low</span></td>
+                        <td><span class="badge badge-alert">New</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">SHOP</span></td>
+                        <td style="font-weight:600;color:#fff;">Cart badge count desyncs on browser back button</td>
+                        <td><span class="badge badge-alert">Medium</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
+                        <td><span class="badge badge-alert">Assigned</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">SHOP</span></td>
+                        <td style="font-weight:600;color:#fff;">Coupon discount calculates negative subtotal when promo exceeds cart value</td>
+                        <td><span class="badge badge-alert">High</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
+                        <td><span class="badge badge-alert">Fixed</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">SHOP</span></td>
+                        <td style="font-weight:600;color:#fff;">Stripe webhook 500 error when processing refund events</td>
+                        <td><span class="badge badge-alert">Critical</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
+                        <td><span class="badge badge-alert">In Progress</span></td>
+                    </tr>
+                    
+                
+                    
+                    <tr>
+                        <td><span class="project-pill">BANK</span></td>
+                        <td style="font-weight:600;color:#fff;">Push notification payload exposes partial account number on lockscreen</td>
+                        <td><span class="badge badge-alert">High</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
+                        <td><span class="badge badge-alert">Fixed</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">BANK</span></td>
+                        <td style="font-weight:600;color:#fff;">Card replacement button inactive on iOS 18 beta devices</td>
+                        <td><span class="badge badge-alert">High</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
+                        <td><span class="badge badge-alert">New</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">BANK</span></td>
+                        <td style="font-weight:600;color:#fff;">PAN Card OCR auto-capture fails in low light environments</td>
+                        <td><span class="badge badge-alert">Medium</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
+                        <td><span class="badge badge-alert">Assigned</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">BANK</span></td>
+                        <td style="font-weight:600;color:#fff;">UPI transfer timeout leaves balance in reserved hold without auto-reversal</td>
+                        <td><span class="badge badge-alert">Critical</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">urgent</span></td>
+                        <td><span class="badge badge-alert">In Progress</span></td>
+                    </tr>
+                    
+                
+                    
+                    <tr>
+                        <td><span class="project-pill">CARE</span></td>
+                        <td style="font-weight:600;color:#fff;">Patient profile avatar upload exceeds 5MB without validation error</td>
+                        <td><span class="badge badge-alert">Low</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Low</span></td>
+                        <td><span class="badge badge-alert">New</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">CARE</span></td>
+                        <td style="font-weight:600;color:#fff;">Audit log fails to capture patient record view event</td>
+                        <td><span class="badge badge-alert">High</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
+                        <td><span class="badge badge-alert">Assigned</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">CARE</span></td>
+                        <td style="font-weight:600;color:#fff;">Appointment calendar timezone discrepancy across daylight savings border</td>
+                        <td><span class="badge badge-alert">High</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
+                        <td><span class="badge badge-alert">Retest</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">CARE</span></td>
+                        <td style="font-weight:600;color:#fff;">Video consultation WebRTC disconnects on network switch from Wi-Fi to 4G</td>
+                        <td><span class="badge badge-alert">Critical</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">urgent</span></td>
+                        <td><span class="badge badge-alert">In Progress</span></td>
+                    </tr>
+                    
+                
+                    
+                
+                    
+                    <tr>
+                        <td><span class="project-pill">TRVZ</span></td>
+                        <td style="font-weight:600;color:#fff;">Fail: Booking confirmation email is sent</td>
+                        <td><span class="badge badge-alert">Medium</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
+                        <td><span class="badge badge-alert">New</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">TRVZ</span></td>
+                        <td style="font-weight:600;color:#fff;">Fail: Booking confirmation email is sent</td>
+                        <td><span class="badge badge-alert">Medium</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
+                        <td><span class="badge badge-alert">Assigned</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">TRVZ</span></td>
+                        <td style="font-weight:600;color:#fff;">Fail: Cancel an existing booking</td>
+                        <td><span class="badge badge-alert">Low</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
+                        <td><span class="badge badge-alert">In Progress</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="project-pill">TRVZ</span></td>
+                        <td style="font-weight:600;color:#fff;">Currency symbol missing on invoice PDF</td>
+                        <td><span class="badge badge-alert">Low</span></td>
+                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
+                        <td><span class="badge badge-alert">Fixed</span></td>
+                    </tr>
+                    
+                
+            </tbody>
+        </table>
+    </div>
+
+    <p class="footer-note">&copy; QAQuad Administrator Enterprise Console &middot; Protected Confidential Dashboard.</p>
+</div>
+
+<script>
+// Admin Authentication Management
+const ADMIN_USERS = {
+    'admin': 'demo1234',
+    'lead': 'demo1234',
+    'umesh': 'demo1234'
+};
+
+function checkAuth() {
+    const sessionUser = sessionStorage.getItem('qaquad_admin_user');
+    const overlay = document.getElementById('loginOverlay');
+    const userLabel = document.getElementById('userDisplayLabel');
+
+    if (sessionUser && ADMIN_USERS[sessionUser]) {
+        overlay.style.display = 'none';
+        userLabel.textContent = 'Administrator: ' + sessionUser;
+    } else {
+        overlay.style.display = 'flex';
+        userLabel.textContent = '';
+    }
+}
+
+function handleLogin(e) {
+    e.preventDefault();
+    const u = document.getElementById('inputUsername').value.trim().toLowerCase();
+    const p = document.getElementById('inputPassword').value;
+    const errorBox = document.getElementById('loginErrorMsg');
+
+    if (ADMIN_USERS[u] && ADMIN_USERS[u] === p) {
+        sessionStorage.setItem('qaquad_admin_user', u);
+        errorBox.style.display = 'none';
+        checkAuth();
+    } else {
+        errorBox.style.display = 'block';
+    }
+}
+
+function handleLogout() {
+    sessionStorage.removeItem('qaquad_admin_user');
+    checkAuth();
+}
+
+window.addEventListener('DOMContentLoaded', checkAuth);
+</script>
+</body>
+</html>
