@@ -3,145 +3,336 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Travzilla Pro Backoffice — Test &amp; Defect Summary</title>
+<title>QA Quad Backoffice — QA Quad Defect &amp; Test Management</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
-:root{--bg:#f5f6f8;--card:#fff;--border:#e0e3e8;--text:#1f2430;--muted:#6b7280;--accent:#2563eb;}
+:root{--bg:#0b0f19;--card:#111827;--border:#1f293d;--text:#f1f5f9;--muted:#94a3b8;--accent:#ff5722;--accent-hover:#e64a19;--sidebar-bg:#192231;--card-light:#1e293b;}
 *{box-sizing:border-box;}
-body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
-.container{max-width:1100px;margin:0 auto;padding:28px 20px 60px;}
-.topbar{background:#111827;color:#fff;padding:16px 20px;}
-.topbar .brand{font-weight:700;font-size:17px;}
-.topbar .sub{color:#9ca3af;font-size:12.5px;margin-top:2px;}
-h1{font-size:22px;margin:0 0 4px;}
-h2{font-size:16px;margin:0 0 12px;}
-h3{font-size:13px;margin:0 0 10px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
-.muted{color:var(--muted);}
-.small{font-size:12.5px;}
-.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:18px;margin-bottom:18px;}
-.grid{display:grid;gap:16px;}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;}
+
+/* Brand Header */
+.topbar{background:var(--sidebar-bg);color:#fff;padding:14px 24px;border-bottom:1px solid #2d3748;display:flex;align-items:center;justify-content:space-between;}
+.brand-group{display:flex;align-items:center;gap:12px;}
+.brand-icon{background:var(--accent);color:#fff;font-weight:900;font-size:18px;width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.brand-title{font-weight:700;font-size:17px;letter-spacing:-0.01em;}
+.brand-tag{background:rgba(255,87,34,0.15);color:var(--accent);border:1px solid rgba(255,87,34,0.4);padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;}
+.user-info{display:flex;align-items:center;gap:12px;}
+.btn-logout{background:#2d3748;color:#e2e8f0;border:none;padding:6px 14px;border-radius:6px;font-size:12.5px;cursor:pointer;font-weight:600;transition:all .15s;}
+.btn-logout:hover{background:#4a5568;}
+
+/* Login Overlay */
+#loginOverlay{position:fixed;inset:0;background:rgba(11,15,25,0.92);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}
+.login-card{background:#151c2c;border:1px solid #2d3b55;border-radius:14px;max-width:400px;width:100%;padding:32px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.7);text-align:center;}
+.login-brand{display:inline-flex;align-items:center;justify-content:center;background:var(--accent);width:48px;height:48px;border-radius:12px;color:#fff;font-size:26px;font-weight:900;margin-bottom:14px;box-shadow:0 8px 16px rgba(255,87,34,0.3);}
+.login-title{font-size:22px;font-weight:800;color:#fff;margin:0 0 6px;}
+.login-sub{color:var(--muted);font-size:13px;margin:0 0 24px;}
+.login-field{text-align:left;margin-bottom:16px;}
+.login-field label{display:block;font-size:12px;font-weight:600;color:#cbd5e1;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
+.login-field input{width:100%;padding:11px 14px;background:#0d1320;border:1px solid #25334d;border-radius:8px;color:#fff;font-size:14px;outline:none;transition:border-color .2s;}
+.login-field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,87,34,0.2);}
+.btn-login{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;transition:background .2s;}
+.btn-login:hover{background:var(--accent-hover);}
+.login-error{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;padding:10px;border-radius:8px;font-size:12.5px;margin-bottom:16px;display:none;}
+.quick-creds{margin-top:20px;padding-top:16px;border-top:1px solid #232f46;font-size:12px;color:var(--muted);text-align:left;}
+.quick-creds span{color:#93c5fd;font-family:monospace;}
+
+/* Dashboard Content */
+.container{max-width:1160px;margin:0 auto;padding:28px 20px 60px;}
+.project-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;border-bottom:1px solid var(--border);padding-bottom:16px;}
+.project-header h1{font-size:24px;margin:0 0 4px;color:#fff;font-weight:800;}
+.project-header .sub{color:var(--muted);font-size:13px;}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:18px;}
+.grid{display:grid;gap:18px;}
 .grid-4{grid-template-columns:repeat(4,1fr);}
 .grid-2{grid-template-columns:repeat(2,1fr);}
-@media(max-width:800px){.grid-4,.grid-2{grid-template-columns:1fr 1fr;}}
-@media(max-width:520px){.grid-4,.grid-2{grid-template-columns:1fr;}}
-.stat{text-align:center;}
-.stat .num{font-size:26px;font-weight:700;}
-.stat .label{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;}
+@media(max-width:850px){.grid-4,.grid-2{grid-template-columns:1fr 1fr;}}
+@media(max-width:560px){.grid-4,.grid-2{grid-template-columns:1fr;}}
+
+.stat{text-align:center;padding:22px 14px;}
+.stat .num{font-size:32px;font-weight:800;color:#fff;line-height:1;}
+.stat .label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em;margin-top:8px;font-weight:600;}
+
+h3{font-size:13px;margin:0 0 14px;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;font-weight:700;}
+
 table{width:100%;border-collapse:collapse;font-size:13.5px;}
-th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
-th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;}
-.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;background:#e5e7eb;color:#374151;}
-.footer-note{text-align:center;color:var(--muted);font-size:12px;margin-top:30px;}
-.progress-bar{background:#e5e7eb;border-radius:20px;height:9px;overflow:hidden;}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);}
+th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;background:#0e1626;}
+tr:hover td{background:#151f33;}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:#24324d;color:#cbd5e1;}
+.badge-open{background:rgba(239,68,68,0.18);color:#fca5a5;border:1px solid rgba(239,68,68,0.3);}
+.badge-closed{background:rgba(34,197,94,0.18);color:#86efac;border:1px solid rgba(34,197,94,0.3);}
+.progress-bar{background:#24324d;border-radius:20px;height:9px;overflow:hidden;}
 .progress-bar .fill{background:var(--accent);height:100%;}
+.footer-note{text-align:center;color:var(--muted);font-size:12px;margin-top:34px;}
 </style>
 </head>
 <body>
+
+<!-- LOGIN MODAL (Default view for unauthenticated visitors) -->
+<div id="loginOverlay">
+    <div class="login-card">
+        <div class="login-brand">Q</div>
+        <h2 class="login-title">QA Quad Portal</h2>
+        <p class="login-sub">Log in to view QA Test Reports &amp; Defect Management</p>
+        
+        <div class="login-error" id="loginErrorMsg">Invalid username or password. Please try again.</div>
+        
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="login-field">
+                <label for="inputUsername">Username</label>
+                <input type="text" id="inputUsername" placeholder="e.g. admin or tester" required autocomplete="username" autofocus>
+            </div>
+            <div class="login-field">
+                <label for="inputPassword">Password</label>
+                <input type="password" id="inputPassword" placeholder="Enter password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-login" id="btnLoginSubmit">Log In</button>
+        </form>
+
+        <div class="quick-creds">
+            <strong>Demo Credentials:</strong><br>
+            Username: <span>admin</span> | <span>tester</span> | <span>lead</span><br>
+            Password: <span>demo1234</span>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN APPLICATION REPORT AREA -->
 <div class="topbar">
-    <div class="brand">Travzilla Pro Backoffice <span class="muted small">(TRVZ)</span></div>
-    <div class="sub">Test &amp; Defect Summary Report &middot; generated 15 Sep 2026, 09:45</div>
+    <div class="brand-group">
+        <div class="brand-icon">Q</div>
+        <div class="brand-title">QA Quad Projects</div>
+        <span class="brand-tag">QATestReport</span>
+    </div>
+    <div class="user-info">
+        <span style="color:#cbd5e1;font-size:13px;" id="userDisplayLabel"></span>
+        <button class="btn-logout" onclick="handleLogout()">Log out</button>
+    </div>
 </div>
+
 <div class="container">
+    <div class="project-header">
+        <div>
+            <h1>QA Quad Backoffice</h1>
+            <div class="sub">Key: <strong style="color:#fff;">TRVZ</strong> &middot; Test &amp; Defect Management Report &middot; generated 15 Sep 2026, 09:51</div>
+        </div>
+    </div>
 
-<div class="grid grid-4">
-    <div class="card stat"><div class="num">6</div><div class="label">Total Defects</div></div>
-    <div class="card stat"><div class="num">4</div><div class="label">Open</div></div>
-    <div class="card stat"><div class="num">2</div><div class="label">Closed / Verified</div></div>
-    <div class="card stat"><div class="num">1</div><div class="label">Test Cycles</div></div>
-</div>
+    <div class="grid grid-4">
+        <div class="card stat"><div class="num">6</div><div class="label">Total Defects</div></div>
+        <div class="card stat"><div class="num" style="color:#f87171;">4</div><div class="label">Open Defects</div></div>
+        <div class="card stat"><div class="num" style="color:#4ade80;">2</div><div class="label">Closed / Verified</div></div>
+        <div class="card stat"><div class="num">1</div><div class="label">Test Cycles</div></div>
+    </div>
 
-<div class="grid grid-2">
-    <div class="card"><h3>Defects by Status</h3><canvas id="statusChart" height="200"></canvas></div>
-    <div class="card"><h3>Defects by Severity</h3><canvas id="severityChart" height="200"></canvas></div>
-</div>
+    <div class="grid grid-2">
+        <div class="card">
+            <h3>Defects by Status</h3>
+            <canvas id="statusChart" height="200"></canvas>
+        </div>
+        <div class="card">
+            <h3>Defects by Severity</h3>
+            <canvas id="severityChart" height="200"></canvas>
+        </div>
+    </div>
 
-<div class="card">
-    <h3>Defect Burndown (open defects over time)</h3>
-    <canvas id="burndownChart" height="90"></canvas>
-</div>
+    <div class="card">
+        <h3>Defect Burndown (Open Defects Over Time)</h3>
+        <canvas id="burndownChart" height="90"></canvas>
+    </div>
 
-<div class="card">
-    <h3>Test Cycle Summary</h3>
-    <table>
-        <tr><th>Cycle</th><th>Status</th><th>Executed</th><th>Pass Rate</th><th>% Complete</th></tr>
-        
-        <tr>
-            <td>Sprint 1 Regression</td>
-            <td><span class="badge">In Progress</span></td>
-            <td>11 / 13</td>
-            <td>72.7%</td>
-            <td>
-                <div class="progress-bar" style="width:80px;display:inline-block;vertical-align:middle;margin-right:6px;"><div class="fill" style="width:84.6%"></div></div>
-                84.6%
-            </td>
-        </tr>
-        
-    </table>
-</div>
+    <div class="card">
+        <h3>Test Cycle Summary</h3>
+        <table>
+            <thead>
+                <tr><th>Cycle</th><th>Status</th><th>Executed</th><th>Pass Rate</th><th>% Complete</th></tr>
+            </thead>
+            <tbody>
+                
+                <tr>
+                    <td style="font-weight:600;color:#fff;">Sprint 1 Regression</td>
+                    <td><span class="badge">In Progress</span></td>
+                    <td>11 / 13</td>
+                    <td style="font-weight:700;color:#38bdf8;">72.7%</td>
+                    <td>
+                        <div class="progress-bar" style="width:90px;display:inline-block;vertical-align:middle;margin-right:8px;"><div class="fill" style="width:84.6%"></div></div>
+                        <span>84.6%</span>
+                    </td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
 
-<div class="card">
-    <h3>Open Defects</h3>
-    <table>
-        <tr><th>Title</th><th>Module</th><th>Severity</th><th>Priority</th><th>Status</th></tr>
-        
-        <tr>
-            <td>Fail: Booking confirmation email is sent</td>
-            <td class="muted">Bookings</td>
-            <td><span class="badge">Medium</span></td>
-            <td><span class="badge">Medium</span></td>
-            <td><span class="badge">New</span></td>
-        </tr>
-        
-        <tr>
-            <td>Fail: Booking confirmation email is sent</td>
-            <td class="muted">Bookings</td>
-            <td><span class="badge">Medium</span></td>
-            <td><span class="badge">Medium</span></td>
-            <td><span class="badge">Assigned</span></td>
-        </tr>
-        
-        <tr>
-            <td>Fail: Cancel an existing booking</td>
-            <td class="muted">Bookings</td>
-            <td><span class="badge">Low</span></td>
-            <td><span class="badge">Medium</span></td>
-            <td><span class="badge">In Progress</span></td>
-        </tr>
-        
-        <tr>
-            <td>Currency symbol missing on invoice PDF</td>
-            <td class="muted">Payments</td>
-            <td><span class="badge">Low</span></td>
-            <td><span class="badge">Medium</span></td>
-            <td><span class="badge">Fixed</span></td>
-        </tr>
-        
-    </table>
-</div>
+    <div class="card">
+        <h3>Open Defects &amp; Tasks</h3>
+        <table>
+            <thead>
+                <tr><th>Defect Title</th><th>Module</th><th>Severity</th><th>Priority</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                
+                <tr>
+                    <td style="font-weight:600;color:#fff;">Fail: Booking confirmation email is sent</td>
+                    <td style="color:var(--muted);">Bookings</td>
+                    <td><span class="badge">Medium</span></td>
+                    <td><span class="badge">Medium</span></td>
+                    <td><span class="badge badge-open">New</span></td>
+                </tr>
+                
+                <tr>
+                    <td style="font-weight:600;color:#fff;">Fail: Booking confirmation email is sent</td>
+                    <td style="color:var(--muted);">Bookings</td>
+                    <td><span class="badge">Medium</span></td>
+                    <td><span class="badge">Medium</span></td>
+                    <td><span class="badge badge-open">Assigned</span></td>
+                </tr>
+                
+                <tr>
+                    <td style="font-weight:600;color:#fff;">Fail: Cancel an existing booking</td>
+                    <td style="color:var(--muted);">Bookings</td>
+                    <td><span class="badge">Low</span></td>
+                    <td><span class="badge">Medium</span></td>
+                    <td><span class="badge badge-open">In Progress</span></td>
+                </tr>
+                
+                <tr>
+                    <td style="font-weight:600;color:#fff;">Currency symbol missing on invoice PDF</td>
+                    <td style="color:var(--muted);">Payments</td>
+                    <td><span class="badge">Low</span></td>
+                    <td><span class="badge">Medium</span></td>
+                    <td><span class="badge badge-open">Fixed</span></td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
 
-<p class="footer-note">This is a read-only snapshot generated from the internal QA Tracker. It does not update automatically — it is refreshed and republished periodically.</p>
+    <p class="footer-note">&copy; QA Quad Defect &amp; Test Management Portal &middot; All Rights Reserved.</p>
 </div>
 
 <script>
-const statusData = [{"label": "New", "key": "new", "count": 1}, {"label": "Assigned", "key": "assigned", "count": 1}, {"label": "In Progress", "key": "in_progress", "count": 1}, {"label": "Fixed", "key": "fixed", "count": 1}, {"label": "Retest", "key": "retest", "count": 0}, {"label": "Reopened", "key": "reopened", "count": 0}, {"label": "Closed", "key": "closed", "count": 0}, {"label": "Verified", "key": "verified", "count": 2}];
-const severityData = [{"label": "Low", "key": "low", "count": 2}, {"label": "Medium", "key": "medium", "count": 3}, {"label": "High", "key": "high", "count": 1}, {"label": "Critical", "key": "critical", "count": 0}];
-const burndownData = [{"date": "17 Aug", "open": 0}, {"date": "18 Aug", "open": 0}, {"date": "19 Aug", "open": 0}, {"date": "20 Aug", "open": 0}, {"date": "21 Aug", "open": 0}, {"date": "22 Aug", "open": 0}, {"date": "23 Aug", "open": 0}, {"date": "24 Aug", "open": 0}, {"date": "25 Aug", "open": 0}, {"date": "26 Aug", "open": 0}, {"date": "27 Aug", "open": 0}, {"date": "28 Aug", "open": 0}, {"date": "29 Aug", "open": 1}, {"date": "30 Aug", "open": 1}, {"date": "31 Aug", "open": 1}, {"date": "01 Sep", "open": 3}, {"date": "02 Sep", "open": 3}, {"date": "03 Sep", "open": 5}, {"date": "04 Sep", "open": 5}, {"date": "05 Sep", "open": 5}, {"date": "06 Sep", "open": 5}, {"date": "07 Sep", "open": 5}, {"date": "08 Sep", "open": 5}, {"date": "09 Sep", "open": 5}, {"date": "10 Sep", "open": 5}, {"date": "11 Sep", "open": 5}, {"date": "12 Sep", "open": 5}, {"date": "13 Sep", "open": 4}, {"date": "14 Sep", "open": 4}, {"date": "15 Sep", "open": 4}];
+// Authentication Management
+const VALID_USERS = {
+    'admin': 'demo1234',
+    'lead': 'demo1234',
+    'tester': 'demo1234',
+    'tester2': 'demo1234',
+    'dev': 'demo1234',
+    'client': 'demo1234',
+    'umesh': 'demo1234'
+};
 
-new Chart(document.getElementById('statusChart'), {
-    type: 'doughnut',
-    data: { labels: statusData.map(d => d.label), datasets: [{ data: statusData.map(d => d.count), backgroundColor: ['#94a3b8','#3b82f6','#8b5cf6','#a78bfa','#60a5fa','#f87171','#22c55e','#10b981'] }] },
-    options: { plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } } } }
-});
-new Chart(document.getElementById('severityChart'), {
-    type: 'doughnut',
-    data: { labels: severityData.map(d => d.label), datasets: [{ data: severityData.map(d => d.count), backgroundColor: ['#94a3b8','#60a5fa','#fbbf24','#ef4444'] }] },
-    options: { plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } } } }
-});
-new Chart(document.getElementById('burndownChart'), {
-    type: 'line',
-    data: { labels: burndownData.map(d => d.date), datasets: [{ label: 'Open defects', data: burndownData.map(d => d.open), borderColor: '#dc2626', backgroundColor: 'rgba(220,38,38,.1)', fill: true, tension: .2, pointRadius: 0 }] },
-    options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
-});
+function checkAuth() {
+    const sessionUser = sessionStorage.getItem('qaquad_user');
+    const overlay = document.getElementById('loginOverlay');
+    const userLabel = document.getElementById('userDisplayLabel');
+
+    if (sessionUser && VALID_USERS[sessionUser]) {
+        overlay.style.display = 'none';
+        userLabel.textContent = 'Signed in as: ' + sessionUser;
+        initCharts();
+    } else {
+        overlay.style.display = 'flex';
+        userLabel.textContent = '';
+    }
+}
+
+function handleLogin(e) {
+    e.preventDefault();
+    const u = document.getElementById('inputUsername').value.trim().toLowerCase();
+    const p = document.getElementById('inputPassword').value;
+    const errorBox = document.getElementById('loginErrorMsg');
+
+    if (VALID_USERS[u] && VALID_USERS[u] === p) {
+        sessionStorage.setItem('qaquad_user', u);
+        errorBox.style.display = 'none';
+        checkAuth();
+    } else {
+        errorBox.style.display = 'block';
+    }
+}
+
+function handleLogout() {
+    sessionStorage.removeItem('qaquad_user');
+    checkAuth();
+}
+
+let chartsInitialized = false;
+function initCharts() {
+    if (chartsInitialized) return;
+    chartsInitialized = true;
+
+    const statusData = [{"label": "New", "key": "new", "count": 1}, {"label": "Assigned", "key": "assigned", "count": 1}, {"label": "In Progress", "key": "in_progress", "count": 1}, {"label": "Fixed", "key": "fixed", "count": 1}, {"label": "Retest", "key": "retest", "count": 0}, {"label": "Reopened", "key": "reopened", "count": 0}, {"label": "Closed", "key": "closed", "count": 0}, {"label": "Verified", "key": "verified", "count": 2}];
+    const severityData = [{"label": "Low", "key": "low", "count": 2}, {"label": "Medium", "key": "medium", "count": 3}, {"label": "High", "key": "high", "count": 1}, {"label": "Critical", "key": "critical", "count": 0}];
+    const burndownData = [{"date": "17 Aug", "open": 0}, {"date": "18 Aug", "open": 0}, {"date": "19 Aug", "open": 0}, {"date": "20 Aug", "open": 0}, {"date": "21 Aug", "open": 0}, {"date": "22 Aug", "open": 0}, {"date": "23 Aug", "open": 0}, {"date": "24 Aug", "open": 0}, {"date": "25 Aug", "open": 0}, {"date": "26 Aug", "open": 0}, {"date": "27 Aug", "open": 0}, {"date": "28 Aug", "open": 0}, {"date": "29 Aug", "open": 1}, {"date": "30 Aug", "open": 1}, {"date": "31 Aug", "open": 1}, {"date": "01 Sep", "open": 3}, {"date": "02 Sep", "open": 3}, {"date": "03 Sep", "open": 5}, {"date": "04 Sep", "open": 5}, {"date": "05 Sep", "open": 5}, {"date": "06 Sep", "open": 5}, {"date": "07 Sep", "open": 5}, {"date": "08 Sep", "open": 5}, {"date": "09 Sep", "open": 5}, {"date": "10 Sep", "open": 5}, {"date": "11 Sep", "open": 5}, {"date": "12 Sep", "open": 5}, {"date": "13 Sep", "open": 4}, {"date": "14 Sep", "open": 4}, {"date": "15 Sep", "open": 4}];
+
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: statusData.map(d => d.label),
+            datasets: [{
+                data: statusData.map(d => d.count),
+                backgroundColor: ['#94a3b8','#3b82f6','#8b5cf6','#a78bfa','#60a5fa','#f87171','#22c55e','#10b981'],
+                borderColor: '#111827',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { position: 'right', labels: { color: '#cbd5e1', boxWidth: 12, font: { size: 12 } } }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('severityChart'), {
+        type: 'doughnut',
+        data: {
+            labels: severityData.map(d => d.label),
+            datasets: [{
+                data: severityData.map(d => d.count),
+                backgroundColor: ['#94a3b8','#60a5fa','#fbbf24','#ef4444'],
+                borderColor: '#111827',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { position: 'right', labels: { color: '#cbd5e1', boxWidth: 12, font: { size: 12 } } }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('burndownChart'), {
+        type: 'line',
+        data: {
+            labels: burndownData.map(d => d.date),
+            datasets: [{
+                label: 'Open defects',
+                data: burndownData.map(d => d.open),
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239,68,68,.15)',
+                fill: true,
+                tension: .3,
+                pointRadius: 3,
+                pointBackgroundColor: '#ef4444'
+            }]
+        },
+        options: {
+            scales: {
+                x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
+                y: { beginAtZero: true, ticks: { stepSize: 1, color: '#94a3b8' }, grid: { color: '#1e293b' } }
+            },
+            plugins: {
+                legend: { labels: { color: '#cbd5e1' } }
+            }
+        }
+    });
+}
+
+// Initialize on page load
+window.addEventListener('DOMContentLoaded', checkAuth);
 </script>
 </body>
 </html>
