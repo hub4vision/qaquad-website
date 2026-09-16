@@ -372,6 +372,101 @@ tr:hover td { background: #f8fafc; }
     margin-right: 6px;
     vertical-align: middle;
 }
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS FOR LAPTOPS, TABLETS & MOBILE
+   ========================================================================== */
+.sidebar-mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #334155;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+}
+.sidebar-mobile-toggle:hover { background: #f1f5f9; }
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(2px);
+    z-index: 95;
+}
+.sidebar-backdrop.active { display: block; }
+
+@media (max-width: 1024px) {
+    .zoho-sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: -240px;
+        z-index: 1000;
+        transition: left 0.25s ease;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+    }
+    .zoho-sidebar.mobile-open {
+        left: 0;
+    }
+    .sidebar-mobile-toggle {
+        display: inline-flex;
+    }
+    .zoho-main {
+        width: 100%;
+        min-width: 0;
+    }
+    .zoho-content {
+        padding: 16px;
+    }
+    .metrics-strip {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .zoho-top-header {
+        padding: 0 16px;
+        gap: 8px;
+    }
+    .breadcrumb-title {
+        font-size: 13.5px;
+        max-width: 180px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .badge-tag {
+        display: none;
+    }
+    .zoho-projects-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 6px;
+        padding-bottom: 2px;
+    }
+    .zoho-projects-tabs a {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+    .metrics-strip {
+        grid-template-columns: 1fr 1fr;
+    }
+    .table-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .table-card table {
+        min-width: 650px;
+    }
+}
+
+@media (max-width: 480px) {
+    .metrics-strip {
+        grid-template-columns: 1fr;
+    }
+}
 </style>
 </head>
 <body>
@@ -476,11 +571,13 @@ tr:hover td { background: #f8fafc; }
             
         </ul>
     </aside>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
     <!-- MAIN APP AREA -->
     <div class="zoho-main">
         <!-- TOP HEADER -->
         <header class="zoho-top-header">
+            <button type="button" class="sidebar-mobile-toggle" id="sidebarMobileToggle" title="Toggle Sidebar">&#9776;</button>
             <div class="breadcrumb-title">QAQuad Master Admin Workspace</div>
             <span class="badge-tag">Central Enterprise Directory</span>
             <div class="header-user-profile">
@@ -496,7 +593,7 @@ tr:hover td { background: #f8fafc; }
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h1 class="zoho-projects-title">Client Projects Directory</h1>
                     <div style="font-size: 12.5px; color: #64748b;">
-                        Snapshot generated: <strong>16 Sep 2026, 10:12</strong>
+                        Snapshot generated: <strong>16 Sep 2026, 14:49</strong>
                     </div>
                 </div>
                 <div class="zoho-projects-tabs">
@@ -1120,7 +1217,26 @@ function handleLogout() {
     checkAuth();
 }
 
-window.addEventListener('DOMContentLoaded', checkAuth);
+window.addEventListener('DOMContentLoaded', function() {
+    checkAuth();
+
+    const mobileToggleBtn = document.getElementById('sidebarMobileToggle');
+    const sidebar = document.querySelector('.zoho-sidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+
+    if (mobileToggleBtn && sidebar) {
+        mobileToggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('mobile-open');
+            if (backdrop) backdrop.classList.toggle('active');
+        });
+    }
+    if (backdrop && sidebar) {
+        backdrop.addEventListener('click', function() {
+            sidebar.classList.remove('mobile-open');
+            backdrop.classList.remove('active');
+        });
+    }
+});
 </script>
 </body>
 </html>

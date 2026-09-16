@@ -12,18 +12,18 @@
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;}
 
 /* Brand Header */
-.topbar{background:var(--sidebar-bg);color:#fff;padding:14px 24px;border-bottom:1px solid #2d3748;display:flex;align-items:center;justify-content:space-between;}
-.brand-group{display:flex;align-items:center;gap:12px;}
-.brand-icon{background:var(--accent);color:#fff;font-weight:900;font-size:18px;width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.topbar{background:var(--sidebar-bg);color:#fff;padding:14px 20px;border-bottom:1px solid #2d3748;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.brand-group{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.brand-icon{background:var(--accent);color:#fff;font-weight:900;font-size:18px;width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .brand-title{font-weight:700;font-size:17px;letter-spacing:-0.01em;}
 .brand-tag{background:rgba(255,87,34,0.15);color:var(--accent);border:1px solid rgba(255,87,34,0.4);padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;}
-.user-info{display:flex;align-items:center;gap:12px;}
+.user-info{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 .btn-logout{background:#2d3748;color:#e2e8f0;border:none;padding:6px 14px;border-radius:6px;font-size:12.5px;cursor:pointer;font-weight:600;transition:all .15s;}
 .btn-logout:hover{background:#4a5568;}
 
 /* Login Overlay */
-#loginOverlay{position:fixed;inset:0;background:rgba(11,15,25,0.92);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}
-.login-card{background:#151c2c;border:1px solid #2d3b55;border-radius:14px;max-width:400px;width:100%;padding:32px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.7);text-align:center;}
+#loginOverlay{position:fixed;inset:0;background:rgba(11,15,25,0.92);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;}
+.login-card{background:#151c2c;border:1px solid #2d3b55;border-radius:14px;max-width:400px;width:100%;padding:28px 24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.7);text-align:center;}
 .login-brand{display:inline-flex;align-items:center;justify-content:center;background:var(--accent);width:48px;height:48px;border-radius:12px;color:#fff;font-size:26px;font-weight:900;margin-bottom:14px;box-shadow:0 8px 16px rgba(255,87,34,0.3);}
 .login-title{font-size:22px;font-weight:800;color:#fff;margin:0 0 6px;}
 .login-sub{color:var(--muted);font-size:13px;margin:0 0 24px;}
@@ -34,30 +34,40 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Hel
 .btn-login{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;transition:background .2s;}
 .btn-login:hover{background:var(--accent-hover);}
 .login-error{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;padding:10px;border-radius:8px;font-size:12.5px;margin-bottom:16px;display:none;}
-.quick-creds{margin-top:20px;padding-top:16px;border-top:1px solid #232f46;font-size:12px;color:var(--muted);text-align:left;}
+.quick-creds{margin-top:20px;padding-top:16px;border-top:1px solid #232f46;font-size:12px;color:var(--muted);text-align:left;word-break:break-word;}
 .quick-creds span{color:#93c5fd;font-family:monospace;}
 
 /* Dashboard Content */
-.container{max-width:1160px;margin:0 auto;padding:28px 20px 60px;}
-.project-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;border-bottom:1px solid var(--border);padding-bottom:16px;}
-.project-header h1{font-size:24px;margin:0 0 4px;color:#fff;font-weight:800;}
-.project-header .sub{color:var(--muted);font-size:13px;}
+.container{max-width:1160px;margin:0 auto;padding:24px 16px 60px;width:100%;}
+.project-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;border-bottom:1px solid var(--border);padding-bottom:16px;flex-wrap:wrap;gap:12px;}
+.project-header h1{font-size:24px;margin:0 0 4px;color:#fff;font-weight:800;word-break:break-word;}
+.project-header .sub{color:var(--muted);font-size:13px;line-height:1.5;}
 
 .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:18px;}
+.table-responsive{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .grid{display:grid;gap:18px;}
 .grid-4{grid-template-columns:repeat(4,1fr);}
 .grid-2{grid-template-columns:repeat(2,1fr);}
-@media(max-width:850px){.grid-4,.grid-2{grid-template-columns:1fr 1fr;}}
-@media(max-width:560px){.grid-4,.grid-2{grid-template-columns:1fr;}}
+@media(max-width:1024px){
+    .container{padding:18px 14px 40px;}
+    .grid-4{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:640px){
+    .topbar{padding:10px 14px;}
+    .brand-title{font-size:15px;}
+    .project-header h1{font-size:20px;}
+    .grid-4,.grid-2{grid-template-columns:1fr;}
+    .card{padding:14px;}
+}
 
-.stat{text-align:center;padding:22px 14px;}
-.stat .num{font-size:32px;font-weight:800;color:#fff;line-height:1;}
+.stat{text-align:center;padding:20px 14px;}
+.stat .num{font-size:28px;font-weight:800;color:#fff;line-height:1;}
 .stat .label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em;margin-top:8px;font-weight:600;}
 
 h3{font-size:13px;margin:0 0 14px;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;font-weight:700;}
 
-table{width:100%;border-collapse:collapse;font-size:13.5px;}
-th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);}
+table{width:100%;min-width:520px;border-collapse:collapse;font-size:13.5px;}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);white-space:nowrap;}
 th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;background:#0e1626;}
 tr:hover td{background:#151f33;}
 .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:#24324d;color:#cbd5e1;}
@@ -116,7 +126,7 @@ tr:hover td{background:#151f33;}
     <div class="project-header">
         <div>
             <h1>QA Quad Test Management Tool</h1>
-            <div class="sub">Key: <strong style="color:#fff;">TRVZ</strong> &middot; Test &amp; Defect Management Report &middot; generated 16 Sep 2026, 10:12</div>
+            <div class="sub">Key: <strong style="color:#fff;">TRVZ</strong> &middot; Test &amp; Defect Management Report &middot; generated 16 Sep 2026, 14:49</div>
         </div>
     </div>
 
@@ -151,69 +161,73 @@ tr:hover td{background:#151f33;}
 
     <div class="card">
         <h3>Test Cycle Summary</h3>
-        <table>
-            <thead>
-                <tr><th>Cycle</th><th>Status</th><th>Executed</th><th>Pass Rate</th><th>% Complete</th></tr>
-            </thead>
-            <tbody>
-                
-                <tr>
-                    <td style="font-weight:600;color:#fff;">Sprint 1 Regression</td>
-                    <td><span class="badge">In Progress</span></td>
-                    <td>11 / 13</td>
-                    <td style="font-weight:700;color:#38bdf8;">72.7%</td>
-                    <td>
-                        <div class="progress-bar" style="width:90px;display:inline-block;vertical-align:middle;margin-right:8px;"><div class="fill" style="width:84.6%"></div></div>
-                        <span>84.6%</span>
-                    </td>
-                </tr>
-                
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>Cycle</th><th>Status</th><th>Executed</th><th>Pass Rate</th><th>% Complete</th></tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td style="font-weight:600;color:#fff;">Sprint 1 Regression</td>
+                        <td><span class="badge">In Progress</span></td>
+                        <td>11 / 13</td>
+                        <td style="font-weight:700;color:#38bdf8;">72.7%</td>
+                        <td>
+                            <div class="progress-bar" style="width:90px;display:inline-block;vertical-align:middle;margin-right:8px;"><div class="fill" style="width:84.6%"></div></div>
+                            <span>84.6%</span>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div class="card">
         <h3>Open Defects &amp; Tasks</h3>
-        <table>
-            <thead>
-                <tr><th>Defect Title</th><th>Module</th><th>Severity</th><th>Priority</th><th>Status</th></tr>
-            </thead>
-            <tbody>
-                
-                <tr>
-                    <td style="font-weight:600;color:#fff;">Fail: Booking confirmation email is sent</td>
-                    <td style="color:var(--muted);">Bookings</td>
-                    <td><span class="badge">Medium</span></td>
-                    <td><span class="badge">Medium</span></td>
-                    <td><span class="badge badge-open">New</span></td>
-                </tr>
-                
-                <tr>
-                    <td style="font-weight:600;color:#fff;">Fail: Booking confirmation email is sent</td>
-                    <td style="color:var(--muted);">Bookings</td>
-                    <td><span class="badge">Medium</span></td>
-                    <td><span class="badge">Medium</span></td>
-                    <td><span class="badge badge-open">Assigned</span></td>
-                </tr>
-                
-                <tr>
-                    <td style="font-weight:600;color:#fff;">Fail: Cancel an existing booking</td>
-                    <td style="color:var(--muted);">Bookings</td>
-                    <td><span class="badge">Low</span></td>
-                    <td><span class="badge">Medium</span></td>
-                    <td><span class="badge badge-open">In Progress</span></td>
-                </tr>
-                
-                <tr>
-                    <td style="font-weight:600;color:#fff;">Currency symbol missing on invoice PDF</td>
-                    <td style="color:var(--muted);">Payments</td>
-                    <td><span class="badge">Low</span></td>
-                    <td><span class="badge">Medium</span></td>
-                    <td><span class="badge badge-open">Fixed</span></td>
-                </tr>
-                
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>Defect Title</th><th>Module</th><th>Severity</th><th>Priority</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td style="font-weight:600;color:#fff;">Fail: Booking confirmation email is sent</td>
+                        <td style="color:var(--muted);">Bookings</td>
+                        <td><span class="badge">Medium</span></td>
+                        <td><span class="badge">Medium</span></td>
+                        <td><span class="badge badge-open">New</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="font-weight:600;color:#fff;">Fail: Booking confirmation email is sent</td>
+                        <td style="color:var(--muted);">Bookings</td>
+                        <td><span class="badge">Medium</span></td>
+                        <td><span class="badge">Medium</span></td>
+                        <td><span class="badge badge-open">Assigned</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="font-weight:600;color:#fff;">Fail: Cancel an existing booking</td>
+                        <td style="color:var(--muted);">Bookings</td>
+                        <td><span class="badge">Low</span></td>
+                        <td><span class="badge">Medium</span></td>
+                        <td><span class="badge badge-open">In Progress</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="font-weight:600;color:#fff;">Currency symbol missing on invoice PDF</td>
+                        <td style="color:var(--muted);">Payments</td>
+                        <td><span class="badge">Low</span></td>
+                        <td><span class="badge">Medium</span></td>
+                        <td><span class="badge badge-open">Fixed</span></td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <p class="footer-note">&copy; QA Quad Defect &amp; Test Management Portal &middot; All Rights Reserved.</p>
