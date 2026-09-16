@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>QA Quad Backoffice — QA Quad Defect &amp; Test Management</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>if (typeof Chart === 'undefined') { document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"><\/script>'); }</script>
 <style>
 :root{--bg:#0b0f19;--card:#111827;--border:#1f293d;--text:#f1f5f9;--muted:#94a3b8;--accent:#ff5722;--accent-hover:#e64a19;--sidebar-bg:#192231;--card-light:#1e293b;}
 *{box-sizing:border-box;}
@@ -115,7 +116,7 @@ tr:hover td{background:#151f33;}
     <div class="project-header">
         <div>
             <h1>QA Quad Backoffice</h1>
-            <div class="sub">Key: <strong style="color:#fff;">TRVZ</strong> &middot; Test &amp; Defect Management Report &middot; generated 16 Sep 2026, 09:44</div>
+            <div class="sub">Key: <strong style="color:#fff;">TRVZ</strong> &middot; Test &amp; Defect Management Report &middot; generated 16 Sep 2026, 09:59</div>
         </div>
     </div>
 
@@ -262,77 +263,103 @@ function handleLogout() {
 let chartsInitialized = false;
 function initCharts() {
     if (chartsInitialized) return;
+    if (typeof Chart === 'undefined') {
+        setTimeout(initCharts, 100);
+        return;
+    }
     chartsInitialized = true;
 
-    const statusData = [{"label": "New", "key": "new", "count": 1}, {"label": "Assigned", "key": "assigned", "count": 1}, {"label": "In Progress", "key": "in_progress", "count": 1}, {"label": "Fixed", "key": "fixed", "count": 1}, {"label": "Retest", "key": "retest", "count": 0}, {"label": "Reopened", "key": "reopened", "count": 0}, {"label": "Closed", "key": "closed", "count": 0}, {"label": "Verified", "key": "verified", "count": 2}];
-    const severityData = [{"label": "Low", "key": "low", "count": 2}, {"label": "Medium", "key": "medium", "count": 3}, {"label": "High", "key": "high", "count": 1}, {"label": "Critical", "key": "critical", "count": 0}];
-    const burndownData = [{"date": "18 Aug", "open": 0}, {"date": "19 Aug", "open": 0}, {"date": "20 Aug", "open": 0}, {"date": "21 Aug", "open": 0}, {"date": "22 Aug", "open": 0}, {"date": "23 Aug", "open": 0}, {"date": "24 Aug", "open": 0}, {"date": "25 Aug", "open": 0}, {"date": "26 Aug", "open": 0}, {"date": "27 Aug", "open": 0}, {"date": "28 Aug", "open": 0}, {"date": "29 Aug", "open": 1}, {"date": "30 Aug", "open": 1}, {"date": "31 Aug", "open": 1}, {"date": "01 Sep", "open": 3}, {"date": "02 Sep", "open": 3}, {"date": "03 Sep", "open": 5}, {"date": "04 Sep", "open": 5}, {"date": "05 Sep", "open": 5}, {"date": "06 Sep", "open": 5}, {"date": "07 Sep", "open": 5}, {"date": "08 Sep", "open": 5}, {"date": "09 Sep", "open": 5}, {"date": "10 Sep", "open": 5}, {"date": "11 Sep", "open": 5}, {"date": "12 Sep", "open": 5}, {"date": "13 Sep", "open": 4}, {"date": "14 Sep", "open": 4}, {"date": "15 Sep", "open": 4}, {"date": "16 Sep", "open": 4}];
+    try {
+        const statusData = [{"label": "New", "key": "new", "count": 1}, {"label": "Assigned", "key": "assigned", "count": 1}, {"label": "In Progress", "key": "in_progress", "count": 1}, {"label": "Fixed", "key": "fixed", "count": 1}, {"label": "Retest", "key": "retest", "count": 0}, {"label": "Reopened", "key": "reopened", "count": 0}, {"label": "Closed", "key": "closed", "count": 0}, {"label": "Verified", "key": "verified", "count": 2}];
+        const severityData = [{"label": "Low", "key": "low", "count": 2}, {"label": "Medium", "key": "medium", "count": 3}, {"label": "High", "key": "high", "count": 1}, {"label": "Critical", "key": "critical", "count": 0}];
+        const burndownData = [{"date": "18 Aug", "open": 0}, {"date": "19 Aug", "open": 0}, {"date": "20 Aug", "open": 0}, {"date": "21 Aug", "open": 0}, {"date": "22 Aug", "open": 0}, {"date": "23 Aug", "open": 0}, {"date": "24 Aug", "open": 0}, {"date": "25 Aug", "open": 0}, {"date": "26 Aug", "open": 0}, {"date": "27 Aug", "open": 0}, {"date": "28 Aug", "open": 0}, {"date": "29 Aug", "open": 1}, {"date": "30 Aug", "open": 1}, {"date": "31 Aug", "open": 1}, {"date": "01 Sep", "open": 3}, {"date": "02 Sep", "open": 3}, {"date": "03 Sep", "open": 5}, {"date": "04 Sep", "open": 5}, {"date": "05 Sep", "open": 5}, {"date": "06 Sep", "open": 5}, {"date": "07 Sep", "open": 5}, {"date": "08 Sep", "open": 5}, {"date": "09 Sep", "open": 5}, {"date": "10 Sep", "open": 5}, {"date": "11 Sep", "open": 5}, {"date": "12 Sep", "open": 5}, {"date": "13 Sep", "open": 4}, {"date": "14 Sep", "open": 4}, {"date": "15 Sep", "open": 4}, {"date": "16 Sep", "open": 4}];
 
-    new Chart(document.getElementById('statusChart'), {
-        type: 'doughnut',
-        data: {
-            labels: statusData.map(d => d.label),
-            datasets: [{
-                data: statusData.map(d => d.count),
-                backgroundColor: ['#94a3b8','#3b82f6','#8b5cf6','#a78bfa','#60a5fa','#f87171','#22c55e','#10b981'],
-                borderColor: '#111827',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            plugins: {
-                legend: { position: 'right', labels: { color: '#cbd5e1', boxWidth: 12, font: { size: 12 } } }
-            }
+        const statusEl = document.getElementById('statusChart');
+        if (statusEl) {
+            new Chart(statusEl, {
+                type: 'doughnut',
+                data: {
+                    labels: statusData.map(d => d.label),
+                    datasets: [{
+                        data: statusData.map(d => d.count),
+                        backgroundColor: ['#94a3b8','#3b82f6','#8b5cf6','#a78bfa','#60a5fa','#f87171','#22c55e','#10b981'],
+                        borderColor: '#111827',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: '#cbd5e1', boxWidth: 12, font: { size: 12 } } }
+                    }
+                }
+            });
         }
-    });
 
-    new Chart(document.getElementById('severityChart'), {
-        type: 'doughnut',
-        data: {
-            labels: severityData.map(d => d.label),
-            datasets: [{
-                data: severityData.map(d => d.count),
-                backgroundColor: ['#94a3b8','#60a5fa','#fbbf24','#ef4444'],
-                borderColor: '#111827',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            plugins: {
-                legend: { position: 'right', labels: { color: '#cbd5e1', boxWidth: 12, font: { size: 12 } } }
-            }
+        const severityEl = document.getElementById('severityChart');
+        if (severityEl) {
+            new Chart(severityEl, {
+                type: 'doughnut',
+                data: {
+                    labels: severityData.map(d => d.label),
+                    datasets: [{
+                        data: severityData.map(d => d.count),
+                        backgroundColor: ['#94a3b8','#60a5fa','#fbbf24','#ef4444'],
+                        borderColor: '#111827',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: '#cbd5e1', boxWidth: 12, font: { size: 12 } } }
+                    }
+                }
+            });
         }
-    });
 
-    new Chart(document.getElementById('burndownChart'), {
-        type: 'line',
-        data: {
-            labels: burndownData.map(d => d.date),
-            datasets: [{
-                label: 'Open defects',
-                data: burndownData.map(d => d.open),
-                borderColor: '#ef4444',
-                backgroundColor: 'rgba(239,68,68,.15)',
-                fill: true,
-                tension: .3,
-                pointRadius: 3,
-                pointBackgroundColor: '#ef4444'
-            }]
-        },
-        options: {
-            scales: {
-                x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
-                y: { beginAtZero: true, ticks: { stepSize: 1, color: '#94a3b8' }, grid: { color: '#1e293b' } }
-            },
-            plugins: {
-                legend: { labels: { color: '#cbd5e1' } }
-            }
+        const burndownEl = document.getElementById('burndownChart');
+        if (burndownEl) {
+            new Chart(burndownEl, {
+                type: 'line',
+                data: {
+                    labels: burndownData.map(d => d.date),
+                    datasets: [{
+                        label: 'Open defects',
+                        data: burndownData.map(d => d.open),
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239,68,68,.15)',
+                        fill: true,
+                        tension: .3,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#ef4444'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
+                        y: { beginAtZero: true, ticks: { stepSize: 1, color: '#94a3b8' }, grid: { color: '#1e293b' } }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#cbd5e1' } }
+                    }
+                }
+            });
         }
-    });
+    } catch (err) {
+        console.error('Error initializing charts:', err);
+    }
 }
 
 // Initialize on page load
-window.addEventListener('DOMContentLoaded', checkAuth);
+window.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+    initCharts();
+});
 </script>
 </body>
 </html>

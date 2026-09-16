@@ -4,68 +4,374 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>QA Quad — Master Admin Multi-Client Workspace</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>if (typeof Chart === 'undefined') { document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"><\/script>'); }</script>
 <style>
-:root{--bg:#0b0f19;--card:#111827;--border:#1f293d;--text:#f1f5f9;--muted:#94a3b8;--accent:#ff5722;--accent-hover:#e64a19;--sidebar-bg:#192231;--card-light:#1e293b;}
-*{box-sizing:border-box;}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;}
-
-/* Header */
-.topbar{background:var(--sidebar-bg);color:#fff;padding:14px 24px;border-bottom:1px solid #2d3748;display:flex;align-items:center;justify-content:space-between;}
-.brand-group{display:flex;align-items:center;gap:12px;}
-.brand-icon{background:var(--accent);color:#fff;font-weight:900;font-size:18px;width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
-.brand-title{font-weight:700;font-size:17px;letter-spacing:-0.01em;}
-.brand-tag{background:rgba(255,87,34,0.18);color:var(--accent);border:1px solid rgba(255,87,34,0.4);padding:2px 10px;border-radius:12px;font-size:11.5px;font-weight:700;}
-.user-info{display:flex;align-items:center;gap:12px;}
-.btn-logout{background:#2d3748;color:#e2e8f0;border:none;padding:6px 14px;border-radius:6px;font-size:12.5px;cursor:pointer;font-weight:600;transition:all .15s;}
-.btn-logout:hover{background:#4a5568;}
+:root {
+    --bg: #f4f6f9;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --muted: #64748b;
+    --zoho-orange: #ff5722;
+    --zoho-orange-hover: #e64a19;
+    --zoho-orange-light: #fff3e0;
+    --zoho-dark: #192231;
+    --zoho-dark-surface: #222d40;
+    --zoho-dark-border: #2d3a50;
+    --accent: #ff5722;
+    --sidebar-width: 230px;
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 13.5px;
+    line-height: 1.5;
+}
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
 
 /* Login Overlay (Admin Access) */
-#loginOverlay{position:fixed;inset:0;background:rgba(11,15,25,0.94);backdrop-filter:blur(10px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}
-.login-card{background:#151c2c;border:1px solid #2d3b55;border-radius:14px;max-width:420px;width:100%;padding:36px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.8);text-align:center;}
-.login-brand{display:inline-flex;align-items:center;justify-content:center;background:var(--accent);width:52px;height:52px;border-radius:12px;color:#fff;font-size:28px;font-weight:900;margin-bottom:14px;box-shadow:0 8px 16px rgba(255,87,34,0.3);}
-.login-title{font-size:23px;font-weight:800;color:#fff;margin:0 0 6px;}
-.login-sub{color:var(--muted);font-size:13px;margin:0 0 24px;}
-.login-field{text-align:left;margin-bottom:16px;}
-.login-field label{display:block;font-size:12px;font-weight:600;color:#cbd5e1;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
-.login-field input{width:100%;padding:11px 14px;background:#0d1320;border:1px solid #25334d;border-radius:8px;color:#fff;font-size:14px;outline:none;transition:border-color .2s;}
-.login-field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,87,34,0.2);}
-.btn-login{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;transition:background .2s;}
-.btn-login:hover{background:var(--accent-hover);}
-.login-error{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;padding:10px;border-radius:8px;font-size:12.5px;margin-bottom:16px;display:none;}
-.quick-creds{margin-top:20px;padding-top:16px;border-top:1px solid #232f46;font-size:12px;color:var(--muted);text-align:left;}
-.quick-creds span{color:#93c5fd;font-family:monospace;}
+#loginOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(11, 15, 25, 0.94);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.login-card {
+    background: #151c2c;
+    border: 1px solid #2d3b55;
+    border-radius: 14px;
+    max-width: 420px;
+    width: 100%;
+    padding: 36px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8);
+    text-align: center;
+}
+.login-brand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 16px rgba(255,87,34,0.3);
+}
+.login-title { font-size: 23px; font-weight: 800; color: #fff; margin: 0 0 6px; }
+.login-sub { color: #94a3b8; font-size: 13px; margin: 0 0 24px; }
+.login-field { text-align: left; margin-bottom: 16px; }
+.login-field label { display: block; font-size: 12px; font-weight: 600; color: #cbd5e1; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+.login-field input { width: 100%; padding: 11px 14px; background: #0d1320; border: 1px solid #25334d; border-radius: 8px; color: #fff; font-size: 14px; outline: none; }
+.login-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,87,34,0.2); }
+.btn-login { width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+.btn-login:hover { background: var(--zoho-orange-hover); }
+.login-error { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); color: #fca5a5; padding: 10px; border-radius: 8px; font-size: 12.5px; margin-bottom: 16px; display: none; }
+.quick-creds { margin-top: 20px; padding-top: 16px; border-top: 1px solid #232f46; font-size: 12px; color: #94a3b8; text-align: left; }
+.quick-creds span { color: #93c5fd; font-family: monospace; }
 
-/* Main Dashboard */
-.container{max-width:1220px;margin:0 auto;padding:28px 20px 60px;}
-.project-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:16px;}
-.project-header h1{font-size:26px;margin:0 0 4px;color:#fff;font-weight:800;}
-.project-header .sub{color:var(--muted);font-size:13.5px;}
+/* ZOHO APP SHELL LAYOUT */
+.zoho-layout {
+    display: flex;
+    min-height: 100vh;
+}
+.zoho-sidebar {
+    width: var(--sidebar-width);
+    background: var(--zoho-dark);
+    color: #94a3b8;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--zoho-dark-border);
+}
+.sidebar-header {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--zoho-dark-border);
+    gap: 12px;
+}
+.sidebar-brand-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #ff5722 0%, #ff8a65 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 800;
+    font-size: 16px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(255, 87, 34, 0.4);
+}
+.sidebar-brand-title {
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+}
+.sidebar-menu {
+    list-style: none;
+    padding: 12px 8px;
+    margin: 0;
+}
+.sidebar-menu li a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    color: #cbd5e1;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+.sidebar-menu li.active a, .sidebar-menu li a:hover {
+    background: var(--zoho-dark-surface);
+    color: #fff;
+    text-decoration: none;
+}
+.sidebar-section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    padding: 14px 16px 6px;
+    font-weight: 700;
+}
+.sidebar-recent-projects {
+    list-style: none;
+    padding: 0 8px;
+    margin: 0;
+}
+.sidebar-recent-projects li a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    color: #94a3b8;
+    border-radius: 6px;
+    font-size: 12.5px;
+}
+.sidebar-recent-projects li a:hover {
+    background: var(--zoho-dark-surface);
+    color: #fff;
+    text-decoration: none;
+}
+.project-key-pill {
+    background: rgba(255, 87, 34, 0.18);
+    color: var(--zoho-orange);
+    border: 1px solid rgba(255, 87, 34, 0.35);
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+}
 
-.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;}
-.grid{display:grid;gap:18px;}
-.grid-5{grid-template-columns:repeat(5,1fr);}
-@media(max-width:1000px){.grid-5{grid-template-columns:repeat(3,1fr);}}
-@media(max-width:640px){.grid-5{grid-template-columns:1fr 1fr;}}
+/* MAIN CONTENT AREA */
+.zoho-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.zoho-top-header {
+    height: 56px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+}
+.breadcrumb-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+}
+.badge-tag {
+    background: rgba(255, 87, 34, 0.12);
+    color: var(--zoho-orange);
+    border: 1px solid rgba(255, 87, 34, 0.3);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+}
+.header-user-profile {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.btn-logout-zoho {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-logout-zoho:hover { background: #e2e8f0; color: #1e293b; }
 
-.stat{text-align:center;padding:20px 12px;}
-.stat .num{font-size:32px;font-weight:800;color:#fff;line-height:1;}
-.stat .label{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;margin-top:8px;font-weight:600;}
+.zoho-content {
+    padding: 24px;
+    flex: 1;
+}
 
-h3{font-size:14px;margin:0 0 14px;color:#cbd5e1;text-transform:uppercase;letter-spacing:.04em;font-weight:700;}
+/* TABS HEADER */
+.zoho-projects-header {
+    margin-bottom: 20px;
+}
+.zoho-projects-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 12px;
+}
+.zoho-projects-tabs {
+    display: flex;
+    gap: 24px;
+    border-bottom: 2px solid #e2e8f0;
+}
+.zoho-projects-tabs a {
+    padding: 8px 4px;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+}
+.zoho-projects-tabs a.active {
+    color: var(--zoho-orange);
+    border-bottom-color: var(--zoho-orange);
+}
 
-table{width:100%;border-collapse:collapse;font-size:13.5px;}
-th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--border);}
-th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;background:#0e1626;}
-tr:hover td{background:#151f33;}
+/* METRICS STRIP */
+.metrics-strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+}
+@media(max-width:960px) { .metrics-strip { grid-template-columns: repeat(3, 1fr); } }
+@media(max-width:640px) { .metrics-strip { grid-template-columns: 1fr 1fr; } }
+.stat-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+.stat-card .num { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+.stat-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: #64748b; font-weight: 700; margin-top: 6px; }
 
-.project-pill{background:#1e293b;border:1px solid #334155;color:#38bdf8;padding:2px 8px;border-radius:6px;font-family:monospace;font-weight:700;font-size:12px;}
-.progress-bar{background:#24324d;border-radius:20px;height:8px;overflow:hidden;}
-.progress-bar .fill{background:var(--accent);height:100%;}
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
-.badge-active{background:rgba(34,197,94,0.15);color:#86efac;border:1px solid rgba(34,197,94,0.3);}
-.badge-alert{background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid rgba(239,68,68,0.3);}
-.footer-note{text-align:center;color:var(--muted);font-size:12px;margin-top:36px;}
+/* TABLE CARD */
+.table-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    margin-bottom: 24px;
+}
+.table-card-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 700;
+    font-size: 14px;
+    color: #0f172a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+th { background: #f8fafc; color: #64748b; font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; }
+tr:hover td { background: #f8fafc; }
+.task-id-badge {
+    color: #c2410c;
+    background: #fff3e0;
+    border: 1px solid #ffccbc;
+    font-family: monospace;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 11.5px;
+}
+.badge-zoho-active {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+}
+.badge-zoho-archived {
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+}
+.badge-alert {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+}
+.progress-bar {
+    background: #e2e8f0;
+    border-radius: 20px;
+    height: 7px;
+    overflow: hidden;
+    width: 90px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+.progress-bar .fill { background: var(--zoho-orange); height: 100%; }
+.user-avatar-initials {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #3b82f6;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 11px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
 </style>
 </head>
 <body>
@@ -75,7 +381,7 @@ tr:hover td{background:#151f33;}
     <div class="login-card">
         <div class="login-brand">Q</div>
         <h2 class="login-title">QAQuad Master Admin</h2>
-        <p class="login-sub">Sign in with Admin credentials to view all client QA reports</p>
+        <p class="login-sub">Sign in with Admin credentials to access the central client workspace</p>
         
         <div class="login-error" id="loginErrorMsg">Invalid credentials. Admin access required.</div>
         
@@ -93,485 +399,681 @@ tr:hover td{background:#151f33;}
 
         <div class="quick-creds">
             <strong>Administrator Credentials:</strong><br>
-            Username: <span>admin</span> | <span>lead</span><br>
+            Username: <span>admin</span> | <span>lead</span> | <span>umesh</span><br>
             Password: <span>demo1234</span>
         </div>
     </div>
 </div>
 
-<!-- TOP HEADER -->
-<div class="topbar">
-    <div class="brand-group">
-        <div class="brand-icon">Q</div>
-        <div class="brand-title">QAQuad Master Overview</div>
-        <span class="brand-tag">All Client Projects</span>
-    </div>
-    <div class="user-info">
-        <span style="color:#cbd5e1;font-size:13px;" id="userDisplayLabel"></span>
-        <button class="btn-logout" onclick="handleLogout()">Log out</button>
-    </div>
-</div>
-
-<div class="container">
-    <div class="project-header">
-        <div>
-            <h1>All Clients QA Report &amp; Defect Directory</h1>
-            <div class="sub">QAQuad Central Management Portal &middot; Last updated 16 Sep 2026, 09:44</div>
+<!-- ZOHO APP SHELL -->
+<div class="zoho-layout">
+    <!-- LEFT SIDEBAR -->
+    <aside class="zoho-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand-icon">Q</div>
+            <div class="sidebar-brand-title">QA Projects</div>
         </div>
-    </div>
+        <ul class="sidebar-menu">
+            <li class="active">
+                <a href="#"><span style="font-size: 14px;">&#8962;</span> <span>All Client Projects</span></a>
+            </li>
+            <li>
+                <a href="/QATestReport"><span style="font-size: 14px;">&#128200;</span> <span>Client Defect Report</span></a>
+            </li>
+        </ul>
 
-    <!-- GRAND TOTAL SUMMARY METRICS -->
-    <div class="grid grid-5">
-        <div class="card stat"><div class="num" style="color:#38bdf8;">7</div><div class="label">Total Client Projects</div></div>
-        <div class="card stat"><div class="num">31</div><div class="label">Total Defects</div></div>
-        <div class="card stat"><div class="num" style="color:#f87171;">24</div><div class="label">Active / Open Defects</div></div>
-        <div class="card stat"><div class="num" style="color:#4ade80;">7</div><div class="label">Resolved &amp; Closed</div></div>
-        <div class="card stat"><div class="num" style="color:#a78bfa;">39</div><div class="label">Test Cases Repository</div></div>
-    </div>
+        <div class="sidebar-section-title">Client Projects</div>
+        <ul class="sidebar-recent-projects">
+            
+            <li>
+                <a href="/QATestReport" title="AI Customer Support &amp; Omnichannel CRM">
+                    <span class="project-key-pill">AICRM</span>
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">AI Customer Support &amp; Omnichannel CRM</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="/QATestReport" title="Cloud Logistics &amp; Fleet Tracking System">
+                    <span class="project-key-pill">FLEET</span>
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Cloud Logistics &amp; Fleet Tracking System</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="/QATestReport" title="E-Commerce Checkout &amp; Payment Revamp">
+                    <span class="project-key-pill">SHOP</span>
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">E-Commerce Checkout &amp; Payment Revamp</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="/QATestReport" title="Fintech Mobile Banking App iOS &amp; Android">
+                    <span class="project-key-pill">BANK</span>
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Fintech Mobile Banking App iOS &amp; Android</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="/QATestReport" title="Healthcare Patient Portal &amp; Telemedicine">
+                    <span class="project-key-pill">CARE</span>
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Healthcare Patient Portal &amp; Telemedicine</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="/QATestReport" title="Lifecycle Verification Project">
+                    <span class="project-key-pill">DEMO</span>
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Lifecycle Verification Project</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="/QATestReport" title="QA Quad Backoffice">
+                    <span class="project-key-pill">TRVZ</span>
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">QA Quad Backoffice</span>
+                </a>
+            </li>
+            
+        </ul>
+    </aside>
 
-    <!-- CLIENT PROJECTS OVERVIEW TABLE -->
-    <div class="card">
-        <h3>Client Projects Performance &amp; Defect Metrics</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Client / Project</th>
-                    <th>Key</th>
-                    <th>Status</th>
-                    <th>Defects (Open / Total)</th>
-                    <th>Resolution Rate</th>
-                    <th>Test Cycles</th>
-                    <th>Test Cases</th>
-                </tr>
-            </thead>
-            <tbody>
-                
-                <tr>
-                    <td>
-                        <div style="font-weight:700;color:#fff;font-size:14.5px;">AI Customer Support &amp; Omnichannel CRM</div>
-                        <div style="color:var(--muted);font-size:12px;margin-top:2px;">Generative AI agent routing, WhatsApp &amp; Email integration, sentiment analytics, …</div>
-                    </td>
-                    <td><span class="project-pill">AICRM</span></td>
-                    <td>
-                        
-                            <span class="badge badge-active">Active</span>
-                        
-                    </td>
-                    <td>
-                        
-                            <span style="color:#f87171;font-weight:700;">4 open</span> / <span style="color:var(--muted);">5 total</span>
-                        
-                    </td>
-                    <td>
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="progress-bar" style="width:100px;">
-                                <div class="fill" style="width:20%;"></div>
-                            </div>
-                            <span style="font-weight:700;font-size:12.5px;color:#fff;">20%</span>
-                        </div>
-                    </td>
-                    <td><strong style="color:#fff;">1</strong> cycle</td>
-                    <td><strong style="color:#fff;">5</strong> cases</td>
-                </tr>
-                
-                <tr>
-                    <td>
-                        <div style="font-weight:700;color:#fff;font-size:14.5px;">Cloud Logistics &amp; Fleet Tracking System</div>
-                        <div style="color:var(--muted);font-size:12px;margin-top:2px;">Real-time GPS truck telematics, driver dispatch, fuel optimization, and delivery …</div>
-                    </td>
-                    <td><span class="project-pill">FLEET</span></td>
-                    <td>
-                        
-                            <span class="badge badge-active">Active</span>
-                        
-                    </td>
-                    <td>
-                        
-                            <span style="color:#f87171;font-weight:700;">4 open</span> / <span style="color:var(--muted);">5 total</span>
-                        
-                    </td>
-                    <td>
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="progress-bar" style="width:100px;">
-                                <div class="fill" style="width:20%;"></div>
-                            </div>
-                            <span style="font-weight:700;font-size:12.5px;color:#fff;">20%</span>
-                        </div>
-                    </td>
-                    <td><strong style="color:#fff;">1</strong> cycle</td>
-                    <td><strong style="color:#fff;">5</strong> cases</td>
-                </tr>
-                
-                <tr>
-                    <td>
-                        <div style="font-weight:700;color:#fff;font-size:14.5px;">E-Commerce Checkout &amp; Payment Revamp</div>
-                        <div style="color:var(--muted);font-size:12px;margin-top:2px;">Next-gen checkout flow, multi-currency support, stripe integration, and 1-click buy …</div>
-                    </td>
-                    <td><span class="project-pill">SHOP</span></td>
-                    <td>
-                        
-                            <span class="badge badge-active">Active</span>
-                        
-                    </td>
-                    <td>
-                        
-                            <span style="color:#f87171;font-weight:700;">4 open</span> / <span style="color:var(--muted);">5 total</span>
-                        
-                    </td>
-                    <td>
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="progress-bar" style="width:100px;">
-                                <div class="fill" style="width:20%;"></div>
-                            </div>
-                            <span style="font-weight:700;font-size:12.5px;color:#fff;">20%</span>
-                        </div>
-                    </td>
-                    <td><strong style="color:#fff;">1</strong> cycle</td>
-                    <td><strong style="color:#fff;">6</strong> cases</td>
-                </tr>
-                
-                <tr>
-                    <td>
-                        <div style="font-weight:700;color:#fff;font-size:14.5px;">Fintech Mobile Banking App iOS &amp; Android</div>
-                        <div style="color:var(--muted);font-size:12px;margin-top:2px;">Cross-platform mobile banking app: UPI transfers, KYC verification, card freezing, …</div>
-                    </td>
-                    <td><span class="project-pill">BANK</span></td>
-                    <td>
-                        
-                            <span class="badge badge-active">Active</span>
-                        
-                    </td>
-                    <td>
-                        
-                            <span style="color:#f87171;font-weight:700;">4 open</span> / <span style="color:var(--muted);">5 total</span>
-                        
-                    </td>
-                    <td>
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="progress-bar" style="width:100px;">
-                                <div class="fill" style="width:20%;"></div>
-                            </div>
-                            <span style="font-weight:700;font-size:12.5px;color:#fff;">20%</span>
-                        </div>
-                    </td>
-                    <td><strong style="color:#fff;">1</strong> cycle</td>
-                    <td><strong style="color:#fff;">5</strong> cases</td>
-                </tr>
-                
-                <tr>
-                    <td>
-                        <div style="font-weight:700;color:#fff;font-size:14.5px;">Healthcare Patient Portal &amp; Telemedicine</div>
-                        <div style="color:var(--muted);font-size:12px;margin-top:2px;">HIPAA-compliant patient booking, lab results viewer, video consultation, and prescription …</div>
-                    </td>
-                    <td><span class="project-pill">CARE</span></td>
-                    <td>
-                        
-                            <span class="badge badge-active">Active</span>
-                        
-                    </td>
-                    <td>
-                        
-                            <span style="color:#f87171;font-weight:700;">4 open</span> / <span style="color:var(--muted);">5 total</span>
-                        
-                    </td>
-                    <td>
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="progress-bar" style="width:100px;">
-                                <div class="fill" style="width:20%;"></div>
-                            </div>
-                            <span style="font-weight:700;font-size:12.5px;color:#fff;">20%</span>
-                        </div>
-                    </td>
-                    <td><strong style="color:#fff;">1</strong> cycle</td>
-                    <td><strong style="color:#fff;">5</strong> cases</td>
-                </tr>
-                
-                <tr>
-                    <td>
-                        <div style="font-weight:700;color:#fff;font-size:14.5px;">Lifecycle Verification Project</div>
-                        <div style="color:var(--muted);font-size:12px;margin-top:2px;">Active client engagement</div>
-                    </td>
-                    <td><span class="project-pill">DEMO</span></td>
-                    <td>
-                        
-                            <span class="badge badge-active">Active</span>
-                        
-                    </td>
-                    <td>
-                        
-                            <span style="color:#4ade80;font-weight:700;">0 open</span> / <span style="color:var(--muted);">0 total</span>
-                        
-                    </td>
-                    <td>
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="progress-bar" style="width:100px;">
-                                <div class="fill" style="width:0%;"></div>
-                            </div>
-                            <span style="font-weight:700;font-size:12.5px;color:#fff;">0%</span>
-                        </div>
-                    </td>
-                    <td><strong style="color:#fff;">0</strong> cycles</td>
-                    <td><strong style="color:#fff;">0</strong> cases</td>
-                </tr>
-                
-                <tr>
-                    <td>
-                        <div style="font-weight:700;color:#fff;font-size:14.5px;">QA Quad Backoffice</div>
-                        <div style="color:var(--muted);font-size:12px;margin-top:2px;">QA Quad Defect Management &amp; Test Reporting System</div>
-                    </td>
-                    <td><span class="project-pill">TRVZ</span></td>
-                    <td>
-                        
-                            <span class="badge badge-active">Active</span>
-                        
-                    </td>
-                    <td>
-                        
-                            <span style="color:#f87171;font-weight:700;">4 open</span> / <span style="color:var(--muted);">6 total</span>
-                        
-                    </td>
-                    <td>
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="progress-bar" style="width:100px;">
-                                <div class="fill" style="width:33%;"></div>
-                            </div>
-                            <span style="font-weight:700;font-size:12.5px;color:#fff;">33%</span>
-                        </div>
-                    </td>
-                    <td><strong style="color:#fff;">1</strong> cycle</td>
-                    <td><strong style="color:#fff;">13</strong> cases</td>
-                </tr>
-                
-            </tbody>
-        </table>
-    </div>
+    <!-- MAIN APP AREA -->
+    <div class="zoho-main">
+        <!-- TOP HEADER -->
+        <header class="zoho-top-header">
+            <div class="breadcrumb-title">QAQuad Master Admin Workspace</div>
+            <span class="badge-tag">Central Enterprise Directory</span>
+            <div class="header-user-profile">
+                <span class="user-avatar-initials" id="userAvatarBox">A</span>
+                <span style="font-weight:600; color:#334155; font-size:13px;" id="userDisplayLabel">admin</span>
+                <button class="btn-logout-zoho" onclick="handleLogout()">Log out</button>
+            </div>
+        </header>
 
-    <!-- RECENT OPEN CRITICAL DEFECTS ACROSS ALL CLIENTS -->
-    <div class="card">
-        <h3>Sample Active Defects Across Clients</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Project</th>
-                    <th>Defect Summary</th>
-                    <th>Severity</th>
-                    <th>Priority</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                
-                    
-                    <tr>
-                        <td><span class="project-pill">AICRM</span></td>
-                        <td style="font-weight:600;color:#fff;">Vector embedding re-index causes 100% CPU spike on background worker</td>
-                        <td><span class="badge badge-alert">Critical</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">urgent</span></td>
-                        <td><span class="badge badge-alert">Retest</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">AICRM</span></td>
-                        <td style="font-weight:600;color:#fff;">SLA countdown clock stops ticking when agent tab is minimized</td>
-                        <td><span class="badge badge-alert">Medium</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Low</span></td>
-                        <td><span class="badge badge-alert">Fixed</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">AICRM</span></td>
-                        <td style="font-weight:600;color:#fff;">WhatsApp attachment images fail to preview inside omnichannel inbox</td>
-                        <td><span class="badge badge-alert">Medium</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
-                        <td><span class="badge badge-alert">Assigned</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">AICRM</span></td>
-                        <td style="font-weight:600;color:#fff;">AI bot hallucinates outdated pricing for discontinued enterprise tiers</td>
-                        <td><span class="badge badge-alert">High</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
-                        <td><span class="badge badge-alert">In Progress</span></td>
-                    </tr>
-                    
-                
-                    
-                    <tr>
-                        <td><span class="project-pill">FLEET</span></td>
-                        <td style="font-weight:600;color:#fff;">Geofence polygon editor snaps vertices incorrectly on zoom levels &gt; 18</td>
-                        <td><span class="badge badge-alert">Medium</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Low</span></td>
-                        <td><span class="badge badge-alert">New</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">FLEET</span></td>
-                        <td style="font-weight:600;color:#fff;">Fuel consumption calculates negative mpg during prolonged engine idle</td>
-                        <td><span class="badge badge-alert">Medium</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
-                        <td><span class="badge badge-alert">Fixed</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">FLEET</span></td>
-                        <td style="font-weight:600;color:#fff;">Driver offline sync drops delivery signature when reconnecting to cellular</td>
-                        <td><span class="badge badge-alert">Critical</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">urgent</span></td>
-                        <td><span class="badge badge-alert">In Progress</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">FLEET</span></td>
-                        <td style="font-weight:600;color:#fff;">Map marker clusters overlap and freeze browser when vehicle count &gt; 500</td>
-                        <td><span class="badge badge-alert">High</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
-                        <td><span class="badge badge-alert">Assigned</span></td>
-                    </tr>
-                    
-                
-                    
-                    <tr>
-                        <td><span class="project-pill">SHOP</span></td>
-                        <td style="font-weight:600;color:#fff;">Receipt PDF generation timeout for orders with &gt;20 items</td>
-                        <td><span class="badge badge-alert">Medium</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Low</span></td>
-                        <td><span class="badge badge-alert">New</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">SHOP</span></td>
-                        <td style="font-weight:600;color:#fff;">Cart badge count desyncs on browser back button</td>
-                        <td><span class="badge badge-alert">Medium</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
-                        <td><span class="badge badge-alert">Assigned</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">SHOP</span></td>
-                        <td style="font-weight:600;color:#fff;">Coupon discount calculates negative subtotal when promo exceeds cart value</td>
-                        <td><span class="badge badge-alert">High</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
-                        <td><span class="badge badge-alert">Fixed</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">SHOP</span></td>
-                        <td style="font-weight:600;color:#fff;">Stripe webhook 500 error when processing refund events</td>
-                        <td><span class="badge badge-alert">Critical</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
-                        <td><span class="badge badge-alert">In Progress</span></td>
-                    </tr>
-                    
-                
-                    
-                    <tr>
-                        <td><span class="project-pill">BANK</span></td>
-                        <td style="font-weight:600;color:#fff;">Push notification payload exposes partial account number on lockscreen</td>
-                        <td><span class="badge badge-alert">High</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
-                        <td><span class="badge badge-alert">Fixed</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">BANK</span></td>
-                        <td style="font-weight:600;color:#fff;">Card replacement button inactive on iOS 18 beta devices</td>
-                        <td><span class="badge badge-alert">High</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
-                        <td><span class="badge badge-alert">New</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">BANK</span></td>
-                        <td style="font-weight:600;color:#fff;">PAN Card OCR auto-capture fails in low light environments</td>
-                        <td><span class="badge badge-alert">Medium</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
-                        <td><span class="badge badge-alert">Assigned</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">BANK</span></td>
-                        <td style="font-weight:600;color:#fff;">UPI transfer timeout leaves balance in reserved hold without auto-reversal</td>
-                        <td><span class="badge badge-alert">Critical</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">urgent</span></td>
-                        <td><span class="badge badge-alert">In Progress</span></td>
-                    </tr>
-                    
-                
-                    
-                    <tr>
-                        <td><span class="project-pill">CARE</span></td>
-                        <td style="font-weight:600;color:#fff;">Patient profile avatar upload exceeds 5MB without validation error</td>
-                        <td><span class="badge badge-alert">Low</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Low</span></td>
-                        <td><span class="badge badge-alert">New</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">CARE</span></td>
-                        <td style="font-weight:600;color:#fff;">Audit log fails to capture patient record view event</td>
-                        <td><span class="badge badge-alert">High</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
-                        <td><span class="badge badge-alert">Assigned</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">CARE</span></td>
-                        <td style="font-weight:600;color:#fff;">Appointment calendar timezone discrepancy across daylight savings border</td>
-                        <td><span class="badge badge-alert">High</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">High</span></td>
-                        <td><span class="badge badge-alert">Retest</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">CARE</span></td>
-                        <td style="font-weight:600;color:#fff;">Video consultation WebRTC disconnects on network switch from Wi-Fi to 4G</td>
-                        <td><span class="badge badge-alert">Critical</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">urgent</span></td>
-                        <td><span class="badge badge-alert">In Progress</span></td>
-                    </tr>
-                    
-                
-                    
-                
-                    
-                    <tr>
-                        <td><span class="project-pill">TRVZ</span></td>
-                        <td style="font-weight:600;color:#fff;">Fail: Booking confirmation email is sent</td>
-                        <td><span class="badge badge-alert">Medium</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
-                        <td><span class="badge badge-alert">New</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">TRVZ</span></td>
-                        <td style="font-weight:600;color:#fff;">Fail: Booking confirmation email is sent</td>
-                        <td><span class="badge badge-alert">Medium</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
-                        <td><span class="badge badge-alert">Assigned</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">TRVZ</span></td>
-                        <td style="font-weight:600;color:#fff;">Fail: Cancel an existing booking</td>
-                        <td><span class="badge badge-alert">Low</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
-                        <td><span class="badge badge-alert">In Progress</span></td>
-                    </tr>
-                    
-                    <tr>
-                        <td><span class="project-pill">TRVZ</span></td>
-                        <td style="font-weight:600;color:#fff;">Currency symbol missing on invoice PDF</td>
-                        <td><span class="badge badge-alert">Low</span></td>
-                        <td><span class="badge" style="background:#1e293b;color:#cbd5e1;">Medium</span></td>
-                        <td><span class="badge badge-alert">Fixed</span></td>
-                    </tr>
-                    
-                
-            </tbody>
-        </table>
-    </div>
+        <!-- CONTENT -->
+        <main class="zoho-content">
+            <div class="zoho-projects-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1 class="zoho-projects-title">Client Projects Directory</h1>
+                    <div style="font-size: 12.5px; color: #64748b;">
+                        Snapshot generated: <strong>16 Sep 2026, 09:59</strong>
+                    </div>
+                </div>
+                <div class="zoho-projects-tabs">
+                    <a href="#" class="active">Active Projects (7)</a>
+                    <a href="#">Defect Metrics</a>
+                    <a href="#">Test Repositories</a>
+                </div>
+            </div>
 
-    <p class="footer-note">&copy; QAQuad Administrator Enterprise Console &middot; Protected Confidential Dashboard.</p>
+            <!-- GRAND TOTAL SUMMARY METRICS -->
+            <div class="metrics-strip">
+                <div class="stat-card">
+                    <div class="num" style="color: #0284c7;">7</div>
+                    <div class="label">Client Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="num">31</div>
+                    <div class="label">Total Defects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="num" style="color: #ef4444;">24</div>
+                    <div class="label">Open Defects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="num" style="color: #10b981;">7</div>
+                    <div class="label">Resolved &amp; Closed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="num" style="color: #8b5cf6;">39</div>
+                    <div class="label">Test Cases</div>
+                </div>
+            </div>
+
+            <!-- CLIENT PROJECTS DIRECTORY TABLE -->
+            <div class="table-card">
+                <div class="table-card-header">
+                    <span>Projects &amp; Defect Resolution Overview</span>
+                    <span style="font-size: 12px; color: #64748b; font-weight: normal;">Total Projects: <strong>7</strong></span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Key</th>
+                            <th>Project / Client Name</th>
+                            <th style="width: 110px; text-align: center;">Status</th>
+                            <th style="width: 140px; text-align: center;">Defects (Open/Total)</th>
+                            <th style="width: 170px;">Resolution Rate</th>
+                            <th style="width: 110px; text-align: center;">Test Cycles</th>
+                            <th style="width: 110px; text-align: center;">Test Cases</th>
+                            <th style="width: 120px; text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td>
+                                <span class="task-id-badge">AICRM</span>
+                            </td>
+                            <td>
+                                <a href="/QATestReport" style="font-weight: 600; color: #0f172a; font-size: 13.5px;">
+                                    AI Customer Support &amp; Omnichannel CRM
+                                </a>
+                                <div style="color: #64748b; font-size: 12px; margin-top: 2px;">
+                                    Generative AI agent routing, WhatsApp &amp; Email integration, sentiment analytics, …
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                
+                                    <span class="badge-zoho-active">Active</span>
+                                
+                            </td>
+                            <td style="text-align: center;">
+                                
+                                    <strong style="color: #ef4444;">4</strong> / <span style="color: #64748b;">5</span>
+                                
+                            </td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="fill" style="width: 20%;"></div>
+                                </div>
+                                <span style="font-weight: 700; font-size: 12px; color: #334155;">20%</span>
+                            </td>
+                            <td style="text-align: center; font-weight: 600; color: #334155;">
+                                1
+                            </td>
+                            <td style="text-align: center; font-weight: 600; color: #334155;">
+                                5
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="/QATestReport" style="color: var(--zoho-orange); font-weight: 700; font-size: 12px; text-decoration: none;">
+                                    View Report &rsaquo;
+                                </a>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <span class="task-id-badge">FLEET</span>
+                            </td>
+                            <td>
+                                <a href="/QATestReport" style="font-weight: 600; color: #0f172a; font-size: 13.5px;">
+                                    Cloud Logistics &amp; Fleet Tracking System
+                                </a>
+                                <div style="color: #64748b; font-size: 12px; margin-top: 2px;">
+                                    Real-time GPS truck telematics, driver dispatch, fuel optimization, and delivery …
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                
+                                    <span class="badge-zoho-active">Active</span>
+                                
+                            </td>
+                            <td style="text-align: center;">
+                                
+                                    <strong style="color: #ef4444;">4</strong> / <span style="color: #64748b;">5</span>
+                                
+                            </td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="fill" style="width: 20%;"></div>
+                                </div>
+                                <span style="font-weight: 700; font-size: 12px; color: #334155;">20%</span>
+                            </td>
+                            <td style="text-align: center; font-weight: 600; color: #334155;">
+                                1
+                            </td>
+                            <td style="text-align: center; font-weight: 600; color: #334155;">
+                                5
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="/QATestReport" style="color: var(--zoho-orange); font-weight: 700; font-size: 12px; text-decoration: none;">
+                                    View Report &rsaquo;
+                                </a>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <span class="task-id-badge">SHOP</span>
+                            </td>
+                            <td>
+                                <a href="/QATestReport" style="font-weight: 600; color: #0f172a; font-size: 13.5px;">
+                                    E-Commerce Checkout &amp; Payment Revamp
+                                </a>
+                                <div style="color: #64748b; font-size: 12px; margin-top: 2px;">
+                                    Next-gen checkout flow, multi-currency support, stripe integration, and 1-click buy …
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                
+                                    <span class="badge-zoho-active">Active</span>
+                                
+                            </td>
+                            <td style="text-align: center;">
+                                
+                                    <strong style="color: #ef4444;">4</strong> / <span style="color: #64748b;">5</span>
+                                
+                            </td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="fill" style="width: 20%;"></div>
+                                </div>
+                                <span style="font-weight: 700; font-size: 12px; color: #334155;">20%</span>
+                            </td>
+                            <td style="text-align: center; font-weight: 600; color: #334155;">
+                                1
+                            </td>
+                            <td style="text-align: center; font-weight: 600; color: #334155;">
+                                6
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="/QATestReport" style="color: var(--zoho-orange); font-weight: 700; font-size: 12px; text-decoration: none;">
+                                    View Report &rsaquo;
+                                </a>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <span class="task-id-badge">BANK</span>
+                            </td>
+                            <td>
+                                <a href="/QATestReport" style="font-weight: 600; color: #0f172a; font-size: 13.5px;">
+                                    Fintech Mobile Banking App iOS &amp; Android
+                                </a>
+                                <div style="color: #64748b; font-size: 12px; margin-top: 2px;">
+                                    Cross-platform mobile banking app: UPI transfers, KYC verification, card freezing, …
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                
+                                    <span class="badge-zoho-active">Active</span>
+                                
+                            </td>
+                            <td style="text-align: center;">
+                                
+                                    <strong style="color: #ef4444;">4</strong> / <span style="color: #64748b;">5</span>
+                                
+                            </td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="fill" style="width: 20%;"></div>
+                                </div>
+                                <span style="font-weight: 700; font-size: 12px; color: #334155;">20%</span>
+                            </td>
+                            <td style="text-align: center; font-weight: 600; color: #334155;">
+                                1
+                            </td>
+                            <td style="text-align: center; font-weight: 600; color: #334155;">
+                                5
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="/QATestReport" style="color: var(--zoho-orange); font-weight: 700; font-size: 12px; text-decoration: none;">
+                                    View Report &rsaquo;
+                                </a>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <span class="task-id-badge">CARE</span>
+                            </td>
+                            <td>
+                                <a href="/QATestReport" style="font-weight: 600; color: #0f172a; font-size: 13.5px;">
+                                    Healthcare Patient Portal &amp; Telemedicine
+                                </a>
+                                <div style="color: #64748b; font-size: 12px; margin-top: 2px;">
+                                    HIPAA-compliant patient booking, lab results viewer, video consultation, and prescription …
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                
+                                    <span class="badge-zoho-active">Active</span>
+                                
+                            </td>
+                            <td style="text-align: center;">
+                                
+                                    <strong style="color: #ef4444;">4</strong> / <span style="color: #64748b;">5</span>
+                                
+                            </td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="fill" style="width: 20%;"></div>
+                                </div>
+                                <span style="font-weight: 700; font-size: 12px; color: #334155;">20%</span>
+                            </td>
+                            <td style="text-align: center; font-weight: 600; color: #334155;">
+                                1
+                            </td>
+                            <td style="text-align: center; font-weight: 600; color: #334155;">
+                                5
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="/QATestReport" style="color: var(--zoho-orange); font-weight: 700; font-size: 12px; text-decoration: none;">
+                                    View Report &rsaquo;
+                                </a>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <span class="task-id-badge">DEMO</span>
+                            </td>
+                            <td>
+                                <a href="/QATestReport" style="font-weight: 600; color: #0f172a; font-size: 13.5px;">
+                                    Lifecycle Verification Project
+                                </a>
+                                <div style="color: #64748b; font-size: 12px; margin-top: 2px;">
+                                    Active client engagement
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                
+                                    <span class="badge-zoho-active">Active</span>
+                                
+                            </td>
+                            <td style="text-align: center;">
+                                
+                                    <strong style="color: #10b981;">0</strong> / <span style="color: #64748b;">0</span>
+                                
+                            </td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="fill" style="width: 0%;"></div>
+                                </div>
+                                <span style="font-weight: 700; font-size: 12px; color: #334155;">0%</span>
+                            </td>
+                            <td style="text-align: center; font-weight: 600; color: #334155;">
+                                0
+                            </td>
+                            <td style="text-align: center; font-weight: 600; color: #334155;">
+                                0
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="/QATestReport" style="color: var(--zoho-orange); font-weight: 700; font-size: 12px; text-decoration: none;">
+                                    View Report &rsaquo;
+                                </a>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <span class="task-id-badge">TRVZ</span>
+                            </td>
+                            <td>
+                                <a href="/QATestReport" style="font-weight: 600; color: #0f172a; font-size: 13.5px;">
+                                    QA Quad Backoffice
+                                </a>
+                                <div style="color: #64748b; font-size: 12px; margin-top: 2px;">
+                                    QA Quad Defect Management &amp; Test Reporting System
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                
+                                    <span class="badge-zoho-active">Active</span>
+                                
+                            </td>
+                            <td style="text-align: center;">
+                                
+                                    <strong style="color: #ef4444;">4</strong> / <span style="color: #64748b;">6</span>
+                                
+                            </td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="fill" style="width: 33%;"></div>
+                                </div>
+                                <span style="font-weight: 700; font-size: 12px; color: #334155;">33%</span>
+                            </td>
+                            <td style="text-align: center; font-weight: 600; color: #334155;">
+                                1
+                            </td>
+                            <td style="text-align: center; font-weight: 600; color: #334155;">
+                                13
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="/QATestReport" style="color: var(--zoho-orange); font-weight: 700; font-size: 12px; text-decoration: none;">
+                                    View Report &rsaquo;
+                                </a>
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- RECENT OPEN CRITICAL DEFECTS ACROSS ALL CLIENTS -->
+            <div class="table-card">
+                <div class="table-card-header">
+                    <span>Critical Open Defects Across All Client Projects</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Project</th>
+                            <th>Defect Summary</th>
+                            <th style="width: 120px;">Severity</th>
+                            <th style="width: 120px;">Priority</th>
+                            <th style="width: 120px;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                            
+                            <tr>
+                                <td><span class="task-id-badge">AICRM</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Vector embedding re-index causes 100% CPU spike on background worker</td>
+                                <td><span class="badge-alert">Critical</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">urgent</span></td>
+                                <td><span class="badge-alert">Retest</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">AICRM</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">SLA countdown clock stops ticking when agent tab is minimized</td>
+                                <td><span class="badge-alert">Medium</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">Low</span></td>
+                                <td><span class="badge-alert">Fixed</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">AICRM</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">WhatsApp attachment images fail to preview inside omnichannel inbox</td>
+                                <td><span class="badge-alert">Medium</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">Medium</span></td>
+                                <td><span class="badge-alert">Assigned</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">AICRM</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">AI bot hallucinates outdated pricing for discontinued enterprise tiers</td>
+                                <td><span class="badge-alert">High</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">High</span></td>
+                                <td><span class="badge-alert">In Progress</span></td>
+                            </tr>
+                            
+                        
+                            
+                            <tr>
+                                <td><span class="task-id-badge">FLEET</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Geofence polygon editor snaps vertices incorrectly on zoom levels &gt; 18</td>
+                                <td><span class="badge-alert">Medium</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">Low</span></td>
+                                <td><span class="badge-alert">New</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">FLEET</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Fuel consumption calculates negative mpg during prolonged engine idle</td>
+                                <td><span class="badge-alert">Medium</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">Medium</span></td>
+                                <td><span class="badge-alert">Fixed</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">FLEET</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Driver offline sync drops delivery signature when reconnecting to cellular</td>
+                                <td><span class="badge-alert">Critical</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">urgent</span></td>
+                                <td><span class="badge-alert">In Progress</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">FLEET</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Map marker clusters overlap and freeze browser when vehicle count &gt; 500</td>
+                                <td><span class="badge-alert">High</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">High</span></td>
+                                <td><span class="badge-alert">Assigned</span></td>
+                            </tr>
+                            
+                        
+                            
+                            <tr>
+                                <td><span class="task-id-badge">SHOP</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Receipt PDF generation timeout for orders with &gt;20 items</td>
+                                <td><span class="badge-alert">Medium</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">Low</span></td>
+                                <td><span class="badge-alert">New</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">SHOP</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Cart badge count desyncs on browser back button</td>
+                                <td><span class="badge-alert">Medium</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">Medium</span></td>
+                                <td><span class="badge-alert">Assigned</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">SHOP</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Coupon discount calculates negative subtotal when promo exceeds cart value</td>
+                                <td><span class="badge-alert">High</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">High</span></td>
+                                <td><span class="badge-alert">Fixed</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">SHOP</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Stripe webhook 500 error when processing refund events</td>
+                                <td><span class="badge-alert">Critical</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">High</span></td>
+                                <td><span class="badge-alert">In Progress</span></td>
+                            </tr>
+                            
+                        
+                            
+                            <tr>
+                                <td><span class="task-id-badge">BANK</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Push notification payload exposes partial account number on lockscreen</td>
+                                <td><span class="badge-alert">High</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">High</span></td>
+                                <td><span class="badge-alert">Fixed</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">BANK</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Card replacement button inactive on iOS 18 beta devices</td>
+                                <td><span class="badge-alert">High</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">High</span></td>
+                                <td><span class="badge-alert">New</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">BANK</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">PAN Card OCR auto-capture fails in low light environments</td>
+                                <td><span class="badge-alert">Medium</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">Medium</span></td>
+                                <td><span class="badge-alert">Assigned</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">BANK</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">UPI transfer timeout leaves balance in reserved hold without auto-reversal</td>
+                                <td><span class="badge-alert">Critical</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">urgent</span></td>
+                                <td><span class="badge-alert">In Progress</span></td>
+                            </tr>
+                            
+                        
+                            
+                            <tr>
+                                <td><span class="task-id-badge">CARE</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Patient profile avatar upload exceeds 5MB without validation error</td>
+                                <td><span class="badge-alert">Low</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">Low</span></td>
+                                <td><span class="badge-alert">New</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">CARE</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Audit log fails to capture patient record view event</td>
+                                <td><span class="badge-alert">High</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">High</span></td>
+                                <td><span class="badge-alert">Assigned</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">CARE</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Appointment calendar timezone discrepancy across daylight savings border</td>
+                                <td><span class="badge-alert">High</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">High</span></td>
+                                <td><span class="badge-alert">Retest</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">CARE</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Video consultation WebRTC disconnects on network switch from Wi-Fi to 4G</td>
+                                <td><span class="badge-alert">Critical</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">urgent</span></td>
+                                <td><span class="badge-alert">In Progress</span></td>
+                            </tr>
+                            
+                        
+                            
+                        
+                            
+                            <tr>
+                                <td><span class="task-id-badge">TRVZ</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Fail: Booking confirmation email is sent</td>
+                                <td><span class="badge-alert">Medium</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">Medium</span></td>
+                                <td><span class="badge-alert">New</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">TRVZ</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Fail: Booking confirmation email is sent</td>
+                                <td><span class="badge-alert">Medium</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">Medium</span></td>
+                                <td><span class="badge-alert">Assigned</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">TRVZ</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Fail: Cancel an existing booking</td>
+                                <td><span class="badge-alert">Low</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">Medium</span></td>
+                                <td><span class="badge-alert">In Progress</span></td>
+                            </tr>
+                            
+                            <tr>
+                                <td><span class="task-id-badge">TRVZ</span></td>
+                                <td style="font-weight: 600; color: #0f172a;">Currency symbol missing on invoice PDF</td>
+                                <td><span class="badge-alert">Low</span></td>
+                                <td><span class="task-id-badge" style="background:#f1f5f9;border-color:#cbd5e1;color:#475569;">Medium</span></td>
+                                <td><span class="badge-alert">Fixed</span></td>
+                            </tr>
+                            
+                        
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="text-align: center; color: #94a3b8; font-size: 12px; margin-top: 32px;">
+                &copy; QAQuad Administrator Enterprise Console &middot; Protected Confidential Multi-Client Workspace.
+            </div>
+        </main>
+    </div>
 </div>
 
 <script>
@@ -586,10 +1088,12 @@ function checkAuth() {
     const sessionUser = sessionStorage.getItem('qaquad_admin_user');
     const overlay = document.getElementById('loginOverlay');
     const userLabel = document.getElementById('userDisplayLabel');
+    const userAvatar = document.getElementById('userAvatarBox');
 
     if (sessionUser && ADMIN_USERS[sessionUser]) {
         overlay.style.display = 'none';
-        userLabel.textContent = 'Administrator: ' + sessionUser;
+        userLabel.textContent = sessionUser;
+        if (userAvatar) userAvatar.textContent = sessionUser[0].toUpperCase();
     } else {
         overlay.style.display = 'flex';
         userLabel.textContent = '';
