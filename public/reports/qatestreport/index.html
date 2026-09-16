@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>QA Quad Backoffice — QA Quad Defect &amp; Test Management</title>
+<title>QA Quad Test Management Tool — QA Quad Defect &amp; Test Management</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script>if (typeof Chart === 'undefined') { document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"><\/script>'); }</script>
 <style>
@@ -115,8 +115,8 @@ tr:hover td{background:#151f33;}
 <div class="container">
     <div class="project-header">
         <div>
-            <h1>QA Quad Backoffice</h1>
-            <div class="sub">Key: <strong style="color:#fff;">TRVZ</strong> &middot; Test &amp; Defect Management Report &middot; generated 16 Sep 2026, 09:59</div>
+            <h1>QA Quad Test Management Tool</h1>
+            <div class="sub">Key: <strong style="color:#fff;">TRVZ</strong> &middot; Test &amp; Defect Management Report &middot; generated 16 Sep 2026, 10:12</div>
         </div>
     </div>
 
@@ -130,17 +130,23 @@ tr:hover td{background:#151f33;}
     <div class="grid grid-2">
         <div class="card">
             <h3>Defects by Status</h3>
-            <canvas id="statusChart" height="200"></canvas>
+            <div style="position: relative; height: 220px; width: 100%;">
+                <canvas id="statusChart"></canvas>
+            </div>
         </div>
         <div class="card">
             <h3>Defects by Severity</h3>
-            <canvas id="severityChart" height="200"></canvas>
+            <div style="position: relative; height: 220px; width: 100%;">
+                <canvas id="severityChart"></canvas>
+            </div>
         </div>
     </div>
 
     <div class="card">
         <h3>Defect Burndown (Open Defects Over Time)</h3>
-        <canvas id="burndownChart" height="90"></canvas>
+        <div style="position: relative; height: 160px; width: 100%;">
+            <canvas id="burndownChart"></canvas>
+        </div>
     </div>
 
     <div class="card">
