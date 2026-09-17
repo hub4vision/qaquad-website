@@ -75,8 +75,18 @@ export function Hero() {
           </div>
 
           <div className="lg:col-span-5">
-            <div className="mx-auto max-w-sm rounded-2xl border border-cyan-500/20 bg-gradient-to-b from-slate-900/90 to-slate-950/90 p-6 shadow-2xl backdrop-blur-md">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-cyan-400">From code to confidence</p>
+            <div className="relative mx-auto max-w-sm rounded-2xl border border-sky-500/30 bg-gradient-to-b from-slate-900/95 via-[#0b1329]/95 to-slate-950/95 p-6 shadow-2xl shadow-cyan-950/50 backdrop-blur-xl ring-1 ring-white/10">
+              <div className="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-3">
+                <p className="text-xs font-black uppercase tracking-wider text-cyan-300">
+                  From Code to Confidence
+                </p>
+                <div className="flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-orange-400" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                </div>
+              </div>
               <VerticalFlow items={heroFlow} tone="dark" />
             </div>
           </div>
