@@ -3,7 +3,7 @@
 import { useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { primaryNav, servicesMegaMatrix, servicesNav, siteConfig } from "@/lib/site-config";
+import { primaryNav, servicesMegaMatrix, servicesNav, siteConfig, subNavMatrix } from "@/lib/site-config";
 import { NavLink } from "@/components/navigation/NavLink";
 import { CtaButton } from "@/components/cta/CtaButton";
 import { Logo } from "@/components/ui/Logo";
@@ -50,7 +50,7 @@ const navIcons: Record<string, React.ReactNode> = {
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
-  const [servicesExpanded, setServicesExpanded] = useState(false);
+  const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const panelId = useId();
 
@@ -146,42 +146,65 @@ export function MobileNav() {
                   </div>
                 </div>
 
-                {/* Primary Navigation Cards with Expandable Services Accordion */}
+                {/* Primary Navigation Cards with Expandable Accordion Submenus for All Menus */}
                 <nav className="flex flex-col gap-2.5" aria-label="Mobile">
                   {primaryNav.map((item) => {
-                    if (item.label === "Services") {
-                      return (
-                        <div
-                          key={item.href}
-                          className="rounded-xl border border-slate-800/80 bg-slate-900/60 transition-all duration-200 overflow-hidden shadow-sm"
-                        >
-                          <div className="flex items-center justify-between p-3.5">
-                            <Link
-                              href={item.href}
-                              onClick={() => setOpen(false)}
-                              className="flex items-center gap-3.5 flex-1 group"
-                            >
-                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 transition-colors group-hover:border-cyan-400/50 group-hover:bg-cyan-500/20 group-hover:text-cyan-300">
-                                {navIcons[item.href] || (
-                                  <span className="h-2 w-2 rounded-full bg-cyan-400" />
-                                )}
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-base font-semibold text-slate-100 group-hover:text-white">
-                                  Services
-                                </span>
-                                <span className="text-[11px] text-cyan-400 font-medium">
-                                  Tap arrow to view all offerings
-                                </span>
-                              </div>
-                            </Link>
+                    const isServices = item.label === "Services";
+                    const hasSubNav = Boolean(subNavMatrix[item.label]);
+                    const isExpandable = isServices || hasSubNav;
+                    const isExpanded = expandedMenu === item.label;
 
+                    return (
+                      <div
+                        key={item.href + item.label}
+                        className={clsx(
+                          "rounded-xl border transition-all duration-200 overflow-hidden shadow-sm",
+                          isExpanded
+                            ? "border-cyan-500/50 bg-slate-900/90 ring-1 ring-cyan-500/20"
+                            : "border-slate-800/80 bg-slate-900/60"
+                        )}
+                      >
+                        <div className="flex items-center justify-between p-3.5">
+                          <Link
+                            href={item.href}
+                            onClick={() => setOpen(false)}
+                            className="flex items-center gap-3.5 flex-1 group"
+                          >
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 transition-colors group-hover:border-cyan-400/50 group-hover:bg-cyan-500/20 group-hover:text-cyan-300">
+                              {navIcons[item.href] || (
+                                <span className="h-2 w-2 rounded-full bg-cyan-400" />
+                              )}
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-base font-semibold text-slate-100 group-hover:text-white">
+                                {item.label}
+                              </span>
+                              {isExpandable ? (
+                                <span className="text-[11px] text-cyan-400 font-medium">
+                                  {isExpanded ? "Tap arrow to collapse" : "Tap arrow for sub-options"}
+                                </span>
+                              ) : (
+                                <span className="text-[11px] text-slate-400">
+                                  Go to {item.label} page
+                                </span>
+                              )}
+                            </div>
+                          </Link>
+
+                          {isExpandable ? (
                             <button
                               type="button"
-                              onClick={() => setServicesExpanded((prev) => !prev)}
-                              aria-expanded={servicesExpanded}
-                              aria-label="Toggle all services categories"
-                              className="p-2.5 rounded-lg border border-slate-700/80 bg-slate-800/80 text-cyan-400 hover:text-white hover:bg-slate-700 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                              onClick={() =>
+                                setExpandedMenu((curr) => (curr === item.label ? null : item.label))
+                              }
+                              aria-expanded={isExpanded}
+                              aria-label={`Toggle ${item.label} submenu`}
+                              className={clsx(
+                                "p-2.5 rounded-lg border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400",
+                                isExpanded
+                                  ? "border-cyan-500/50 bg-cyan-950/60 text-cyan-300"
+                                  : "border-slate-700/80 bg-slate-800/80 text-cyan-400 hover:text-white hover:bg-slate-700"
+                              )}
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -189,7 +212,7 @@ export function MobileNav() {
                                 fill="currentColor"
                                 className={clsx(
                                   "w-5 h-5 transition-transform duration-300",
-                                  servicesExpanded ? "rotate-180 text-amber-400" : "text-cyan-400"
+                                  isExpanded ? "rotate-180 text-amber-400" : "text-cyan-400"
                                 )}
                                 aria-hidden="true"
                               >
@@ -200,83 +223,126 @@ export function MobileNav() {
                                 />
                               </svg>
                             </button>
-                          </div>
-
-                          {/* Expandable 5-Pillar Matrix for Mobile (Android & iOS) */}
-                          {servicesExpanded && (
-                            <div className="border-t border-slate-800 bg-[#050812] p-4 space-y-5 animate-fadeIn">
-                              <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
-                                <span className="text-[11px] font-extrabold uppercase tracking-widest text-cyan-300">
-                                  All Quality Engineering Categories
-                                </span>
-                                <Link
-                                  href="/ai-qa-tool"
-                                  onClick={() => setOpen(false)}
-                                  className="text-[11px] font-bold text-amber-400 hover:underline"
-                                >
-                                  AI-QA Tool &rarr;
-                                </Link>
-                              </div>
-
-                              {servicesMegaMatrix.map((cat) => (
-                                <div key={cat.title} className="space-y-2">
-                                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-cyan-400">
-                                    {cat.title}
-                                  </h4>
-                                  <div className="grid grid-cols-1 gap-1.5 pl-2 border-l border-slate-800">
-                                    {cat.items.map((sub) => (
-                                      <Link
-                                        key={sub.label}
-                                        href={sub.href}
-                                        onClick={() => setOpen(false)}
-                                        className="flex items-center justify-between py-1 px-2 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-slate-900/90 transition-colors"
-                                      >
-                                        <span className="font-medium truncate">{sub.label}</span>
-                                        {sub.badge && (
-                                          <span className="text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-cyan-950 border border-cyan-500/40 text-cyan-300 ml-1">
-                                            {sub.badge}
-                                          </span>
-                                        )}
-                                      </Link>
-                                    ))}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
+                          ) : (
+                            <Link
+                              href={item.href}
+                              onClick={() => setOpen(false)}
+                              className="p-2.5 text-slate-500 hover:text-cyan-400"
+                              aria-label={`Open ${item.label}`}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                                className="h-5 w-5"
+                                aria-hidden="true"
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                              </svg>
+                            </Link>
                           )}
                         </div>
-                      );
-                    }
 
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        onClick={() => setOpen(false)}
-                        className="group flex items-center justify-between rounded-xl border border-slate-800/80 bg-slate-900/60 p-3.5 transition-all duration-200 hover:border-cyan-400/60 hover:bg-slate-800/80 active:scale-[0.99] shadow-sm"
-                      >
-                        <div className="flex items-center gap-3.5">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 transition-colors group-hover:border-cyan-400/50 group-hover:bg-cyan-500/20 group-hover:text-cyan-300">
-                            {navIcons[item.href] || (
-                              <span className="h-2 w-2 rounded-full bg-cyan-400" />
-                            )}
+                        {/* Services Mega Matrix Accordion Content */}
+                        {isServices && isExpanded && (
+                          <div className="border-t border-slate-800 bg-[#050812] p-4 space-y-5 animate-fadeIn">
+                            <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+                              <span className="text-[11px] font-extrabold uppercase tracking-widest text-cyan-300">
+                                All Quality Engineering Offerings
+                              </span>
+                              <Link
+                                href="/ai-qa-tool"
+                                onClick={() => setOpen(false)}
+                                className="text-[11px] font-bold text-amber-400 hover:underline"
+                              >
+                                AI-QA Tool &rarr;
+                              </Link>
+                            </div>
+
+                            {servicesMegaMatrix.map((cat) => (
+                              <div key={cat.title} className="space-y-2">
+                                <h4 className="text-[11px] font-bold uppercase tracking-wider text-cyan-400">
+                                  {cat.title}
+                                </h4>
+                                <div className="grid grid-cols-1 gap-1.5 pl-2 border-l border-slate-800">
+                                  {cat.items.map((sub) => (
+                                    <Link
+                                      key={sub.label}
+                                      href={sub.href}
+                                      onClick={() => setOpen(false)}
+                                      className="flex items-center justify-between py-1.5 px-2 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-slate-900/90 transition-colors"
+                                    >
+                                      <div className="flex flex-col">
+                                        <span className="font-medium">{sub.label}</span>
+                                        {sub.desc && (
+                                          <span className="text-[10px] text-slate-400">{sub.desc}</span>
+                                        )}
+                                      </div>
+                                      {sub.badge && (
+                                        <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-cyan-950 border border-cyan-500/40 text-cyan-300 shrink-0 ml-2">
+                                          {sub.badge}
+                                        </span>
+                                      )}
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                          <span className="text-base font-semibold text-slate-100 transition-colors group-hover:text-white">
-                            {item.label}
-                          </span>
-                        </div>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth={2}
-                          className="h-5 w-5 text-slate-500 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-cyan-400"
-                          aria-hidden="true"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                        </svg>
-                      </Link>
+                        )}
+
+                        {/* Other Menu Items SubNavMatrix Accordion Content */}
+                        {!isServices && hasSubNav && isExpanded && (
+                          <div className="border-t border-slate-800 bg-[#050812] p-4 space-y-4 animate-fadeIn">
+                            <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+                              <span className="text-[11px] font-extrabold uppercase tracking-widest text-cyan-300">
+                                {item.label} Topics &amp; Sections
+                              </span>
+                              <Link
+                                href={item.href}
+                                onClick={() => setOpen(false)}
+                                className="text-[11px] font-bold text-amber-400 hover:underline"
+                              >
+                                View Page &rarr;
+                              </Link>
+                            </div>
+
+                            {subNavMatrix[item.label]?.map((section) => (
+                              <div key={section.title} className="space-y-2">
+                                <h4 className="text-[11px] font-bold uppercase tracking-wider text-cyan-400">
+                                  {section.title}
+                                </h4>
+                                <div className="grid grid-cols-1 gap-1.5 pl-2 border-l border-slate-800">
+                                  {section.items.map((sub) => (
+                                    <Link
+                                      key={sub.label}
+                                      href={sub.href}
+                                      onClick={() => setOpen(false)}
+                                      className="flex items-center justify-between py-1.5 px-2 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-slate-900/90 transition-colors"
+                                    >
+                                      <div className="flex flex-col">
+                                        <span className="font-semibold text-slate-200 hover:text-cyan-300">
+                                          {sub.label}
+                                        </span>
+                                        {sub.desc && (
+                                          <span className="text-[10px] text-slate-400">{sub.desc}</span>
+                                        )}
+                                      </div>
+                                      {sub.badge && (
+                                        <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-cyan-950 border border-cyan-500/40 text-cyan-300 shrink-0 ml-2">
+                                          {sub.badge}
+                                        </span>
+                                      )}
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
                 </nav>

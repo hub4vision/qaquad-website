@@ -103,6 +103,98 @@ export const servicesMegaMatrix: ServiceMatrixCategory[] = [
   },
 ];
 
+export interface SubMenuItem {
+  label: string;
+  href: string;
+  badge?: string;
+  desc?: string;
+}
+
+export interface SubNavSection {
+  title: string;
+  items: SubMenuItem[];
+}
+
+export const subNavMatrix: Record<string, SubNavSection[]> = {
+  "AI-QA Tool": [
+    {
+      title: "Engine Capabilities",
+      items: [
+        { label: "Predictive Analysis", href: "/ai-qa-tool#predictive-analysis", badge: "AI", desc: "Defect forecasting & risk score calculation" },
+        { label: "Self-Healing Scripts", href: "/ai-qa-tool#self-healing", badge: "Auto", desc: "Automated locator resolution on DOM changes" },
+        { label: "Behavioural AI Testing", href: "/ai-qa-tool#behavioural-ai", badge: "LLM", desc: "Validate non-deterministic conversational AI" },
+        { label: "Model Evaluation", href: "/ai-qa-tool#model-evaluation", desc: "Accuracy, latency, and drift benchmarks" },
+      ],
+    },
+    {
+      title: "Interactive Framework",
+      items: [
+        { label: "4-Stage QA Cycle", href: "/ai-qa-tool#cycle-heading", desc: "Data Processing → Model → Prediction → Feedback" },
+        { label: "Live Telemetry Cluster", href: "/ai-qa-tool#telemetry", desc: "Real-time execution dashboard simulation" },
+      ],
+    },
+  ],
+  "Migration Testing": [
+    {
+      title: "Legacy-to-New Verification",
+      items: [
+        { label: "Functional Parity Analysis", href: "/migration-testing", badge: "Flagship", desc: "Compare business behavior between legacy & new" },
+        { label: "Old vs New Scorecard", href: "/migration-testing#classification-heading", desc: "PASS, PARTIAL, FAIL, and GAP classification" },
+        { label: "Database & ETL Validation", href: "/migration-testing#database", desc: "Post-migration calculation & data integrity" },
+      ],
+    },
+    {
+      title: "Strategy & Process",
+      items: [
+        { label: "Migration Strategy Graph", href: "/migration-testing#migration-strategy-heading", desc: "Circular legacy discovery & cutover readiness" },
+        { label: "Illustrative Comparison", href: "/migration-testing#example-heading", desc: "Side-by-side behavioral gap demonstration" },
+      ],
+    },
+  ],
+  "How It Works": [
+    {
+      title: "Delivery Workflow",
+      items: [
+        { label: "7-Step QA Process", href: "/how-it-works", desc: "Connect → Discover → Understand → Generate → Execute → Analyze → Automate" },
+        { label: "AI Application Explorer", href: "/how-it-works#steps-heading", desc: "Autonomous screen and form mapping" },
+        { label: "Evidence Collection", href: "/how-it-works#detail-heading", desc: "Screenshots, traces, and DB diffs on every run" },
+      ],
+    },
+  ],
+  Industries: [
+    {
+      title: "Specialized Sectors",
+      items: [
+        { label: "Travel Technology", href: "/industries#travel-technology", badge: "Complex", desc: "Multi-currency booking engines & fare logic" },
+        { label: "SaaS & Cloud Platforms", href: "/industries#saas", desc: "Multi-tenant permissions & subscription billing" },
+        { label: "ERP & CRM Systems", href: "/industries#erp-crm", desc: "Interconnected workflows & calculation audit" },
+        { label: "Logistics & Supply Chain", href: "/industries#logistics", desc: "Order fulfillment & status pipeline testing" },
+        { label: "E-Commerce", href: "/industries#e-commerce", desc: "Cart, checkout, payments & inventory sync" },
+      ],
+    },
+  ],
+  About: [
+    {
+      title: "Company & Vision",
+      items: [
+        { label: "About QAQuad", href: "/about", desc: "Engineering-first quality assurance philosophy" },
+        { label: "AI QA Agent Architecture", href: "/ai-qa-agent", badge: "Multi-Agent", desc: "Coordinated browser, API, and database agents" },
+        { label: "Pricing & Engagement", href: "/pricing", desc: "Flexible audit & managed testing models" },
+        { label: "Case Studies", href: "/case-studies", desc: "Real-world release velocity benchmarks" },
+      ],
+    },
+  ],
+  Contact: [
+    {
+      title: "Connect With Our Engineers",
+      items: [
+        { label: "Book a QA Assessment", href: "/contact", badge: "Free", desc: "Scope a proof-of-concept run for your app" },
+        { label: "Technical Advisory", href: "/contact", desc: "Speak directly with QA automation architects" },
+      ],
+    },
+  ],
+};
+
 export const footerLinks = {
   company: [
     { label: "About", href: "/about" },
