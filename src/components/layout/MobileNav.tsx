@@ -3,9 +3,10 @@
 import { useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { primaryNav, servicesNav, siteConfig } from "@/lib/site-config";
+import { primaryNav, servicesMegaMatrix, servicesNav, siteConfig } from "@/lib/site-config";
 import { NavLink } from "@/components/navigation/NavLink";
 import { CtaButton } from "@/components/cta/CtaButton";
+import { clsx } from "@/lib/clsx";
 
 const navIcons: Record<string, React.ReactNode> = {
   "/ai-qa-automation": (
@@ -48,6 +49,7 @@ const navIcons: Record<string, React.ReactNode> = {
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
+  const [servicesExpanded, setServicesExpanded] = useState(false);
   const [mounted, setMounted] = useState(false);
   const panelId = useId();
 
@@ -138,38 +140,139 @@ export function MobileNav() {
                   </span>
                 </div>
 
-                {/* Primary Navigation Cards */}
+                {/* Primary Navigation Cards with Expandable Services Accordion */}
                 <nav className="flex flex-col gap-2.5" aria-label="Mobile">
-                  {primaryNav.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setOpen(false)}
-                      className="group flex items-center justify-between rounded-xl border border-slate-800/80 bg-slate-900/60 p-3.5 transition-all duration-200 hover:border-cyan-400/60 hover:bg-slate-800/80 active:scale-[0.99] shadow-sm"
-                    >
-                      <div className="flex items-center gap-3.5">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 transition-colors group-hover:border-cyan-400/50 group-hover:bg-cyan-500/20 group-hover:text-cyan-300">
-                          {navIcons[item.href] || (
-                            <span className="h-2 w-2 rounded-full bg-cyan-400" />
+                  {primaryNav.map((item) => {
+                    if (item.label === "Services") {
+                      return (
+                        <div
+                          key={item.href}
+                          className="rounded-xl border border-slate-800/80 bg-slate-900/60 transition-all duration-200 overflow-hidden shadow-sm"
+                        >
+                          <div className="flex items-center justify-between p-3.5">
+                            <Link
+                              href={item.href}
+                              onClick={() => setOpen(false)}
+                              className="flex items-center gap-3.5 flex-1 group"
+                            >
+                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 transition-colors group-hover:border-cyan-400/50 group-hover:bg-cyan-500/20 group-hover:text-cyan-300">
+                                {navIcons[item.href] || (
+                                  <span className="h-2 w-2 rounded-full bg-cyan-400" />
+                                )}
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-base font-semibold text-slate-100 group-hover:text-white">
+                                  Services
+                                </span>
+                                <span className="text-[11px] text-cyan-400 font-medium">
+                                  Tap arrow to view all offerings
+                                </span>
+                              </div>
+                            </Link>
+
+                            <button
+                              type="button"
+                              onClick={() => setServicesExpanded((prev) => !prev)}
+                              aria-expanded={servicesExpanded}
+                              aria-label="Toggle all services categories"
+                              className="p-2.5 rounded-lg border border-slate-700/80 bg-slate-800/80 text-cyan-400 hover:text-white hover:bg-slate-700 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                className={clsx(
+                                  "w-5 h-5 transition-transform duration-300",
+                                  servicesExpanded ? "rotate-180 text-amber-400" : "text-cyan-400"
+                                )}
+                                aria-hidden="true"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+
+                          {/* Expandable 5-Pillar Matrix for Mobile (Android & iOS) */}
+                          {servicesExpanded && (
+                            <div className="border-t border-slate-800 bg-[#050812] p-4 space-y-5 animate-fadeIn">
+                              <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+                                <span className="text-[11px] font-extrabold uppercase tracking-widest text-cyan-300">
+                                  All Quality Engineering Categories
+                                </span>
+                                <Link
+                                  href="/ai-qa-tool"
+                                  onClick={() => setOpen(false)}
+                                  className="text-[11px] font-bold text-amber-400 hover:underline"
+                                >
+                                  AI-QA Tool &rarr;
+                                </Link>
+                              </div>
+
+                              {servicesMegaMatrix.map((cat) => (
+                                <div key={cat.title} className="space-y-2">
+                                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-cyan-400">
+                                    {cat.title}
+                                  </h4>
+                                  <div className="grid grid-cols-1 gap-1.5 pl-2 border-l border-slate-800">
+                                    {cat.items.map((sub) => (
+                                      <Link
+                                        key={sub.label}
+                                        href={sub.href}
+                                        onClick={() => setOpen(false)}
+                                        className="flex items-center justify-between py-1 px-2 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-slate-900/90 transition-colors"
+                                      >
+                                        <span className="font-medium truncate">{sub.label}</span>
+                                        {sub.badge && (
+                                          <span className="text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-cyan-950 border border-cyan-500/40 text-cyan-300 ml-1">
+                                            {sub.badge}
+                                          </span>
+                                        )}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
                           )}
                         </div>
-                        <span className="text-base font-semibold text-slate-100 transition-colors group-hover:text-white">
-                          {item.label}
-                        </span>
-                      </div>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        className="h-5 w-5 text-slate-500 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-cyan-400"
-                        aria-hidden="true"
+                      );
+                    }
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setOpen(false)}
+                        className="group flex items-center justify-between rounded-xl border border-slate-800/80 bg-slate-900/60 p-3.5 transition-all duration-200 hover:border-cyan-400/60 hover:bg-slate-800/80 active:scale-[0.99] shadow-sm"
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                      </svg>
-                    </Link>
-                  ))}
+                        <div className="flex items-center gap-3.5">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 transition-colors group-hover:border-cyan-400/50 group-hover:bg-cyan-500/20 group-hover:text-cyan-300">
+                            {navIcons[item.href] || (
+                              <span className="h-2 w-2 rounded-full bg-cyan-400" />
+                            )}
+                          </div>
+                          <span className="text-base font-semibold text-slate-100 transition-colors group-hover:text-white">
+                            {item.label}
+                          </span>
+                        </div>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          className="h-5 w-5 text-slate-500 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-cyan-400"
+                          aria-hidden="true"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                        </svg>
+                      </Link>
+                    );
+                  })}
                 </nav>
 
                 {/* Core Capabilities Sub-section */}
