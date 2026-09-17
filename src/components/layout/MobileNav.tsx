@@ -253,41 +253,45 @@ export function MobileNav() {
 
                         {/* Services Mega Matrix Accordion Content */}
                         {isServices && isExpanded && (
-                          <div className="border-t border-slate-200 bg-slate-50/90 p-4 space-y-5 animate-fadeIn">
-                            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-                              <span className="text-[11px] font-extrabold uppercase tracking-widest text-sky-700">
+                          <div className="border-t border-slate-200 bg-slate-50/95 p-4 sm:p-5 space-y-6 animate-fadeIn">
+                            <div className="flex items-center justify-between pb-2.5 border-b border-slate-200">
+                              <span className="text-xs font-black uppercase tracking-wider text-sky-800">
                                 All Quality Engineering Offerings
                               </span>
                               <Link
                                 href="/ai-qa-tool"
                                 onClick={() => setOpen(false)}
-                                className="text-[11px] font-bold text-orange-600 hover:text-orange-700 hover:underline"
+                                className="text-xs font-bold text-orange-600 hover:text-orange-700 hover:underline"
                               >
                                 AI-QA Tool &rarr;
                               </Link>
                             </div>
 
                             {servicesMegaMatrix.map((cat) => (
-                              <div key={cat.title} className="space-y-2">
-                                <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
+                              <div key={cat.title} className="space-y-2.5">
+                                <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 border-b border-slate-200/60 pb-1">
                                   {cat.title}
                                 </h4>
-                                <div className="grid grid-cols-1 gap-1.5 pl-2 border-l-2 border-sky-300">
+                                <div className="grid grid-cols-1 gap-2 pl-2.5 border-l-2 border-sky-400">
                                   {cat.items.map((sub) => (
                                     <Link
                                       key={sub.label}
                                       href={sub.href}
                                       onClick={() => setOpen(false)}
-                                      className="flex items-center justify-between py-1.5 px-2.5 rounded-lg text-xs text-slate-700 hover:text-slate-900 hover:bg-white hover:shadow-sm transition-all"
+                                      className="flex items-center justify-between py-2 px-3 rounded-xl text-slate-800 hover:text-sky-700 hover:bg-white hover:shadow-sm transition-all"
                                     >
                                       <div className="flex flex-col">
-                                        <span className="font-semibold text-slate-800">{sub.label}</span>
+                                        <span className="text-sm font-bold text-slate-900 leading-snug">
+                                          {sub.label}
+                                        </span>
                                         {sub.desc && (
-                                          <span className="text-[10px] text-slate-500">{sub.desc}</span>
+                                          <span className="text-xs text-slate-600 font-normal leading-relaxed mt-0.5">
+                                            {sub.desc}
+                                          </span>
                                         )}
                                       </div>
                                       {sub.badge && (
-                                        <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-sky-100 border border-sky-300 text-sky-700 shrink-0 ml-2">
+                                        <span className="text-[11px] font-black uppercase px-2 py-0.5 rounded-md bg-sky-100 border border-sky-300 text-sky-800 shrink-0 ml-3">
                                           {sub.badge}
                                         </span>
                                       )}
@@ -301,43 +305,45 @@ export function MobileNav() {
 
                         {/* Other Menu Items SubNavMatrix Accordion Content */}
                         {!isServices && hasSubNav && isExpanded && (
-                          <div className="border-t border-slate-200 bg-slate-50/90 p-4 space-y-4 animate-fadeIn">
-                            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-                              <span className="text-[11px] font-extrabold uppercase tracking-widest text-sky-700">
+                          <div className="border-t border-slate-200 bg-slate-50/95 p-4 sm:p-5 space-y-6 animate-fadeIn">
+                            <div className="flex items-center justify-between pb-2.5 border-b border-slate-200">
+                              <span className="text-xs font-black uppercase tracking-wider text-sky-800">
                                 {item.label} Topics &amp; Sections
                               </span>
                               <Link
                                 href={item.href}
                                 onClick={() => setOpen(false)}
-                                className="text-[11px] font-bold text-orange-600 hover:text-orange-700 hover:underline"
+                                className="text-xs font-bold text-orange-600 hover:text-orange-700 hover:underline"
                               >
                                 View Page &rarr;
                               </Link>
                             </div>
 
                             {subNavMatrix[item.label]?.map((section) => (
-                              <div key={section.title} className="space-y-2">
-                                <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
+                              <div key={section.title} className="space-y-2.5">
+                                <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 border-b border-slate-200/60 pb-1">
                                   {section.title}
                                 </h4>
-                                <div className="grid grid-cols-1 gap-1.5 pl-2 border-l-2 border-purple-300">
+                                <div className="grid grid-cols-1 gap-2 pl-2.5 border-l-2 border-purple-400">
                                   {section.items.map((sub) => (
                                     <Link
                                       key={sub.label}
                                       href={sub.href}
                                       onClick={() => setOpen(false)}
-                                      className="flex items-center justify-between py-1.5 px-2.5 rounded-lg text-xs text-slate-700 hover:text-slate-900 hover:bg-white hover:shadow-sm transition-all"
+                                      className="flex items-center justify-between py-2 px-3 rounded-xl text-slate-800 hover:text-purple-700 hover:bg-white hover:shadow-sm transition-all"
                                     >
                                       <div className="flex flex-col">
-                                        <span className="font-semibold text-slate-800">
+                                        <span className="text-sm font-bold text-slate-900 leading-snug">
                                           {sub.label}
                                         </span>
                                         {sub.desc && (
-                                          <span className="text-[10px] text-slate-500">{sub.desc}</span>
+                                          <span className="text-xs text-slate-600 font-normal leading-relaxed mt-0.5">
+                                            {sub.desc}
+                                          </span>
                                         )}
                                       </div>
                                       {sub.badge && (
-                                        <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-purple-100 border border-purple-300 text-purple-700 shrink-0 ml-2">
+                                        <span className="text-[11px] font-black uppercase px-2 py-0.5 rounded-md bg-purple-100 border border-purple-300 text-purple-800 shrink-0 ml-3">
                                           {sub.badge}
                                         </span>
                                       )}
@@ -354,16 +360,16 @@ export function MobileNav() {
                 </nav>
 
                 {/* Core Capabilities Sub-section (Light card with logo accents) */}
-                <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm backdrop-blur-sm">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-800">
+                <div className="rounded-2xl border border-slate-200 bg-white/95 p-4 sm:p-5 shadow-sm backdrop-blur-sm">
+                  <div className="flex items-center justify-between mb-3.5">
+                    <p className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
                       Core Testing Capabilities
                     </p>
-                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800">
+                    <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800">
                       AI + Automation
                     </span>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     {[
                       { label: "AI-QA Tool & Engine", href: "/ai-qa-tool" },
                       { label: "AI Functional Testing", href: "/ai-qa-automation" },
@@ -376,9 +382,9 @@ export function MobileNav() {
                         key={svc.href}
                         href={svc.href}
                         onClick={() => setOpen(false)}
-                        className="group flex items-center gap-2 rounded-lg border border-slate-200/80 bg-slate-50/70 px-3 py-2 text-xs font-medium text-slate-700 transition-all hover:border-sky-300 hover:bg-white hover:text-sky-700 hover:shadow-sm"
+                        className="group flex items-center gap-2.5 rounded-xl border border-slate-200/90 bg-slate-50/80 px-3.5 py-2.5 text-sm font-semibold text-slate-800 transition-all hover:border-sky-300 hover:bg-white hover:text-sky-700 hover:shadow-sm"
                       >
-                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-sky-500 group-hover:bg-orange-500 transition-colors" />
+                        <span className="h-2 w-2 shrink-0 rounded-full bg-sky-500 group-hover:bg-orange-500 transition-colors" />
                         <span className="truncate">{svc.label}</span>
                       </Link>
                     ))}
@@ -403,7 +409,7 @@ export function MobileNav() {
                   </svg>
                   <a
                     href={`mailto:${siteConfig.contactEmail}`}
-                    className="font-semibold text-sky-600 hover:text-sky-700 transition-colors"
+                    className="font-semibold text-sky-600 hover:text-sky-700 transition-colors text-sm"
                   >
                     {siteConfig.contactEmail}
                   </a>
