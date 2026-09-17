@@ -8,6 +8,52 @@ import { CtaButton } from "@/components/cta/CtaButton";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { breadcrumbJsonLd, buildPageMetadata, serviceJsonLd } from "@/lib/seo";
 import { AiQaCycleDiagram } from "@/components/workflow/AiQaCycleDiagram";
+import { CircularProcessGraph, type StrategyPillar } from "@/components/workflow/CircularProcessGraph";
+
+const toolStrategyPillars: StrategyPillar[] = [
+  {
+    id: "predictive-scoring",
+    title: "Predictive Defect Scoring",
+    description: "Evaluates git commits, code churn, and historical failure clusters to calculate regression risk prior to execution.",
+    position: "top-left",
+    badge: "Machine Learning",
+  },
+  {
+    id: "self-healing-locators",
+    title: "Self-Healing Locators",
+    description: "Auto-recovers broken element locators in flight using visual geometry, DOM context, and semantic attributes.",
+    position: "mid-left",
+    badge: "Zero Flake",
+  },
+  {
+    id: "agentic-orchestration",
+    title: "Multi-Agent Coordination",
+    description: "Dispatches synchronized agents across Browser UI, REST/GraphQL APIs, and SQL databases simultaneously.",
+    position: "bottom-left",
+    badge: "Multi-Layer",
+  },
+  {
+    id: "genai-guardrails",
+    title: "GenAI & LLM Verification",
+    description: "Evaluates non-deterministic LLM apps with prompt-injection defenses, factual consistency, and token latency scoring.",
+    position: "top-right",
+    badge: "LLM Quality",
+  },
+  {
+    id: "continuous-telemetry",
+    title: "Live Regression Telemetry",
+    description: "Streams live pass/fail heatmaps, execution speedup ratios, and flaky test quarantine logs in real time.",
+    position: "mid-right",
+    badge: "Telemetry",
+  },
+  {
+    id: "automated-rca",
+    title: "Automated Root Cause Analysis",
+    description: "Extracts console logs, network traces, and visual snapshots into actionable Jira-ready bug packets with reproduction steps.",
+    position: "bottom-right",
+    badge: "RCA Evidence",
+  },
+];
 
 const pageDescription =
   "QAQuad AI-QA Tool & Engine: Self-healing automation scripts, predictive bug hotspot analysis, multi-agent execution, and real-time regression telemetry.";
@@ -163,6 +209,18 @@ export default function AiQaToolPage() {
             ))}
           </div>
         </div>
+      </Section>
+
+      {/* QualiMatrix-Style Circular Strategy Diagram */}
+      <Section tone="ocean" aria-labelledby="tool-strategy-heading">
+        <CircularProcessGraph
+          sectionEyebrow="Engine Architecture"
+          sectionTitle="AI-QA TOOL ENGINE STRATEGY"
+          sectionSubtitle="A closed-loop autonomous system connecting predictive risk modeling, runtime self-healing, multi-agent execution, and root-cause evidence."
+          centerTitle="QAQuad"
+          centerSubtitle="Engine Core"
+          pillars={toolStrategyPillars}
+        />
       </Section>
 
       {/* The 4-Stage Predictive AI-QA Cycle (QualiMatrix Screenshot 1 match) */}

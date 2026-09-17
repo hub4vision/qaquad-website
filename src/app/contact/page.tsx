@@ -5,6 +5,7 @@ import { ContactForm } from "@/components/forms/ContactForm";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { breadcrumbJsonLd, buildPageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
+import { CircularProcessGraph, type StrategyPillar } from "@/components/workflow/CircularProcessGraph";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Book a Free QA Assessment",
@@ -12,6 +13,51 @@ export const metadata: Metadata = buildPageMetadata({
     "Tell us about your application and testing needs. We'll review your requirement and get back to you with next steps for a free QA assessment.",
   path: "/contact",
 });
+
+const assessmentPillars: StrategyPillar[] = [
+  {
+    id: "confidentiality-pact",
+    title: "SOC2-Aligned NDA",
+    description: "Strict non-disclosure agreements executed before receiving any application credentials or schemas.",
+    position: "top-left",
+    badge: "Confidentiality",
+  },
+  {
+    id: "least-privilege-env",
+    title: "Isolated Staging",
+    description: "We work exclusively within non-production, sandboxed staging environments with dummy test accounts.",
+    position: "mid-left",
+    badge: "Security",
+  },
+  {
+    id: "exploratory-discovery",
+    title: "AI Journey Discovery",
+    description: "Multi-agent autonomous exploration across high-traffic user journeys to detect undocumented business flows.",
+    position: "bottom-left",
+    badge: "Discovery",
+  },
+  {
+    id: "findings-report",
+    title: "Executive Findings Report",
+    description: "Comprehensive initial report with real defect evidence, trace logs, and actionable coverage hotspots.",
+    position: "top-right",
+    badge: "Free Deliverable",
+  },
+  {
+    id: "playwright-blueprint",
+    title: "Automation Blueprint",
+    description: "A tailored Playwright automation roadmap and locator strategy presented to your engineering leads.",
+    position: "mid-right",
+    badge: "Roadmap",
+  },
+  {
+    id: "zero-obligation",
+    title: "Zero Obligation",
+    description: "No retainers or upfront financial commitment. Use the findings and recommendations however you see fit.",
+    position: "bottom-right",
+    badge: "Risk-Free",
+  },
+];
 
 export default function ContactPage() {
   return (
@@ -58,6 +104,18 @@ export default function ContactPage() {
             </div>
           </div>
         </div>
+      </Section>
+
+      {/* Circular Free Assessment Strategy Diagram */}
+      <Section tone="ocean" aria-labelledby="assessment-strategy-heading">
+        <CircularProcessGraph
+          sectionEyebrow="Safe & Transparent"
+          sectionTitle="OUR ASSESSMENT STRATEGY"
+          sectionSubtitle="A seamless, zero-risk pathway to discovering hidden functional gaps, measuring test coverage, and reviewing empirical bug evidence."
+          centerTitle="QAQuad"
+          centerSubtitle="Assessment"
+          pillars={assessmentPillars}
+        />
       </Section>
     </>
   );

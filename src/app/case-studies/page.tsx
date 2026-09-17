@@ -6,11 +6,83 @@ import { CTASection } from "@/components/cta/CTASection";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { breadcrumbJsonLd, buildPageMetadata } from "@/lib/seo";
 
+import { CircularProcessGraph, type StrategyPillar } from "@/components/workflow/CircularProcessGraph";
+import { WorkflowDiagram } from "@/components/workflow/WorkflowDiagram";
+import type { WorkflowStep } from "@/lib/site-config";
+
 export const metadata: Metadata = buildPageMetadata({
-  title: "Case Studies",
-  description: "Real case studies are coming soon. Here's the structure they'll follow once published.",
+  title: "Case Studies & Validation Methodology",
+  description: "Real case studies coming soon. Explore our rigorous validation methodology and case study publication lifecycle.",
   path: "/case-studies",
 });
+
+const caseStudyStrategyPillars: StrategyPillar[] = [
+  {
+    id: "business-context",
+    title: "Root Problem Profiling",
+    description: "Deep examination of legacy QA bottlenecks, release velocity drag, and production escape patterns.",
+    position: "top-left",
+    badge: "Problem Context",
+  },
+  {
+    id: "architectural-discovery",
+    title: "Layered Discovery",
+    description: "Systematic mapping of frontend DOM, microservice API contracts, and SQL state transformations.",
+    position: "mid-left",
+    badge: "Architecture",
+  },
+  {
+    id: "verifiable-evidence",
+    title: "Empirical Defect Logs",
+    description: "Zero assumptions — all findings documented with network HAR traces, DOM state diffs, and DB logs.",
+    position: "bottom-left",
+    badge: "Zero Speculation",
+  },
+  {
+    id: "quantified-metrics",
+    title: "Quantified Business ROI",
+    description: "Precise measurement of regression cycle speedup, defect escape reduction, and CI/CD time saved.",
+    position: "top-right",
+    badge: "Measured ROI",
+  },
+  {
+    id: "client-anonymization",
+    title: "Strict Confidentiality",
+    description: "Case studies published only with explicit client approval or under complete architectural anonymization.",
+    position: "mid-right",
+    badge: "Confidentiality",
+  },
+  {
+    id: "reproducible-playbooks",
+    title: "Repeatable Blueprints",
+    description: "Each engagement converts into a modular test asset and reusable automation playbook.",
+    position: "bottom-right",
+    badge: "Reusability",
+  },
+];
+
+const lifecycleSteps: WorkflowStep[] = [
+  {
+    step: "01",
+    title: "Engagement Scoping",
+    description: "Identifying target business workflows, defect risk areas, and initial functional baseline.",
+  },
+  {
+    step: "02",
+    title: "AI-Assisted Discovery",
+    description: "Exploration across user journeys, capturing edge cases and unexpected application behaviors.",
+  },
+  {
+    step: "03",
+    title: "Evidence Compilation",
+    description: "Classifying defects by severity and capturing Playwright traces and database mutation diffs.",
+  },
+  {
+    step: "04",
+    title: "Review & Publication",
+    description: "Publishing anonymized metrics and verified architectural outcomes with client authorization.",
+  },
+];
 
 const placeholderStructure = [
   { label: "Challenge", description: "The business and technical problem the customer faced before engaging us." },
@@ -52,6 +124,34 @@ export default function CaseStudiesPage() {
               <p className="mt-2 text-sm leading-relaxed text-slate-300">{item.description}</p>
             </div>
           ))}
+        </div>
+      </Section>
+
+      {/* Circular Case Study Validation Strategy */}
+      <Section tone="ocean" aria-labelledby="case-study-strategy-heading">
+        <CircularProcessGraph
+          sectionEyebrow="Evidence-Driven"
+          sectionTitle="CASE STUDY VALIDATION STRATEGY"
+          sectionSubtitle="How we evaluate client architectures, trace defects to root causes, and measure regression impact."
+          centerTitle="QAQuad"
+          centerSubtitle="Validation Lab"
+          pillars={caseStudyStrategyPillars}
+        />
+      </Section>
+
+      {/* 4-Step Case Study Publication Lifecycle */}
+      <Section tone="violet" aria-labelledby="publication-lifecycle-heading">
+        <SectionHeading
+          id="publication-lifecycle-heading"
+          eyebrow="Lifecycle Flow"
+          title="From Initial Scoping to Verified Case Study"
+          description="A transparent 4-stage process preserving confidentiality while showcasing verified technical outcomes."
+          align="center"
+          className="mx-auto"
+          tone="dark"
+        />
+        <div className="mt-12">
+          <WorkflowDiagram steps={lifecycleSteps} columns={4} />
         </div>
       </Section>
 
