@@ -5,7 +5,13 @@ import { VerticalFlow } from "@/components/workflow/WorkflowDiagram";
 
 const heroFlow = ["Application", "AI QA Agent", "Browser + API + SQL", "Test Execution", "Evidence", "Defect", "Regression"];
 
-const trustStrip = ["Playwright", "REST / API", "SQL / Database", "CI/CD", "AI-Assisted QA"];
+const trustStrip = [
+  "⚡ Playwright Automation",
+  "🛡️ Zero Flake Self-Healing",
+  "🔄 REST & GraphQL Validation",
+  "🗄️ SQL Database Parity",
+  "🚀 3.8x Faster Releases",
+];
 
 export function Hero() {
   return (

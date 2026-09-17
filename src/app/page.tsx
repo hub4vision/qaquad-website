@@ -13,6 +13,10 @@ import { CtaButton } from "@/components/cta/CtaButton";
 import { AiQaCycleDiagram } from "@/components/workflow/AiQaCycleDiagram";
 import { buildPageMetadata } from "@/lib/seo";
 import { industries, solutionSteps } from "@/lib/site-config";
+import { InteractiveTestInspector } from "@/components/evidence/InteractiveTestInspector";
+import { RoiCalculator } from "@/components/analytics/RoiCalculator";
+import { IntegrationGrid } from "@/components/services/IntegrationGrid";
+import { SecurityTrustMatrix } from "@/components/services/SecurityTrustMatrix";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "AI-Powered QA Automation for Faster, More Reliable Software Releases",
@@ -158,6 +162,32 @@ export default function HomePage() {
         </div>
       </Section>
 
+      {/* Interactive Live Test Inspector & Self-Healing Runner */}
+      <Section tone="ocean" aria-labelledby="live-runner-heading">
+        <SectionHeading
+          id="live-runner-heading"
+          eyebrow="Interactive Artifact Studio"
+          title="See Autonomous QA Execution In Action"
+          description="Explore how QAQuad executes Playwright tests, auto-heals broken locators in real time, and asserts dual API + database consistency."
+          align="center"
+          className="mx-auto"
+          tone="dark"
+        />
+        <div className="mt-12">
+          <InteractiveTestInspector />
+        </div>
+      </Section>
+
+      {/* Interactive ROI & Regression Cost Calculator */}
+      <Section tone="dark" aria-labelledby="roi-calculator-heading">
+        <RoiCalculator />
+      </Section>
+
+      {/* CI/CD & Testing Ecosystem Integration Grid */}
+      <Section tone="ocean" aria-labelledby="integration-grid-heading">
+        <IntegrationGrid />
+      </Section>
+
       {/* Industries - emerald tone */}
       <Section tone="emerald" aria-labelledby="industries-heading">
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
@@ -171,6 +201,11 @@ export default function HomePage() {
             <IndustryCard key={industry.name} industry={industry} />
           ))}
         </div>
+      </Section>
+
+      {/* Enterprise Security, Privacy & IP Ownership Trust Matrix */}
+      <Section tone="violet" aria-labelledby="security-trust-heading">
+        <SecurityTrustMatrix />
       </Section>
 
       <CTASection location="home" />

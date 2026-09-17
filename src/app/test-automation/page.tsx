@@ -4,6 +4,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CTASection } from "@/components/cta/CTASection";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { breadcrumbJsonLd, buildPageMetadata, serviceJsonLd } from "@/lib/seo";
+import { InteractiveTestInspector } from "@/components/evidence/InteractiveTestInspector";
+import { IntegrationGrid } from "@/components/services/IntegrationGrid";
 
 const pageDescription =
   "Playwright browser automation, REST/API validation, and SQL/database checks, built as maintainable regression automation and wired into CI/CD.";
@@ -178,6 +180,27 @@ export default function TestAutomationPage() {
           </div>
         </Section>
       ))}
+
+      {/* Live Interactive Test Runner & Artifact Inspector */}
+      <Section tone="dark" aria-labelledby="automation-inspector-heading">
+        <SectionHeading
+          id="automation-inspector-heading"
+          eyebrow="Live Test Console"
+          title="Playwright Execution & Self-Healing Telemetry"
+          description="Test runs execute hermetically, auto-healing broken UI selectors and validating relational database transactions in parallel."
+          align="center"
+          className="mx-auto"
+          tone="dark"
+        />
+        <div className="mt-12">
+          <InteractiveTestInspector />
+        </div>
+      </Section>
+
+      {/* CI/CD & Testing Ecosystem Integration Grid */}
+      <Section tone="ocean" aria-labelledby="automation-integrations-heading">
+        <IntegrationGrid />
+      </Section>
 
       <CTASection
         location="test_automation_page"

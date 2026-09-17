@@ -9,6 +9,8 @@ import { breadcrumbJsonLd, buildPageMetadata } from "@/lib/seo";
 import { CircularProcessGraph, type StrategyPillar } from "@/components/workflow/CircularProcessGraph";
 import { WorkflowDiagram } from "@/components/workflow/WorkflowDiagram";
 import type { WorkflowStep } from "@/lib/site-config";
+import { RoiCalculator } from "@/components/analytics/RoiCalculator";
+import { SecurityTrustMatrix } from "@/components/services/SecurityTrustMatrix";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Pricing & Engagement Strategy",
@@ -185,6 +187,16 @@ export default function PricingPage() {
         <div className="mt-12">
           <WorkflowDiagram steps={onboardingSteps} columns={4} />
         </div>
+      </Section>
+
+      {/* Interactive ROI & Regression Cost Calculator */}
+      <Section tone="dark" aria-labelledby="pricing-roi-heading">
+        <RoiCalculator />
+      </Section>
+
+      {/* Enterprise Security, Privacy & IP Trust Assurance */}
+      <Section tone="ocean" aria-labelledby="pricing-security-heading">
+        <SecurityTrustMatrix />
       </Section>
 
       <CTASection location="pricing_page" title="Get a scoped quote for your application" />
