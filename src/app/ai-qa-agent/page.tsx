@@ -39,6 +39,53 @@ const futureRoadmap = [
   "Expanded integrations across additional data stores and protocols",
 ];
 
+import { CircularProcessGraph, type StrategyPillar } from "@/components/workflow/CircularProcessGraph";
+
+const multiAgentPillars: StrategyPillar[] = [
+  {
+    id: "browser-agent",
+    title: "Browser UI Agent",
+    description: "Crawls forms, dynamic DOM trees, modals, and viewport states across WebKit, Chromium, and Firefox.",
+    position: "top-left",
+    badge: "Frontend",
+  },
+  {
+    id: "api-agent",
+    title: "REST & GraphQL Agent",
+    description: "Exercises payload schemas, status codes, auth tokens, and response latencies concurrently.",
+    position: "mid-left",
+    badge: "Service",
+  },
+  {
+    id: "database-agent",
+    title: "Database Integrity Agent",
+    description: "Queries SQL state, inspecting foreign key mutations, audit timestamps, and transactional commits.",
+    position: "bottom-left",
+    badge: "Data Layer",
+  },
+  {
+    id: "requirement-agent",
+    title: "Requirement Agent",
+    description: "Extracts business invariants, calculation rules, and user permission limits from observed execution.",
+    position: "top-right",
+    badge: "Discovery",
+  },
+  {
+    id: "defect-agent",
+    title: "Evidence & Defect Agent",
+    description: "Pairs failures with instant video replay, network HAR files, console logs, and SQL diffs.",
+    position: "mid-right",
+    badge: "Evidence",
+  },
+  {
+    id: "reporting-agent",
+    title: "Executive Reporting Agent",
+    description: "Aggregates release confidence metrics, test pass ratios, and risk hot spots for sign-off.",
+    position: "bottom-right",
+    badge: "Audit",
+  },
+];
+
 export default function AiQaAgentPage() {
   return (
     <>
@@ -56,6 +103,18 @@ export default function AiQaAgentPage() {
           title="An AI QA Agent built from coordinated, specialized agents"
           description="Rather than one generalist AI trying to do everything, the AI QA Agent architecture splits responsibility across agents that each do one part of QA well."
           tone="dark"
+        />
+      </Section>
+
+      {/* Multi-Agent Circular Coordination Diagram */}
+      <Section tone="ocean" aria-labelledby="multi-agent-diagram-heading">
+        <CircularProcessGraph
+          sectionEyebrow="Multi-Agent Orchestration"
+          sectionTitle="AGENT COORDINATION ARCHITECTURE"
+          sectionSubtitle="Specialized AI agents work in concert — discovering UI, validating APIs, verifying database transactions, and compiling evidence."
+          centerTitle="QAQuad"
+          centerSubtitle="Multi-Agent Hub"
+          pillars={multiAgentPillars}
         />
       </Section>
 

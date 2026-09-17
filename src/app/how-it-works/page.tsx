@@ -16,6 +16,53 @@ export const metadata: Metadata = buildPageMetadata({
   path: "/how-it-works",
 });
 
+import { CircularProcessGraph, type StrategyPillar } from "@/components/workflow/CircularProcessGraph";
+
+const deliveryStrategyPillars: StrategyPillar[] = [
+  {
+    id: "app-discovery",
+    title: "Application Discovery",
+    description: "Autonomous crawl of all active routes, auth boundaries, and forms to build a living functional baseline.",
+    position: "top-left",
+    badge: "Step 1-2",
+  },
+  {
+    id: "rules-extraction",
+    title: "Rules Extraction",
+    description: "Capturing input validations, edge cases, and business logic directly from runtime application behavior.",
+    position: "mid-left",
+    badge: "Step 3-4",
+  },
+  {
+    id: "multi-layer-exec",
+    title: "Multi-Layer Execution",
+    description: "Executing synchronized test scenarios spanning Browser UI, REST/GraphQL APIs, and SQL databases.",
+    position: "bottom-left",
+    badge: "Step 5",
+  },
+  {
+    id: "evidence-capture",
+    title: "Evidence Collection",
+    description: "Attaching traces, network waterfall payloads, DB diffs, and screenshots directly to every defect.",
+    position: "top-right",
+    badge: "Step 6",
+  },
+  {
+    id: "defect-attribution",
+    title: "Defect Root-Cause",
+    description: "AI clusters stack traces, identifying whether breakages stem from frontend, API, or data layers.",
+    position: "mid-right",
+    badge: "Step 7",
+  },
+  {
+    id: "zero-drift",
+    title: "Continuous Regression",
+    description: "Converting confirmed scenarios into permanent, self-healing Playwright automation for CI/CD.",
+    position: "bottom-right",
+    badge: "Automate",
+  },
+];
+
 export default function HowItWorksPage() {
   return (
     <>
@@ -33,6 +80,18 @@ export default function HowItWorksPage() {
           title="From application access to regression automation in seven steps"
           description="The same process powers every engagement, whether it's a first functional assessment or an ongoing regression partnership."
           tone="dark"
+        />
+      </Section>
+
+      {/* Circular Strategy Process Graph */}
+      <Section tone="ocean" aria-labelledby="delivery-strategy-heading">
+        <CircularProcessGraph
+          sectionEyebrow="Delivery Methodology"
+          sectionTitle="OUR DELIVERY STRATEGY"
+          sectionSubtitle="Connecting agile development, intelligent exploration, and multi-layer verification into one continuous feedback loop."
+          centerTitle="QAQuad"
+          centerSubtitle="Delivery Loop"
+          pillars={deliveryStrategyPillars}
         />
       </Section>
 

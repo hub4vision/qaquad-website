@@ -31,6 +31,53 @@ const principles = [
   },
 ];
 
+import { CircularProcessGraph, type StrategyPillar } from "@/components/workflow/CircularProcessGraph";
+
+const aboutPhilosophyPillars: StrategyPillar[] = [
+  {
+    id: "evidence-first",
+    title: "Evidence Over Opinion",
+    description: "Every single defect reported ships with traces, network logs, screenshots, and database state proofs.",
+    position: "top-left",
+    badge: "Truth",
+  },
+  {
+    id: "behavior-focus",
+    title: "Behavior Over Pixels",
+    description: "We validate what software achieves for the business logic, not just superficial HTML/CSS alignment.",
+    position: "mid-left",
+    badge: "Functionality",
+  },
+  {
+    id: "multi-layer-qa",
+    title: "Full-Stack Verification",
+    description: "Testing browser workflows, API payload contracts, and SQL backend transactions in tight coordination.",
+    position: "bottom-left",
+    badge: "Full-Stack",
+  },
+  {
+    id: "engineering-led",
+    title: "Engineering-Led AI",
+    description: "AI accelerates discovery and test authoring, while rigorous QA engineering standards govern every run.",
+    position: "top-right",
+    badge: "Discipline",
+  },
+  {
+    id: "zero-flake",
+    title: "Zero-Flake Automation",
+    description: "Self-healing locators and resilient selectors eliminate brittle scripts that break on routine UI releases.",
+    position: "mid-right",
+    badge: "Stability",
+  },
+  {
+    id: "honest-maturity",
+    title: "Transparent Maturity",
+    description: "We label illustrative capabilities clearly and pride ourselves on technical honesty with our partners.",
+    position: "bottom-right",
+    badge: "Integrity",
+  },
+];
+
 export default function AboutPage() {
   return (
     <>
@@ -48,6 +95,18 @@ export default function AboutPage() {
           title="A practical engineering partner for QA, not a generic AI agency"
           description="We built this company around a simple belief: releases should be validated against what the business actually needs the software to do — with evidence, not guesswork."
           tone="dark"
+        />
+      </Section>
+
+      {/* Circular Philosophy & Engineering Pillars Diagram */}
+      <Section tone="ocean" aria-labelledby="about-strategy-heading">
+        <CircularProcessGraph
+          sectionEyebrow="Engineering Philosophy"
+          sectionTitle="OUR CORE STRATEGY & VALUES"
+          sectionSubtitle="How disciplined QA engineering, evidence-backed verification, and intelligent AI combine to protect software releases."
+          centerTitle="QAQuad"
+          centerSubtitle="Core Values"
+          pillars={aboutPhilosophyPillars}
         />
       </Section>
 
