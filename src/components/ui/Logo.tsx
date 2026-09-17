@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Image from "next/image";
 
 interface LogoProps {
@@ -14,6 +16,8 @@ export function Logo({
   size = "md",
   hoverPlacement = "bottom",
 }: LogoProps) {
+  const [showPreview, setShowPreview] = React.useState(false);
+
   // Sizing matrix for emblem
   const iconDimensions = {
     sm: { size: 36, px: "h-9 w-9" },
@@ -27,8 +31,17 @@ export function Logo({
     lg: "text-3xl tracking-tight",
   }[size];
 
+  const handleToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowPreview((prev) => !prev);
+  };
+
   return (
-    <div className={`relative inline-flex items-center select-none group/logo group cursor-pointer ${className}`}>
+    <div
+      onClick={handleToggle}
+      className={`relative inline-flex items-center select-none group/logo group cursor-pointer ${className}`}
+    >
       <div className="inline-flex items-center gap-3">
         {/* Official QAQuad Multi-Color Q Emblem */}
         <div
@@ -65,15 +78,34 @@ export function Logo({
         )}
       </div>
 
-      {/* Hover Card: Shows full QAQuadLogo.png with all brand details */}
+      {/* Hover Card & Touch Click Popup: Shows full QAQuadLogo.png with all brand details */}
       <div
-        className={`pointer-events-none absolute ${
+        className={`absolute ${
           hoverPlacement === "top" ? "bottom-full pb-3" : "top-full pt-3"
-        } left-0 z-50 w-72 sm:w-80 opacity-0 ${
-          hoverPlacement === "top" ? "-translate-y-2" : "translate-y-2"
-        } scale-95 transition-all duration-300 ease-out group-hover:opacity-100 group-hover/logo:opacity-100 group-hover:translate-y-0 group-hover/logo:translate-y-0 group-hover:scale-100 group-hover/logo:scale-100 group-hover:pointer-events-auto group-hover/logo:pointer-events-auto`}
+        } left-0 z-50 w-72 sm:w-80 transition-all duration-300 ease-out ${
+          showPreview
+            ? "opacity-100 visible translate-y-0 scale-100 pointer-events-auto"
+            : "opacity-0 invisible -translate-y-2 pointer-events-none scale-95 group-hover:opacity-100 group-hover/logo:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover/logo:translate-y-0 group-hover:scale-100 group-hover/logo:scale-100 group-hover:pointer-events-auto group-hover/logo:pointer-events-auto"
+        }`}
       >
-        <div className="overflow-hidden rounded-2xl border border-cyan-500/40 bg-slate-950/95 p-3.5 shadow-2xl shadow-cyan-950/60 backdrop-blur-2xl ring-1 ring-white/10">
+        <div className="relative overflow-hidden rounded-2xl border border-cyan-500/50 bg-slate-950/98 p-4 shadow-2xl shadow-cyan-950/80 backdrop-blur-2xl ring-1 ring-cyan-500/30">
+          {/* Mobile close tap icon */}
+          {showPreview && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowPreview(false);
+              }}
+              className="absolute top-2.5 right-2.5 z-10 p-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800 focus:outline-none"
+              aria-label="Close logo preview"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+              </svg>
+            </button>
+          )}
+
           <div className="relative w-full aspect-square overflow-hidden rounded-xl bg-white p-2 shadow-inner">
             <Image
               src="/QAQuadLogo.png"
@@ -83,11 +115,11 @@ export function Logo({
               className="object-contain p-1"
             />
           </div>
-          <div className="mt-2.5 px-1 text-center">
+          <div className="mt-3 px-1 text-center">
             <p className="text-xs font-bold tracking-wide text-cyan-300 uppercase">
               AI-Powered Quality Engineering
             </p>
-            <p className="mt-0.5 text-[11px] text-slate-400">
+            <p className="mt-0.5 text-[11px] text-slate-300">
               UI • API • Database • Business Logic
             </p>
           </div>

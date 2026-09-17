@@ -6,6 +6,7 @@ import Link from "next/link";
 import { primaryNav, servicesMegaMatrix, servicesNav, siteConfig } from "@/lib/site-config";
 import { NavLink } from "@/components/navigation/NavLink";
 import { CtaButton } from "@/components/cta/CtaButton";
+import { Logo } from "@/components/ui/Logo";
 import { clsx } from "@/lib/clsx";
 
 const navIcons: Record<string, React.ReactNode> = {
@@ -127,17 +128,22 @@ export function MobileNav() {
               </div>
 
               <div className="flex flex-col gap-6 px-5 py-6">
-                {/* Menu Section Header */}
-                <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee] animate-pulse" />
-                    <span className="text-xs font-bold uppercase tracking-widest text-cyan-300">
-                      Navigation Menu
+                {/* Menu Section Header with Clickable QAQuad Logo Preview */}
+                <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
+                  <div className="flex items-center gap-3">
+                    <Logo size="sm" hoverPlacement="bottom" />
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <div className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee] animate-pulse" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-300">
+                        Menu
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-slate-400">
+                      Tap logo for details
                     </span>
                   </div>
-                  <span className="text-[11px] font-medium text-slate-400">
-                    QAQuad.com
-                  </span>
                 </div>
 
                 {/* Primary Navigation Cards with Expandable Services Accordion */}
