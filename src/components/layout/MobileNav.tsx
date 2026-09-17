@@ -117,28 +117,39 @@ export function MobileNav() {
               role="dialog"
               aria-modal="true"
               aria-label="Mobile navigation"
-              className="fixed inset-x-0 top-[68px] bottom-0 z-50 overflow-y-auto bg-[#070b14] border-t border-slate-800 shadow-2xl flex flex-col justify-between"
+              className="fixed inset-x-0 top-[68px] bottom-0 z-50 overflow-y-auto bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] text-slate-900 border-t border-slate-200 shadow-2xl flex flex-col justify-between"
             >
-              {/* Decorative Tech Grid & Ambient Glow Background */}
+              {/* Decorative Subtle Logo Glow Ambient Highlights (Sky Blue, Orange, Purple, Green) */}
               <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-                <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_12px_rgba(34,211,238,0.8)]" />
-                <div className="absolute top-0 left-1/4 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl" />
-                <div className="absolute bottom-10 right-1/4 h-72 w-72 rounded-full bg-blue-600/10 blur-3xl" />
-                <div className="absolute inset-0 bg-grid-faint opacity-60" />
+                <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-sky-500 via-orange-500 via-purple-500 to-emerald-500 shadow-[0_0_12px_rgba(56,189,248,0.5)]" />
+                <div className="absolute top-10 left-[-10%] h-72 w-72 rounded-full bg-sky-300/25 blur-3xl" />
+                <div className="absolute top-1/3 right-[-10%] h-80 w-80 rounded-full bg-orange-300/20 blur-3xl" />
+                <div className="absolute bottom-20 left-10 h-72 w-72 rounded-full bg-purple-300/20 blur-3xl" />
+                <div className="absolute bottom-10 right-10 h-64 w-64 rounded-full bg-emerald-300/20 blur-3xl" />
+                <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:16px_16px] opacity-40" />
               </div>
 
               <div className="flex flex-col gap-6 px-5 py-6">
-                {/* Menu Title / Quick Status Bar */}
-                <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                {/* Menu Title / Quick Status Bar with QAQuad Logo Brand Strip */}
+                <div className="flex items-center justify-between border-b border-slate-300/80 pb-3">
                   <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee] animate-pulse" />
-                    <span className="text-xs font-extrabold uppercase tracking-widest text-cyan-300">
+                    <span className="flex h-2.5 w-2.5 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-sky-500"></span>
+                    </span>
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-800">
                       Navigation Menu
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400">
-                    Select a service or section
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    <span className="text-[11px] font-semibold text-slate-500 ml-1">
+                      QAQuad Suite
+                    </span>
+                  </div>
                 </div>
 
                 {/* Primary Navigation Cards with Expandable Accordion Submenus for All Menus */}
@@ -155,8 +166,8 @@ export function MobileNav() {
                         className={clsx(
                           "rounded-xl border transition-all duration-200 overflow-hidden shadow-sm",
                           isExpanded
-                            ? "border-cyan-500/50 bg-slate-900/90 ring-1 ring-cyan-500/20"
-                            : "border-slate-800/80 bg-slate-900/60"
+                            ? "border-sky-400 bg-white shadow-md ring-2 ring-sky-400/20"
+                            : "border-slate-200/90 bg-white/80 hover:bg-white hover:border-slate-300 backdrop-blur-sm"
                         )}
                       >
                         <div className="flex items-center justify-between p-3.5">
@@ -165,21 +176,21 @@ export function MobileNav() {
                             onClick={() => setOpen(false)}
                             className="flex items-center gap-3.5 flex-1 group"
                           >
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 transition-colors group-hover:border-cyan-400/50 group-hover:bg-cyan-500/20 group-hover:text-cyan-300">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-sky-100 bg-gradient-to-br from-sky-50 to-blue-100 text-sky-600 shadow-sm transition-all group-hover:scale-105 group-hover:from-sky-100 group-hover:to-blue-200 group-hover:text-sky-700">
                               {navIcons[item.href] || (
-                                <span className="h-2 w-2 rounded-full bg-cyan-400" />
+                                <span className="h-2 w-2 rounded-full bg-sky-500" />
                               )}
                             </div>
                             <div className="flex flex-col">
-                              <span className="text-base font-semibold text-slate-100 group-hover:text-white">
+                              <span className="text-base font-bold text-slate-800 group-hover:text-sky-600 transition-colors">
                                 {item.label}
                               </span>
                               {isExpandable ? (
-                                <span className="text-[11px] text-cyan-400 font-medium">
+                                <span className="text-[11px] text-sky-600 font-semibold">
                                   {isExpanded ? "Tap arrow to collapse" : "Tap arrow for sub-options"}
                                 </span>
                               ) : (
-                                <span className="text-[11px] text-slate-400">
+                                <span className="text-[11px] text-slate-500">
                                   Go to {item.label} page
                                 </span>
                               )}
@@ -195,10 +206,10 @@ export function MobileNav() {
                               aria-expanded={isExpanded}
                               aria-label={`Toggle ${item.label} submenu`}
                               className={clsx(
-                                "p-2.5 rounded-lg border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400",
+                                "p-2.5 rounded-lg border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500",
                                 isExpanded
-                                  ? "border-cyan-500/50 bg-cyan-950/60 text-cyan-300"
-                                  : "border-slate-700/80 bg-slate-800/80 text-cyan-400 hover:text-white hover:bg-slate-700"
+                                  ? "border-sky-300 bg-sky-50 text-sky-600"
+                                  : "border-slate-200 bg-slate-100/80 text-slate-600 hover:text-slate-900 hover:bg-slate-200"
                               )}
                             >
                               <svg
@@ -207,7 +218,7 @@ export function MobileNav() {
                                 fill="currentColor"
                                 className={clsx(
                                   "w-5 h-5 transition-transform duration-300",
-                                  isExpanded ? "rotate-180 text-amber-400" : "text-cyan-400"
+                                  isExpanded ? "rotate-180 text-orange-500" : "text-slate-500"
                                 )}
                                 aria-hidden="true"
                               >
@@ -222,7 +233,7 @@ export function MobileNav() {
                             <Link
                               href={item.href}
                               onClick={() => setOpen(false)}
-                              className="p-2.5 text-slate-500 hover:text-cyan-400"
+                              className="p-2.5 text-slate-400 hover:text-sky-600"
                               aria-label={`Open ${item.label}`}
                             >
                               <svg
@@ -242,15 +253,15 @@ export function MobileNav() {
 
                         {/* Services Mega Matrix Accordion Content */}
                         {isServices && isExpanded && (
-                          <div className="border-t border-slate-800 bg-[#050812] p-4 space-y-5 animate-fadeIn">
-                            <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
-                              <span className="text-[11px] font-extrabold uppercase tracking-widest text-cyan-300">
+                          <div className="border-t border-slate-200 bg-slate-50/90 p-4 space-y-5 animate-fadeIn">
+                            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                              <span className="text-[11px] font-extrabold uppercase tracking-widest text-sky-700">
                                 All Quality Engineering Offerings
                               </span>
                               <Link
                                 href="/ai-qa-tool"
                                 onClick={() => setOpen(false)}
-                                className="text-[11px] font-bold text-amber-400 hover:underline"
+                                className="text-[11px] font-bold text-orange-600 hover:text-orange-700 hover:underline"
                               >
                                 AI-QA Tool &rarr;
                               </Link>
@@ -258,25 +269,25 @@ export function MobileNav() {
 
                             {servicesMegaMatrix.map((cat) => (
                               <div key={cat.title} className="space-y-2">
-                                <h4 className="text-[11px] font-bold uppercase tracking-wider text-cyan-400">
+                                <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
                                   {cat.title}
                                 </h4>
-                                <div className="grid grid-cols-1 gap-1.5 pl-2 border-l border-slate-800">
+                                <div className="grid grid-cols-1 gap-1.5 pl-2 border-l-2 border-sky-300">
                                   {cat.items.map((sub) => (
                                     <Link
                                       key={sub.label}
                                       href={sub.href}
                                       onClick={() => setOpen(false)}
-                                      className="flex items-center justify-between py-1.5 px-2 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-slate-900/90 transition-colors"
+                                      className="flex items-center justify-between py-1.5 px-2.5 rounded-lg text-xs text-slate-700 hover:text-slate-900 hover:bg-white hover:shadow-sm transition-all"
                                     >
                                       <div className="flex flex-col">
-                                        <span className="font-medium">{sub.label}</span>
+                                        <span className="font-semibold text-slate-800">{sub.label}</span>
                                         {sub.desc && (
-                                          <span className="text-[10px] text-slate-400">{sub.desc}</span>
+                                          <span className="text-[10px] text-slate-500">{sub.desc}</span>
                                         )}
                                       </div>
                                       {sub.badge && (
-                                        <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-cyan-950 border border-cyan-500/40 text-cyan-300 shrink-0 ml-2">
+                                        <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-sky-100 border border-sky-300 text-sky-700 shrink-0 ml-2">
                                           {sub.badge}
                                         </span>
                                       )}
@@ -290,15 +301,15 @@ export function MobileNav() {
 
                         {/* Other Menu Items SubNavMatrix Accordion Content */}
                         {!isServices && hasSubNav && isExpanded && (
-                          <div className="border-t border-slate-800 bg-[#050812] p-4 space-y-4 animate-fadeIn">
-                            <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
-                              <span className="text-[11px] font-extrabold uppercase tracking-widest text-cyan-300">
+                          <div className="border-t border-slate-200 bg-slate-50/90 p-4 space-y-4 animate-fadeIn">
+                            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                              <span className="text-[11px] font-extrabold uppercase tracking-widest text-sky-700">
                                 {item.label} Topics &amp; Sections
                               </span>
                               <Link
                                 href={item.href}
                                 onClick={() => setOpen(false)}
-                                className="text-[11px] font-bold text-amber-400 hover:underline"
+                                className="text-[11px] font-bold text-orange-600 hover:text-orange-700 hover:underline"
                               >
                                 View Page &rarr;
                               </Link>
@@ -306,27 +317,27 @@ export function MobileNav() {
 
                             {subNavMatrix[item.label]?.map((section) => (
                               <div key={section.title} className="space-y-2">
-                                <h4 className="text-[11px] font-bold uppercase tracking-wider text-cyan-400">
+                                <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
                                   {section.title}
                                 </h4>
-                                <div className="grid grid-cols-1 gap-1.5 pl-2 border-l border-slate-800">
+                                <div className="grid grid-cols-1 gap-1.5 pl-2 border-l-2 border-purple-300">
                                   {section.items.map((sub) => (
                                     <Link
                                       key={sub.label}
                                       href={sub.href}
                                       onClick={() => setOpen(false)}
-                                      className="flex items-center justify-between py-1.5 px-2 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-slate-900/90 transition-colors"
+                                      className="flex items-center justify-between py-1.5 px-2.5 rounded-lg text-xs text-slate-700 hover:text-slate-900 hover:bg-white hover:shadow-sm transition-all"
                                     >
                                       <div className="flex flex-col">
-                                        <span className="font-semibold text-slate-200 hover:text-cyan-300">
+                                        <span className="font-semibold text-slate-800">
                                           {sub.label}
                                         </span>
                                         {sub.desc && (
-                                          <span className="text-[10px] text-slate-400">{sub.desc}</span>
+                                          <span className="text-[10px] text-slate-500">{sub.desc}</span>
                                         )}
                                       </div>
                                       {sub.badge && (
-                                        <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-cyan-950 border border-cyan-500/40 text-cyan-300 shrink-0 ml-2">
+                                        <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-purple-100 border border-purple-300 text-purple-700 shrink-0 ml-2">
                                           {sub.badge}
                                         </span>
                                       )}
@@ -342,13 +353,13 @@ export function MobileNav() {
                   })}
                 </nav>
 
-                {/* Core Capabilities Sub-section */}
-                <div className="rounded-2xl border border-slate-800/90 bg-gradient-to-b from-slate-900/70 to-slate-950/80 p-4 shadow-inner">
+                {/* Core Capabilities Sub-section (Light card with logo accents) */}
+                <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm backdrop-blur-sm">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-xs font-bold uppercase tracking-wider text-cyan-300">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-800">
                       Core Testing Capabilities
                     </p>
-                    <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-cyan-300">
+                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800">
                       AI + Automation
                     </span>
                   </div>
@@ -365,9 +376,9 @@ export function MobileNav() {
                         key={svc.href}
                         href={svc.href}
                         onClick={() => setOpen(false)}
-                        className="group flex items-center gap-2 rounded-lg border border-slate-800/60 bg-slate-900/40 px-3 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-cyan-500/40 hover:bg-slate-800/70 hover:text-cyan-300"
+                        className="group flex items-center gap-2 rounded-lg border border-slate-200/80 bg-slate-50/70 px-3 py-2 text-xs font-medium text-slate-700 transition-all hover:border-sky-300 hover:bg-white hover:text-sky-700 hover:shadow-sm"
                       >
-                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-400 group-hover:shadow-[0_0_6px_#22d3ee]" />
+                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-sky-500 group-hover:bg-orange-500 transition-colors" />
                         <span className="truncate">{svc.label}</span>
                       </Link>
                     ))}
@@ -375,24 +386,24 @@ export function MobileNav() {
                 </div>
               </div>
 
-              {/* Bottom Action Section */}
-              <div className="border-t border-slate-800/90 bg-slate-950/90 p-5 flex flex-col gap-3.5 backdrop-blur-md">
+              {/* Bottom Action Section (Clean light footer) */}
+              <div className="border-t border-slate-200 bg-white/95 p-5 flex flex-col gap-3.5 backdrop-blur-md shadow-lg">
                 <CtaButton
                   href={siteConfig.primaryCta.href}
                   trackAs="cta_click"
                   trackProps={{ location: "mobile_nav" }}
-                  className="w-full justify-center py-3.5 text-base font-bold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/25 border-0"
+                  className="w-full justify-center py-3.5 text-base font-bold bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white shadow-md shadow-sky-500/25 border-0"
                   onClick={() => setOpen(false)}
                 >
                   {siteConfig.primaryCta.label}
                 </CtaButton>
-                <div className="flex items-center justify-center gap-2 text-sm text-slate-400">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} className="h-4 w-4 text-cyan-400" aria-hidden="true">
+                <div className="flex items-center justify-center gap-2 text-sm text-slate-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} className="h-4 w-4 text-sky-600" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                   </svg>
                   <a
                     href={`mailto:${siteConfig.contactEmail}`}
-                    className="font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+                    className="font-semibold text-sky-600 hover:text-sky-700 transition-colors"
                   >
                     {siteConfig.contactEmail}
                   </a>
