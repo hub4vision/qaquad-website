@@ -3,6 +3,7 @@ import { siteConfig } from "@/lib/site-config";
 
 const routes = [
   { path: "/", priority: 1.0, changeFrequency: "weekly" as const },
+  { path: "/ai-qa-tool", priority: 0.9, changeFrequency: "monthly" as const },
   { path: "/ai-qa-automation", priority: 0.9, changeFrequency: "monthly" as const },
   { path: "/migration-testing", priority: 0.9, changeFrequency: "monthly" as const },
   { path: "/test-automation", priority: 0.9, changeFrequency: "monthly" as const },

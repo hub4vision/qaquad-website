@@ -26,6 +26,7 @@ export type NavItem = {
 
 export const primaryNav: NavItem[] = [
   { label: "Services", href: "/ai-qa-automation" },
+  { label: "AI-QA Tool", href: "/ai-qa-tool" },
   { label: "Migration Testing", href: "/migration-testing" },
   { label: "How It Works", href: "/how-it-works" },
   { label: "Industries", href: "/industries" },
@@ -34,12 +35,72 @@ export const primaryNav: NavItem[] = [
 ];
 
 export const servicesNav: NavItem[] = [
+  { label: "AI-QA Tool & Engine", href: "/ai-qa-tool" },
   { label: "AI Functional Testing", href: "/ai-qa-automation" },
   { label: "Playwright Automation", href: "/test-automation" },
   { label: "API Testing", href: "/test-automation#api-testing" },
   { label: "Database Validation", href: "/test-automation#database-validation" },
   { label: "Migration Testing", href: "/migration-testing" },
   { label: "AI QA Agent", href: "/ai-qa-agent" },
+];
+
+export interface ServiceMatrixCategory {
+  title: string;
+  items: { label: string; href: string; badge?: string; desc?: string }[];
+}
+
+export const servicesMegaMatrix: ServiceMatrixCategory[] = [
+  {
+    title: "AI-QA Services",
+    items: [
+      { label: "Predictive Analysis", href: "/ai-qa-tool#predictive-analysis", badge: "AI", desc: "Forecast defect hotspots & risk scores" },
+      { label: "Self-Healing Scripts", href: "/ai-qa-tool#self-healing", badge: "AI", desc: "Auto-adapt locators to UI changes" },
+      { label: "Platform Testing", href: "/ai-qa-automation", desc: "End-to-end multi-platform coverage" },
+      { label: "Cognitive Features", href: "/ai-qa-agent", desc: "Vision, voice, and conversational QA" },
+      { label: "Robustness Validation", href: "/test-automation", desc: "Chaos, stress & boundary resilience" },
+      { label: "Behavioural AI Testing", href: "/ai-qa-tool#behavioural-ai", desc: "Validate LLMs & AI decision models" },
+      { label: "Model Evaluation", href: "/ai-qa-tool#model-evaluation", desc: "Accuracy, latency & drift checks" },
+      { label: "Data Validation", href: "/test-automation#database-validation", desc: "Data integrity & SQL precision" },
+    ],
+  },
+  {
+    title: "Quality Engineering",
+    items: [
+      { label: "Agile Testing", href: "/how-it-works", desc: "Sprint-aligned continuous validation" },
+      { label: "Microservice Testing", href: "/test-automation#api-testing", desc: "Contract & distributed service checks" },
+      { label: "Continuous Testing", href: "/test-automation#cicd-qa", desc: "Seamless CI/CD pipeline triggers" },
+    ],
+  },
+  {
+    title: "Systems & Platforms",
+    items: [
+      { label: "Web App Testing", href: "/test-automation", desc: "Cross-browser modern WebApps" },
+      { label: "Mobile App Testing", href: "/test-automation", desc: "iOS, Android & responsive viewport" },
+      { label: "ERP & CRM Testing", href: "/industries", desc: "Enterprise enterprise workflow QA" },
+      { label: "SaaS & Cloud Platforms", href: "/industries", desc: "Multi-tenant cloud apps" },
+      { label: "Travel & E-Commerce", href: "/industries", desc: "Complex transactional workflows" },
+    ],
+  },
+  {
+    title: "Full-Cycle Testing",
+    items: [
+      { label: "QA Consulting", href: "/contact", desc: "Strategy & architecture assessment" },
+      { label: "Test Automation", href: "/test-automation", desc: "Playwright & Cypress suites" },
+      { label: "Managed QA Testing", href: "/how-it-works", desc: "Dedicated high-velocity squads" },
+      { label: "Migration Testing", href: "/migration-testing", badge: "Flagship", desc: "Legacy vs modern behavior diff" },
+      { label: "Manual & Ad-hoc QA", href: "/how-it-works", desc: "Exploratory expert evaluation" },
+    ],
+  },
+  {
+    title: "Test Coverage",
+    items: [
+      { label: "Functional Testing", href: "/ai-qa-automation", desc: "Core business rule execution" },
+      { label: "API & Integration Testing", href: "/test-automation#api-testing", desc: "Payload & contract verification" },
+      { label: "Regression Testing", href: "/test-automation", desc: "Zero-drift release protection" },
+      { label: "Performance & Stress", href: "/test-automation", desc: "Load, latency & memory metrics" },
+      { label: "Compatibility Testing", href: "/test-automation", desc: "Matrix across OS & browsers" },
+    ],
+  },
 ];
 
 export const footerLinks = {
@@ -51,6 +112,7 @@ export const footerLinks = {
   ],
   services: servicesNav,
   resources: [
+    { label: "AI-QA Tool", href: "/ai-qa-tool" },
     { label: "Resources", href: "/resources" },
     { label: "Blog", href: "/blog" },
     { label: "How It Works", href: "/how-it-works" },

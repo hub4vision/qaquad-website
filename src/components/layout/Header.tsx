@@ -5,6 +5,8 @@ import { CtaButton } from "@/components/cta/CtaButton";
 import { Logo } from "@/components/ui/Logo";
 import { MobileNav } from "./MobileNav";
 
+import { MegaMenu } from "@/components/navigation/MegaMenu";
+
 export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-slate-700/60 bg-slate-950 shadow-xl shadow-black/40">
@@ -14,11 +16,14 @@ export function Header() {
         </Link>
 
         <nav className="hidden md:flex md:items-center md:gap-7" aria-label="Primary">
-          {primaryNav.map((item) => (
-            <NavLink key={item.href} href={item.href}>
-              {item.label}
-            </NavLink>
-          ))}
+          <MegaMenu />
+          {primaryNav
+            .filter((item) => item.label !== "Services")
+            .map((item) => (
+              <NavLink key={item.href} href={item.href}>
+                {item.label}
+              </NavLink>
+            ))}
         </nav>
 
         <div className="hidden md:block">

@@ -9,6 +9,7 @@ test.describe("Desktop navigation", () => {
 
     const expectations: [string, RegExp][] = [
       ["Services", /\/ai-qa-automation/],
+      ["AI-QA Tool", /\/ai-qa-tool/],
       ["Migration Testing", /\/migration-testing/],
       ["How It Works", /\/how-it-works/],
       ["Industries", /\/industries/],
@@ -17,11 +18,18 @@ test.describe("Desktop navigation", () => {
     ];
 
     for (const [label, urlPattern] of expectations) {
-      await nav.getByRole("link", { name: label }).click();
+      await page.goto("/");
+      await nav.getByRole("link", { name: label, exact: label === "Services" }).click();
       await expect(page).toHaveURL(urlPattern);
-      await page.goBack();
-      await expect(nav.getByRole("link", { name: label })).toBeVisible();
     }
+  });
+
+  test("services mega menu opens on hover and contains predictive analysis link", async ({ page }) => {
+    await page.goto("/");
+    const servicesTrigger = page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Services" });
+    await servicesTrigger.hover();
+    const predictiveLink = page.getByRole("link", { name: "Predictive Analysis" });
+    await expect(predictiveLink).toBeVisible();
   });
 
   test("header CTA is visible and links to contact", async ({ page }) => {

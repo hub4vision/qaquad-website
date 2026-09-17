@@ -10,6 +10,7 @@ import { EvidenceSection } from "@/components/evidence/EvidenceSection";
 import { IndustryCard } from "@/components/industries/IndustryCard";
 import { CTASection } from "@/components/cta/CTASection";
 import { CtaButton } from "@/components/cta/CtaButton";
+import { AiQaCycleDiagram } from "@/components/workflow/AiQaCycleDiagram";
 import { buildPageMetadata } from "@/lib/seo";
 import { industries, solutionSteps } from "@/lib/site-config";
 
@@ -115,6 +116,11 @@ export default function HomePage() {
         <div className="mt-12">
           <ServicesGrid limit={8} />
         </div>
+      </Section>
+
+      {/* The 4-Stage AI-QA Predictive Engine */}
+      <Section tone="gradient" aria-labelledby="ai-cycle-home-heading">
+        <AiQaCycleDiagram />
       </Section>
 
       {/* How it works - default tone */}

@@ -45,6 +45,8 @@ const differentiators = [
   },
 ];
 
+import { AiQaCycleDiagram } from "@/components/workflow/AiQaCycleDiagram";
+
 export default function AiQaAutomationPage() {
   return (
     <>
@@ -72,8 +74,13 @@ export default function AiQaAutomationPage() {
         />
       </Section>
 
+      {/* The 4-Stage AI-QA Predictive Engine */}
+      <Section tone="ocean" aria-labelledby="ai-cycle-heading">
+        <AiQaCycleDiagram />
+      </Section>
+
       <Section tone="ocean" aria-labelledby="workflow-heading">
-        <SectionHeading id="workflow-heading" eyebrow="How it works" title="AI QA workflow" align="center" className="mx-auto" tone="dark" />
+        <SectionHeading id="workflow-heading" eyebrow="Execution Workflow" title="End-to-End Discovery & Execution" align="center" className="mx-auto" tone="dark" />
         <div className="mt-12">
           <WorkflowDiagram steps={discoverySteps} columns={4} />
         </div>
