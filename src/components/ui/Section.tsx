@@ -22,7 +22,7 @@ const tones = {
 
 export function Section({ id, className, containerClassName, tone = "default", children, ...rest }: SectionProps) {
   return (
-    <section id={id} className={clsx("relative py-16 sm:py-20 lg:py-24 border-y border-slate-700/40", tones[tone], className)} {...rest}>
+    <section id={id} className={clsx("relative py-10 sm:py-14 lg:py-16 border-y border-slate-700/40", tones[tone], className)} {...rest}>
       <Container className={containerClassName}>{children}</Container>
     </section>
   );

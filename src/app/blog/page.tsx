@@ -34,7 +34,7 @@ export default function BlogPage() {
         ])}
       />
 
-      <Section tone="dark" className="pt-16 sm:pt-20">
+      <Section tone="dark" className="pt-4 pb-10 sm:pt-6 sm:pb-12">
         <SectionHeading as="h1" eyebrow="Blog" title="Coming soon" tone="dark" />
       </Section>
 

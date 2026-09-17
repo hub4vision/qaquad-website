@@ -28,7 +28,7 @@ export function Hero() {
         aria-hidden="true"
         className="absolute inset-0 bg-grid-faint [mask-image:radial-gradient(ellipse_at_top,black,transparent_80%)]"
       />
-      <Container className="relative py-20 sm:py-28">
+      <Container className="relative pt-8 pb-14 sm:pt-12 sm:pb-18 lg:pt-14 lg:pb-20">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <p className="mb-4 inline-flex items-center rounded-full border border-cyan-400/40 bg-cyan-500/15 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-cyan-300 shadow-sm">

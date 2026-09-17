@@ -13,7 +13,7 @@ const lastUpdated = "This draft was generated for initial launch and has not yet
 
 export default function PrivacyPage() {
   return (
-    <Section tone="dark" className="pt-16 sm:pt-20">
+    <Section tone="dark" className="pt-4 pb-10 sm:pt-6 sm:pb-12">
       <div className="prose-content mx-auto max-w-3xl">
         <p className="text-sm font-bold uppercase tracking-wide text-cyan-400">Legal</p>
         <h1 className="mt-2 text-3xl font-bold text-white sm:text-4xl">Privacy Policy</h1>

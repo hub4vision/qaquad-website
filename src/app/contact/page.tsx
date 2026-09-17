@@ -23,7 +23,7 @@ export default function ContactPage() {
         ])}
       />
 
-      <Section tone="dark" className="pt-16 sm:pt-20">
+      <Section tone="dark" className="pt-4 pb-10 sm:pt-6 sm:pb-12">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <SectionHeading

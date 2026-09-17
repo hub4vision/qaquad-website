@@ -99,7 +99,7 @@ export default function AiQaToolPage() {
       />
 
       {/* Hero Section */}
-      <Section tone="dark" className="pt-16 sm:pt-20">
+      <Section tone="dark" className="pt-4 pb-10 sm:pt-6 sm:pb-12">
         <div className="text-center max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-950/60 px-4 py-1.5 text-xs font-semibold text-cyan-300 mb-6">
             <span className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee] animate-pulse" />
