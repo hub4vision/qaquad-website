@@ -75,6 +75,53 @@ const layers = [
   },
 ];
 
+import { CircularProcessGraph } from "@/components/workflow/CircularProcessGraph";
+
+const testAutomationPillars = [
+  {
+    id: "expertise",
+    title: "Domain Expertise",
+    description: "Deep engineering knowledge across Playwright, contract testing, and relational database validation.",
+    position: "top-left" as const,
+    badge: "Specialized",
+  },
+  {
+    id: "agile-dev",
+    title: "Agile Development",
+    description: "Dynamic test generation adapting immediately to continuous sprint iterations, PRs, and changing specs.",
+    position: "mid-left" as const,
+    badge: "Sprint-Ready",
+  },
+  {
+    id: "efficiency",
+    title: "High Efficiency",
+    description: "70% faster execution cycles with localized parallelization and selective regression running.",
+    position: "bottom-left" as const,
+    badge: "Speed",
+  },
+  {
+    id: "track-record",
+    title: "Proven Track Record",
+    description: "Trusted across SaaS, travel tech, logistics, and multi-tenant platforms with zero-drift releases.",
+    position: "top-right" as const,
+    badge: "Reliable",
+  },
+  {
+    id: "accurate-results",
+    title: "Accurate Results",
+    description: "Complete elimination of false alarms with multi-layer verification (DOM + API payload + SQL state).",
+    position: "mid-right" as const,
+    badge: "Zero-Flake",
+  },
+  {
+    id: "quality",
+    title: "Continuous Quality",
+    description: "End-to-end release gates ensuring that every software update meets enterprise standards before launch.",
+    position: "bottom-right" as const,
+    badge: "Governance",
+  },
+];
+
 export default function TestAutomationPage() {
   return (
     <>
@@ -99,6 +146,18 @@ export default function TestAutomationPage() {
           title="Maintainable automation across UI, API, and database"
           description="Click-based automation alone misses backend defects. We validate business workflows at every layer they touch."
           tone="dark"
+        />
+      </Section>
+
+      {/* QualiMatrix-style Circular Strategy Process Graph */}
+      <Section tone="ocean" aria-labelledby="strategy-heading">
+        <CircularProcessGraph
+          sectionEyebrow="Agile Quality Engineering Strategy"
+          sectionTitle="OUR AUTOMATION STRATEGY"
+          sectionSubtitle="Connecting agile development, domain expertise, and multi-layer validation into one seamless release loop."
+          centerTitle="QAQuad"
+          centerSubtitle="Automation Loop"
+          pillars={testAutomationPillars}
         />
       </Section>
 

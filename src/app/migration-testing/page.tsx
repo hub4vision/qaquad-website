@@ -35,6 +35,53 @@ const whatWeCompare = [
   "Integrations",
 ];
 
+import { CircularProcessGraph } from "@/components/workflow/CircularProcessGraph";
+
+const migrationStrategyPillars = [
+  {
+    id: "legacy-discovery",
+    title: "Legacy Discovery",
+    description: "Deep crawl of the legacy system to capture undocumented business rules, edge-case validations, and user paths.",
+    position: "top-left" as const,
+    badge: "Baseline",
+  },
+  {
+    id: "parity-mapping",
+    title: "Functional Parity",
+    description: "Mapping legacy capabilities directly against new target microservices, APIs, and modern frontends.",
+    position: "mid-left" as const,
+    badge: "Alignment",
+  },
+  {
+    id: "data-integrity",
+    title: "Data Consistency",
+    description: "Validating schema mutations, ETL transformations, and database field calculations post-migration.",
+    position: "bottom-left" as const,
+    badge: "SQL Level",
+  },
+  {
+    id: "evidence-capture",
+    title: "Evidence Traceability",
+    description: "Every functional gap is proven with dual-screen traces, network request diffs, and query outputs.",
+    position: "top-right" as const,
+    badge: "Audited",
+  },
+  {
+    id: "risk-mitigation",
+    title: "Zero Business Loss",
+    description: "Preventing silent drops of critical workflows, compliance policies, or revenue-impacting business logic.",
+    position: "mid-right" as const,
+    badge: "Guarantee",
+  },
+  {
+    id: "cutover-confidence",
+    title: "Cutover Readiness",
+    description: "Delivering an unambiguous PASS / PARTIAL / FAIL scorecard so executive stakeholders launch with clarity.",
+    position: "bottom-right" as const,
+    badge: "Sign-off",
+  },
+];
+
 const toneMap = { pass: "pass", partial: "partial", fail: "fail", info: "info" } as const;
 
 export default function MigrationTestingPage() {
@@ -90,6 +137,18 @@ export default function MigrationTestingPage() {
         <div className="mt-12">
           <WorkflowDiagram steps={migrationWorkflowSteps} columns={5} />
         </div>
+      </Section>
+
+      {/* Circular Migration Strategy Graph */}
+      <Section tone="ocean" aria-labelledby="migration-strategy-heading">
+        <CircularProcessGraph
+          sectionEyebrow="Legacy-to-New Transformation Strategy"
+          sectionTitle="OUR MIGRATION STRATEGY"
+          sectionSubtitle="Ensuring no business logic, data rules, or calculations are silently dropped during replatforming."
+          centerTitle="QAQuad"
+          centerSubtitle="Migration Core"
+          pillars={migrationStrategyPillars}
+        />
       </Section>
 
       <Section tone="gradient" aria-labelledby="classification-heading">
