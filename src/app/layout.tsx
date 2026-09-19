@@ -7,6 +7,7 @@ import { Analytics } from "@/components/analytics/Analytics";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { organizationJsonLd } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
+import { GlobalChatbot } from "@/components/chatbot/GlobalChatbot";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -84,6 +85,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
         <Footer />
+        <GlobalChatbot />
         <Analytics />
       </body>
     </html>
