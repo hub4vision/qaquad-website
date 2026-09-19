@@ -136,7 +136,7 @@ export function GlobalChatbot() {
       setInputValue("");
       setIsTyping(true);
 
-      trackEvent("chatbot_ai_message", { messageLength: text.length });
+      trackEvent("chatbot_ai_message", { messageLength: text.length.toString() });
 
       try {
         const response = await fetch("/api/chat", {
@@ -178,13 +178,13 @@ export function GlobalChatbot() {
 
   function getFallbackResponse(query: string): string {
     const lower = query.toLowerCase();
-    if (lower.includes("service") || lower.includes("offer")) return fallbackResponses.services;
-    if (lower.includes("price") || lower.includes("cost") || lower.includes("pricing")) return fallbackResponses.pricing;
-    if (lower.includes("migrat")) return fallbackResponses.migration;
-    if (lower.includes("industr") || lower.includes("domain")) return fallbackResponses.industries;
+    if (lower.includes("service") || lower.includes("offer")) return fallbackResponses.services!;
+    if (lower.includes("price") || lower.includes("cost") || lower.includes("pricing")) return fallbackResponses.pricing!;
+    if (lower.includes("migrat")) return fallbackResponses.migration!;
+    if (lower.includes("industr") || lower.includes("domain")) return fallbackResponses.industries!;
     if (lower.includes("when") || lower.includes("start") || lower.includes("timeline") || lower.includes("fast"))
-      return fallbackResponses.timeline;
-    return fallbackResponses.default;
+      return fallbackResponses.timeline!;
+    return fallbackResponses.default!;
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
@@ -391,15 +391,15 @@ export function GlobalChatbot() {
                 {guidedPhase === "active" && (
                   <div className="animate-fade-up flex-1 flex flex-col min-h-0 overflow-y-auto pr-1">
                     <h3 className="text-lg font-bold text-white leading-tight shrink-0">
-                      {guidedSteps[currentStep].question}
+                      {guidedSteps[currentStep]!.question}
                     </h3>
-                    {guidedSteps[currentStep].subtext && (
+                    {guidedSteps[currentStep]!.subtext && (
                       <p className="mt-1 text-xs text-slate-400 shrink-0">
-                        {guidedSteps[currentStep].subtext}
+                        {guidedSteps[currentStep]!.subtext}
                       </p>
                     )}
                     <div className="mt-4 flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto">
-                      {guidedSteps[currentStep].options.map((option) => (
+                      {guidedSteps[currentStep]!.options.map((option) => (
                         <button
                           key={option.id}
                           type="button"
