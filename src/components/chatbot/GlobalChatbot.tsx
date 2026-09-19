@@ -96,6 +96,7 @@ export function GlobalChatbot() {
 
   function handleGuidedSelect(option: GuidedOption) {
     const step = guidedSteps[currentStep];
+    if (!step) return;
     const newAnswers = { ...answers, [step.id]: option.id };
     setAnswers(newAnswers);
 
