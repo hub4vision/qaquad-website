@@ -191,13 +191,13 @@ export default function TestingStructurePage() {
                     {pkg.description}
                   </p>
                   
-                  <button className={`w-full py-3 px-4 rounded-xl font-medium transition-colors mb-8 ${
+                  <a href="/contact" className={`block text-center w-full py-3 px-4 rounded-xl font-medium transition-colors mb-8 ${
                     pkg.popular 
                       ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/20' 
                       : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
                   }`}>
                     {pkg.buttonText}
-                  </button>
+                  </a>
 
                   <div className="space-y-4">
                     <p className="text-sm font-semibold text-slate-300 uppercase tracking-wider">What's included:</p>
