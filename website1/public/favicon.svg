@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="QAQuad.com logo">
+  <defs>
+    <linearGradient id="fav-border" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#38bdf8"/>
+      <stop offset="35%" stopColor="#f43f5e"/>
+      <stop offset="70%" stopColor="#a855f7"/>
+      <stop offset="100%" stopColor="#34d399"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#030712"/>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="15" stroke="url(#fav-border)" stroke-width="2" stroke-opacity="0.85"/>
+  <!-- All 4 vibrant quadrant colors -->
+  <!-- Q1: Cyan -->
+  <rect x="12" y="12" width="17" height="17" rx="5" fill="#0284c7"/>
+  <!-- Q2: Coral Rose -->
+  <rect x="35" y="12" width="17" height="17" rx="5" fill="#e11d48"/>
+  <!-- Q3: Violet Purple -->
+  <rect x="12" y="35" width="17" height="17" rx="5" fill="#7c3aed"/>
+  <!-- Q4: Emerald Green with checkmark -->
+  <rect x="35" y="35" width="17" height="17" rx="5" fill="#059669"/>
+  <!-- Center Core Target -->
+  <circle cx="32" cy="32" r="3.5" fill="#ffffff"/>
+  <!-- White Checkmark on Emerald Tile -->
+  <path d="M39 43.5L42.5 47L48 40.5" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

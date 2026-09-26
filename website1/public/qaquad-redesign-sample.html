@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QAQuad Next-Gen UI Design Sample (Concept Prototype)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070b14;
+      --surface: #0d1527;
+      --surface-border: #1e293b;
+      --accent: #06b6d4;
+      --accent-glow: rgba(6, 182, 212, 0.3);
+      --purple: #8b5cf6;
+      --emerald: #10b981;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* Top Sticky Notification / Announcement Bar */
+    .top-bar {
+      background: linear-gradient(90deg, rgba(6, 182, 212, 0.15), rgba(139, 92, 246, 0.15));
+      border-bottom: 1px solid rgba(6, 182, 212, 0.25);
+      padding: 10px 20px;
+      font-size: 0.88rem;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+    }
+    .top-bar .pill {
+      background: #06b6d4;
+      color: #000;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+    }
+    .top-bar a {
+      color: #38bdf8;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    /* Modern Mega Navbar */
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 11, 20, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--surface-border);
+    }
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: #fff;
+      text-decoration: none;
+    }
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #fff;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    .nav-item {
+      position: relative;
+      cursor: pointer;
+    }
+    .nav-link {
+      color: #cbd5e1;
+      font-weight: 500;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: #38bdf8; }
+
+    /* Mega Menu Dropdown Mock */
+    .mega-menu {
+      position: absolute;
+      top: 100%;
+      left: -150px;
+      width: 680px;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 15px;
+    }
+    .nav-item:hover .mega-menu {
+      display: grid;
+    }
+    .menu-col h4 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: #94a3b8;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--surface-border);
+      padding-bottom: 6px;
+    }
+    .menu-item {
+      padding: 10px;
+      border-radius: 8px;
+      transition: background 0.2s;
+      display: block;
+      text-decoration: none;
+    }
+    .menu-item:hover { background: rgba(255,255,255,0.04); }
+    .menu-item-title { color: #fff; font-weight: 600; font-size: 0.92rem; }
+    .menu-item-desc { color: #94a3b8; font-size: 0.8rem; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .btn-secondary {
+      color: #cbd5e1;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      padding: 8px 16px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent) 0%, #2563eb 100%);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-decoration: none;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(6, 182, 212, 0.45);
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      padding: 80px 24px 60px;
+      text-align: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      border-radius: 99px;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #38bdf8 0%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: 1.25rem;
+      max-width: 780px;
+      margin: 0 auto 36px;
+    }
+    .hero-cta-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .btn-audit {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-audit:hover { transform: translateY(-2px); }
+
+    /* Trust & Badges Banner */
+    .trust-strip {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      padding: 24px;
+      border-top: 1px solid var(--surface-border);
+      border-bottom: 1px solid var(--surface-border);
+      background: rgba(13, 21, 39, 0.4);
+      margin-bottom: 60px;
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      font-weight: 600;
+    }
+    .star-rating { color: #f59e0b; font-size: 1.1rem; }
+
+    /* Accelerators Section (Branded Proprietary IP) */
+    .section-container {
+      max-width: 1200px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    .section-eyebrow {
+      color: var(--accent);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .section-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-top: 8px;
+    }
+    .accelerators-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .accel-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .accel-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(6, 182, 212, 0.5);
+    }
+    .accel-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--accent);
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+    .accel-card h3 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .accel-card p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .metric-chip {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--surface-border);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      color: #34d399;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    /* Gartner-Style Reviews Slider Mock */
+    .reviews-section {
+      background: linear-gradient(180deg, rgba(13, 21, 39, 0.6) 0%, rgba(7, 11, 20, 1) 100%);
+      padding: 70px 24px;
+      border-top: 1px solid var(--surface-border);
+      margin-bottom: 80px;
+    }
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+      align-items: center;
+    }
+    .review-score-box {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      padding: 36px;
+      text-align: center;
+    }
+    .big-score {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .review-card-testimonial {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      padding: 36px;
+      position: relative;
+    }
+    .review-quote {
+      font-size: 1.1rem;
+      color: #e2e8f0;
+      font-style: italic;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+    .client-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--surface-border);
+      padding-top: 16px;
+      font-size: 0.88rem;
+    }
+    .client-role { color: #fff; font-weight: 700; }
+    .client-scale { color: #38bdf8; font-weight: 600; }
+
+    /* Sticky Bottom Conversion Dock */
+    .sticky-dock {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 99;
+      background: rgba(13, 21, 39, 0.95);
+      border: 1px solid rgba(6, 182, 212, 0.4);
+      border-radius: 99px;
+      padding: 10px 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Top Announcement Bar (TestingXperts-style) -->
+  <div class="top-bar">
+    <span class="pill">NEW FOR 2026</span>
+    <span>Autonomous AI Quality Engineering & Zero-Regression Migration Audit.</span>
+    <a href="#audit-modal">Claim Free 48-Hour PoV →</a>
+  </div>
+
+  <!-- 2. Header with Enterprise Mega Menu -->
+  <header class="site-header">
+    <div class="nav-container">
+      <a href="#" class="brand">
+        <div class="brand-icon">Q</div>
+        <span>QAQuad</span>
+      </a>
+
+      <nav class="nav-links">
+        <div class="nav-item">
+          <div class="nav-link">Offerings ▾</div>
+          <div class="mega-menu">
+            <div class="menu-col">
+              <h4>Quality Assurance</h4>
+              <a href="#" class="menu-item">
+                <div class="menu-item-title">Autonomous Web & API QA</div>
+                <div class="menu-item-desc">End-to-end multi-layer behavioral test discovery</div>
+              </a>
+              <a href="#" class="menu-item">
+                <div class="menu-item-title">Migration State Verification</div>
+                <div class="menu-item-desc">7-layer DB, CRUD, and permission parity testing</div>
+              </a>
+              <a href="#" class="menu-item">
+                <div class="menu-item-title">Agentic AI & LLM QE <span style="color:#10b981;font-size:0.75rem;">NEW</span></div>
+                <div class="menu-item-desc">Validate autonomous AI agents & guardrails</div>
+              </a>
+            </div>
+            <div class="menu-col">
+              <h4>Proprietary Accelerators</h4>
+              <a href="#" class="menu-item">
+                <div class="menu-item-title">QuadEngine™</div>
+                <div class="menu-item-desc">Autonomous crawler & behavioral map generator</div>
+              </a>
+              <a href="#" class="menu-item">
+                <div class="menu-item-title">QuadHeal™</div>
+                <div class="menu-item-desc">Real-time self-healing locator technology</div>
+              </a>
+              <a href="#" class="menu-item">
+                <div class="menu-item-title">QuadDiff™</div>
+                <div class="menu-item-desc">Business rule & data parity comparison engine</div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <div class="nav-link">Industries ▾</div>
+          <div class="mega-menu" style="grid-template-columns: 1fr 1fr;">
+            <div class="menu-col">
+              <h4>Regulated Sectors</h4>
+              <a href="#" class="menu-item">
+                <div class="menu-item-title">Banking & FinTech (PCI-DSS)</div>
+                <div class="menu-item-desc">Double-entry ledger & transaction validation</div>
+              </a>
+              <a href="#" class="menu-item">
+                <div class="menu-item-title">Healthcare & Life Sciences (HIPAA)</div>
+                <div class="menu-item-desc">Electronic Health Record & synthetic data testing</div>
+              </a>
+            </div>
+            <div class="menu-col">
+              <h4>High-Velocity Sectors</h4>
+              <a href="#" class="menu-item">
+                <div class="menu-item-title">E-Commerce & Retail</div>
+                <div class="menu-item-desc">Checkout funnel & peak load resilience</div>
+              </a>
+              <a href="#" class="menu-item">
+                <div class="menu-item-title">Enterprise B2B SaaS</div>
+                <div class="menu-item-desc">Multi-tenant role permissions & webhook testing</div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <a href="#" class="nav-link">How It Works</a>
+        <a href="#" class="nav-link">Case Studies</a>
+        <a href="#" class="nav-link">Pricing</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="#" class="btn-secondary">Sign In</a>
+        <a href="#" class="btn-primary">Book a 20-Min Call</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. High-Converting Hero Section -->
+  <section class="hero">
+    <div class="hero-tag">
+      <span>🚀 Recognized Alternative to Legacy QA Outsourcing</span>
+    </div>
+    <h1>Autonomous Quality Engineering & <br><span class="gradient-text">Zero-Defect Migration Testing</span></h1>
+    <p class="hero-sub">QAQuad combines autonomous Playwright discovery, real-time selector self-healing, and dual API+DB assertions to deliver bulletproof release confidence in hours, not weeks.</p>
+    
+    <div class="hero-cta-group">
+      <a href="#" class="btn-audit">
+        <span>⚡ Get Free 48-Hour PoV Audit</span>
+      </a>
+      <a href="#" class="btn-primary" style="background:#1e293b;border:1px solid #334155;">
+        <span>See Interactive Runner Demo</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 4. Third-Party Trust Strip (Inspired by Tx's Gartner/Everest Proof) -->
+  <div class="trust-strip">
+    <div class="trust-item">
+      <span class="star-rating">★★★★★</span>
+      <span><strong>4.9 / 5</strong> Client Satisfaction</span>
+    </div>
+    <div class="trust-item">
+      <span>🏢 <strong>$500M+ ARR</strong> Workloads Tested</span>
+    </div>
+    <div class="trust-item">
+      <span>🛡️ <strong>SOC 2 Type II</strong> & GDPR Ready</span>
+    </div>
+    <div class="trust-item">
+      <span>⚡ <strong>0% Flaky False Positives</strong> with QuadHeal™</span>
+    </div>
+  </div>
+
+  <!-- 5. Branded Accelerators Showcase (Tx Platform Formula) -->
+  <section class="section-container">
+    <div class="section-header">
+      <div class="section-eyebrow">Proprietary Technology Stack</div>
+      <h2 class="section-title">Enterprise Accelerators Built for Scale</h2>
+    </div>
+
+    <div class="accelerators-grid">
+      <div class="accel-card">
+        <span class="accel-badge">CRAWLER & GRAPH</span>
+        <h3>QuadEngine™</h3>
+        <p>Autonomous AI crawler that maps user journeys, extracts underlying API dependencies, and synthesizes 100% executable Playwright test specs.</p>
+        <div class="metric-chip">↑ 85% Faster Suite Creation</div>
+      </div>
+
+      <div class="accel-card">
+        <span class="accel-badge">RESILIENCE AI</span>
+        <h3>QuadHeal™</h3>
+        <p>Dynamic DOM-aware selector healing that automatically fixes broken element locators during live execution without interrupting CI/CD pipelines.</p>
+        <div class="metric-chip">↓ 92% Less Script Maintenance</div>
+      </div>
+
+      <div class="accel-card">
+        <span class="accel-badge">MIGRATION PARITY</span>
+        <h3>QuadDiff™</h3>
+        <p>Deep-layer comparison engine that verifies CRUD operations, database constraints, calculations, and role-based permissions between legacy and new apps.</p>
+        <div class="metric-chip">100% Behavioral Parity Audit</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Gartner-Style Verified Testimonial Showcase -->
+  <section class="reviews-section">
+    <div class="reviews-grid">
+      <div class="review-score-box">
+        <div class="big-score">4.9</div>
+        <div class="star-rating" style="font-size:1.5rem;margin-bottom:8px;">★★★★★</div>
+        <p style="color:#94a3b8;font-size:0.9rem;">Overall Enterprise Rating across 40+ Production Migrations & Test Suites</p>
+      </div>
+
+      <div class="review-card-testimonial">
+        <p class="review-quote">“During our core ERP migration, QAQuad's QuadDiff caught 18 silent calculation discrepancies that manual testing missed for 3 months. Their 48-hour initial proof-of-value made the decision effortless for our leadership.”</p>
+        <div class="client-meta">
+          <div>
+            <div class="client-role">VP of Engineering</div>
+            <div style="color:#94a3b8;font-size:0.8rem;">FinTech & Payments Infrastructure</div>
+          </div>
+          <div class="client-scale">Firm Size: <strong>$120M ARR</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Persistent Conversion Dock -->
+  <div class="sticky-dock">
+    <div class="pulse-dot"></div>
+    <span style="font-size:0.88rem;font-weight:600;">Talk with a Principal QA Architect:</span>
+    <a href="#" class="btn-primary" style="padding:6px 14px;font-size:0.82rem;">Instant Schedule (15m)</a>
+  </div>
+
+</body>
+</html>
