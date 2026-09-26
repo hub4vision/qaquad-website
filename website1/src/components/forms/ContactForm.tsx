@@ -51,7 +51,7 @@ function ContactFormInner() {
     if (interest) {
       setValues((prev) => ({
         ...prev,
-        message: `I am interested in: ${interest}\n\n`,
+        message: interest,
       }));
     }
   }, [interest]);

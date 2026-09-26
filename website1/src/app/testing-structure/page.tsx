@@ -191,7 +191,7 @@ export default function TestingStructurePage() {
                     {pkg.description}
                   </p>
                   
-                  <a href={`/contact?interest=${encodeURIComponent(pkg.name)}`} className={`block text-center w-full py-3 px-4 rounded-xl font-medium transition-colors mb-8 ${
+                  <a href={`/contact?interest=${encodeURIComponent(`${pkg.name}\n${pkg.price} ${pkg.frequency}\n${pkg.description}\n\nWhat's included:\n${pkg.features.map((f: string) => `- ${f}`).join('\n')}`)}`} className={`block text-center w-full py-3 px-4 rounded-xl font-medium transition-colors mb-8 ${
                     pkg.popular 
                       ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/20' 
                       : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
