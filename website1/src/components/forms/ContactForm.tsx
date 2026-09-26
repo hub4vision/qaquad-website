@@ -93,9 +93,9 @@ export function ContactForm() {
 
   if (status === "success") {
     return (
-      <div role="status" className="rounded-2xl border border-emerald-500/40 bg-emerald-950/40 p-8 text-center backdrop-blur-md">
-        <h3 className="text-xl font-semibold text-white">Thank you.</h3>
-        <p className="mt-2 text-slate-300">We will review your requirement and contact you shortly.</p>
+      <div role="status" className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center">
+        <h3 className="text-xl font-semibold text-emerald-900">Thank you.</h3>
+        <p className="mt-2 text-emerald-700">We will review your requirement and contact you shortly.</p>
         <button
           type="button"
           onClick={() => setStatus("idle")}
@@ -189,7 +189,7 @@ export function ContactForm() {
             className={inputClass(!!errors.companyType)}
           >
             {companyTypeOptions.map((option) => (
-              <option key={option.value} value={option.value} className="bg-slate-900 text-white">
+              <option key={option.value} value={option.value} className="bg-white text-slate-900">
                 {option.label}
               </option>
             ))}
@@ -205,7 +205,7 @@ export function ContactForm() {
             className={inputClass(!!errors.testingRequirement)}
           >
             {testingRequirementOptions.map((option) => (
-              <option key={option.value} value={option.value} className="bg-slate-900 text-white">
+              <option key={option.value} value={option.value} className="bg-white text-slate-900">
                 {option.label}
               </option>
             ))}
@@ -221,7 +221,7 @@ export function ContactForm() {
             className={inputClass(!!errors.currentQaMethod)}
           >
             {currentQaMethodOptions.map((option) => (
-              <option key={option.value} value={option.value} className="bg-slate-900 text-white">
+              <option key={option.value} value={option.value} className="bg-white text-slate-900">
                 {option.label}
               </option>
             ))}
@@ -238,7 +238,7 @@ export function ContactForm() {
           className={inputClass(!!errors.isMigrationProject)}
         >
           {migrationProjectOptions.map((option) => (
-            <option key={option.value} value={option.value} className="bg-slate-900 text-white">
+            <option key={option.value} value={option.value} className="bg-white text-slate-900">
               {option.label}
             </option>
           ))}
@@ -287,7 +287,7 @@ export function ContactForm() {
         >
           {status === "submitting" ? "Submitting..." : "Request Free QA Assessment"}
         </button>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           No credit card required. We treat your application access and data under strict confidentiality.
         </p>
       </div>
@@ -312,7 +312,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={htmlFor} className="block text-sm font-medium text-slate-200">
+      <label htmlFor={htmlFor} className="block text-sm font-medium text-slate-900">
         {label}
         {required ? <span className="text-rose-400"> *</span> : null}
         {hint ? <span className="ml-1 text-xs font-normal text-slate-400">({hint})</span> : null}
@@ -329,8 +329,8 @@ function Field({
 
 function inputClass(hasError: boolean) {
   return clsx(
-    "block w-full rounded-xl border bg-slate-900/80 px-3.5 py-2.5 text-sm text-white placeholder:text-slate-500 backdrop-blur-sm",
-    "focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400",
-    hasError ? "border-rose-500" : "border-slate-700",
+    "block w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400",
+    "focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500",
+    hasError ? "border-rose-500" : "border-slate-300",
   );
 }
