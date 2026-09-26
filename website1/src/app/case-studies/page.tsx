@@ -107,7 +107,7 @@ export default function CaseStudiesPage() {
 
       <Section tone="muted" aria-labelledby="featured-case-study">
         <div className="mx-auto max-w-4xl">
-          <Badge tone="success">Featured Case Study</Badge>
+          <Badge tone="pass">Featured Case Study</Badge>
           <h2 id="featured-case-study" className="mt-4 text-3xl font-bold text-white sm:text-4xl">
             Legacy ERP Migration for a Global Logistics Provider
           </h2>
