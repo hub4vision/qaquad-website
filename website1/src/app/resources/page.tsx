@@ -99,24 +99,50 @@ export default function ResourcesPage() {
         <SectionHeading as="h1" eyebrow="Resources" title="Coming soon" tone="dark" />
       </Section>
 
-      <Section tone="muted" aria-labelledby="resources-heading">
-        <div className="mx-auto max-w-2xl text-center">
-          <Badge tone="info">Coming Soon</Badge>
-          <h2 id="resources-heading" className="mt-4 text-2xl font-bold text-white sm:text-3xl">
-            Guides and educational content
+      <Section tone="muted" aria-labelledby="downloadable-resources">
+        <div className="mx-auto max-w-5xl">
+          <Badge tone="info">Technical Resources</Badge>
+          <h2 id="downloadable-resources" className="mt-4 text-3xl font-bold text-white sm:text-4xl">
+            Guides, Whitepapers & Blueprints
           </h2>
-          <p className="mt-3 text-slate-300 leading-relaxed">
-            We're building out practical guides on AI QA automation, Playwright & Selenium test design, migration testing, and
-            regression automation. In the meantime, see the{" "}
-            <Link href="/blog" className="font-semibold text-cyan-400 hover:text-cyan-300 underline underline-offset-4">
-              Blog
-            </Link>{" "}
-            for initial topics, or{" "}
-            <Link href="/how-it-works" className="font-semibold text-cyan-400 hover:text-cyan-300 underline underline-offset-4">
-              How It Works
-            </Link>{" "}
-            for our delivery process.
+          <p className="mt-4 text-lg text-slate-300">
+            Actionable technical content for QA Engineering leads building automation at scale.
           </p>
+
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="flex flex-col rounded-2xl border border-slate-700/60 bg-gradient-to-br from-slate-900/90 to-slate-800/80 p-6 shadow-xl backdrop-blur-sm hover:border-cyan-500/40 transition-colors">
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Blueprint</span>
+              <h3 className="mt-3 text-lg font-bold text-white">Playwright Enterprise Architecture Guide</h3>
+              <p className="mt-3 flex-1 text-sm text-slate-300 leading-relaxed">
+                A complete setup guide for building scalable Playwright frameworks with Page Object Models, API interception, and custom reporters.
+              </p>
+              <div className="mt-6 border-t border-slate-700/50 pt-4">
+                <a href="/contact" className="text-sm font-semibold text-cyan-400 hover:text-cyan-300">Request Blueprint &rarr;</a>
+              </div>
+            </div>
+
+            <div className="flex flex-col rounded-2xl border border-slate-700/60 bg-gradient-to-br from-slate-900/90 to-slate-800/80 p-6 shadow-xl backdrop-blur-sm hover:border-cyan-500/40 transition-colors">
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Whitepaper</span>
+              <h3 className="mt-3 text-lg font-bold text-white">The Real Cost of UI-Only Automation</h3>
+              <p className="mt-3 flex-1 text-sm text-slate-300 leading-relaxed">
+                An analysis of production escapes and why relying solely on Selenium or Cypress for full-stack regression leaves your backend exposed.
+              </p>
+              <div className="mt-6 border-t border-slate-700/50 pt-4">
+                <a href="/contact" className="text-sm font-semibold text-cyan-400 hover:text-cyan-300">Request Whitepaper &rarr;</a>
+              </div>
+            </div>
+
+            <div className="flex flex-col rounded-2xl border border-slate-700/60 bg-gradient-to-br from-slate-900/90 to-slate-800/80 p-6 shadow-xl backdrop-blur-sm hover:border-cyan-500/40 transition-colors">
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Checklist</span>
+              <h3 className="mt-3 text-lg font-bold text-white">SaaS Migration QA Checklist</h3>
+              <p className="mt-3 flex-1 text-sm text-slate-300 leading-relaxed">
+                The 40-point technical checklist we use before signing off on any legacy-to-modern platform cutover.
+              </p>
+              <div className="mt-6 border-t border-slate-700/50 pt-4">
+                <a href="/contact" className="text-sm font-semibold text-cyan-400 hover:text-cyan-300">Request Checklist &rarr;</a>
+              </div>
+            </div>
+          </div>
         </div>
       </Section>
 

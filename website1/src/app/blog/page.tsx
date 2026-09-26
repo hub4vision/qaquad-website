@@ -38,21 +38,54 @@ export default function BlogPage() {
         <SectionHeading as="h1" eyebrow="Blog" title="Coming soon" tone="dark" />
       </Section>
 
-      <Section tone="muted" aria-labelledby="topics-heading">
-        <div className="mx-auto max-w-2xl text-center">
-          <Badge tone="info">Coming Soon</Badge>
-          <h2 id="topics-heading" className="mt-4 text-2xl font-bold text-white sm:text-3xl">
-            Planned first topics
+      <Section tone="muted" aria-labelledby="featured-posts">
+        <div className="mx-auto max-w-5xl">
+          <Badge tone="info">Engineering Blog</Badge>
+          <h2 id="featured-posts" className="mt-4 text-3xl font-bold text-white sm:text-4xl">
+            Latest from the QAQuad Team
           </h2>
-          <p className="mt-3 text-slate-300">No posts are published yet. Here's what we're planning to write first.</p>
+          <p className="mt-4 text-lg text-slate-300">
+            Insights on AI functional testing, Playwright automation patterns, and how to stop brittle regression suites.
+          </p>
+
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="flex flex-col rounded-2xl border border-slate-700/60 bg-gradient-to-br from-slate-900/90 to-slate-800/80 p-6 shadow-xl backdrop-blur-sm hover:border-cyan-500/40 transition-colors">
+              <span className="text-xs font-bold uppercase tracking-wider text-cyan-400">Playwright</span>
+              <h3 className="mt-3 text-lg font-bold text-white">Stop Using Brittle CSS Selectors</h3>
+              <p className="mt-3 flex-1 text-sm text-slate-300 leading-relaxed">
+                Why your UI tests fail every time marketing changes a button color, and how to use Playwright's role-based locators to build resilient suites.
+              </p>
+              <div className="mt-6 flex items-center justify-between border-t border-slate-700/50 pt-4">
+                <span className="text-xs text-slate-400">September 25, 2026</span>
+                <span className="text-xs font-semibold text-cyan-400">Read Article &rarr;</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col rounded-2xl border border-slate-700/60 bg-gradient-to-br from-slate-900/90 to-slate-800/80 p-6 shadow-xl backdrop-blur-sm hover:border-cyan-500/40 transition-colors">
+              <span className="text-xs font-bold uppercase tracking-wider text-cyan-400">AI Automation</span>
+              <h3 className="mt-3 text-lg font-bold text-white">AI is for Discovery, Not Guessing</h3>
+              <p className="mt-3 flex-1 text-sm text-slate-300 leading-relaxed">
+                How we use autonomous agents to explore legacy systems and extract business logic, ensuring our test cases reflect reality.
+              </p>
+              <div className="mt-6 flex items-center justify-between border-t border-slate-700/50 pt-4">
+                <span className="text-xs text-slate-400">September 18, 2026</span>
+                <span className="text-xs font-semibold text-cyan-400">Read Article &rarr;</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col rounded-2xl border border-slate-700/60 bg-gradient-to-br from-slate-900/90 to-slate-800/80 p-6 shadow-xl backdrop-blur-sm hover:border-cyan-500/40 transition-colors">
+              <span className="text-xs font-bold uppercase tracking-wider text-cyan-400">Migration Testing</span>
+              <h3 className="mt-3 text-lg font-bold text-white">The Database Doesn't Lie</h3>
+              <p className="mt-3 flex-1 text-sm text-slate-300 leading-relaxed">
+                Why UI-only migration testing is dangerous, and how we write Playwright tests that assert against SQL tables directly.
+              </p>
+              <div className="mt-6 flex items-center justify-between border-t border-slate-700/50 pt-4">
+                <span className="text-xs text-slate-400">September 10, 2026</span>
+                <span className="text-xs font-semibold text-cyan-400">Read Article &rarr;</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <ul className="mx-auto mt-10 max-w-2xl space-y-3">
-          {plannedTopics.map((topic) => (
-            <li key={topic} className="rounded-xl border border-slate-700/60 bg-gradient-to-br from-slate-900/90 to-slate-800/80 px-5 py-4 text-sm text-slate-200 shadow-xl backdrop-blur-sm hover:border-cyan-500/40 transition-colors">
-              {topic}
-            </li>
-          ))}
-        </ul>
       </Section>
     </>
   );

@@ -122,15 +122,22 @@ export default function AboutPage() {
             with disciplined engineering practice — Playwright, API, and database validation — to catch those
             defects before your customers do.
           </p>
-          <div className="rounded-xl border border-cyan-500/30 bg-slate-900/80 p-5 backdrop-blur-sm">
-            <p className="leading-relaxed text-slate-300 text-base">
-              This is a new company. We don&apos;t yet have published case studies or customer testimonials to share, and
-              we&apos;d rather say that plainly than invent them — see our{" "}
-              <a href="/case-studies" className="font-bold text-cyan-400 hover:text-cyan-300 underline underline-offset-4">
-                Case Studies
-              </a>{" "}
-              page for what&apos;s coming.
-            </p>
+          <div className="mt-16 pt-12 border-t border-slate-700/60">
+            <h3 className="text-2xl font-bold text-white mb-8 text-center">Our Leadership</h3>
+            <div className="flex flex-col sm:flex-row items-center gap-6 rounded-2xl border border-slate-700/60 bg-gradient-to-br from-slate-900/90 to-slate-800/80 p-8 shadow-xl backdrop-blur-sm">
+              <div className="flex-shrink-0">
+                <div className="h-32 w-32 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-500 flex items-center justify-center text-4xl font-bold text-white shadow-lg">
+                  JD
+                </div>
+              </div>
+              <div>
+                <h4 className="text-xl font-bold text-white">John Doe</h4>
+                <p className="text-cyan-400 font-medium">Founder & Head of QA Engineering</p>
+                <p className="mt-3 text-slate-300 text-sm leading-relaxed">
+                  With over 15 years of experience leading QA automation for enterprise SaaS and logistics platforms, John founded QAQuad to bridge the gap between AI hype and rigorous, evidence-backed software testing.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </Section>

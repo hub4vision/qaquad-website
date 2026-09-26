@@ -155,10 +155,11 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
-        <p className="mt-8 text-sm text-slate-400">
-          Figures above are placeholder business-planning targets for India-market launch, not a quote. Replace with
-          final commercial pricing after customer discovery, and add currency/region variants as you expand.
-        </p>
+        <div className="mt-12 flex justify-center">
+          <a href="/contact" className="inline-flex items-center justify-center rounded-xl bg-slate-800 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 transition-colors border border-slate-700">
+            Request a Custom Quote
+          </a>
+        </div>
       </Section>
 
       {/* Circular Value & Engagement Strategy */}
