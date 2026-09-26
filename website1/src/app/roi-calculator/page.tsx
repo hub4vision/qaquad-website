@@ -56,7 +56,7 @@ export default function ROICalculatorPage() {
   
   return (
     <main className="min-h-screen pt-24 pb-16">
-      <Section background="light">
+      <Section>
         <SectionHeading
           title="Interactive QA ROI Calculator"
           description="Discover how much time and money your team can save by switching to QA Quad's AI-driven testing."

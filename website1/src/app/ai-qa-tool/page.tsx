@@ -216,9 +216,9 @@ export default function AiQaToolPage() {
         <CircularProcessGraph
           sectionEyebrow="Engine Architecture"
           sectionTitle="AI-QA TOOL ENGINE STRATEGY"
-          sectiondescription="A closed-loop autonomous system connecting predictive risk modeling, runtime self-healing, multi-agent execution, and root-cause evidence."
+          sectionSubtitle="A closed-loop autonomous system connecting predictive risk modeling, runtime self-healing, multi-agent execution, and root-cause evidence."
           centerTitle="QAQuad"
-          centerdescription="Engine Core"
+          centerSubtitle="Engine Core"
           pillars={toolStrategyPillars}
         />
       </Section>

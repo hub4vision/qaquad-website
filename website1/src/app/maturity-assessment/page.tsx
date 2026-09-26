@@ -105,11 +105,11 @@ export default function MaturityAssessmentPage() {
               </div>
 
               <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-8">
-                {questions[currentStep].question}
+                {questions[currentStep]?.question}
               </h2>
 
               <div className="space-y-4">
-                {questions[currentStep].options.map((opt, idx) => (
+                {questions[currentStep]?.options.map((opt, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSelect(opt.score)}

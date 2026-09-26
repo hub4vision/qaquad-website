@@ -156,9 +156,9 @@ export default function TestAutomationPage() {
         <CircularProcessGraph
           sectionEyebrow="Agile Quality Engineering Strategy"
           sectionTitle="OUR AUTOMATION STRATEGY"
-          sectiondescription="Connecting agile development, domain expertise, and multi-layer validation into one seamless release loop."
+          sectionSubtitle="Connecting agile development, domain expertise, and multi-layer validation into one seamless release loop."
           centerTitle="QAQuad"
-          centerdescription="Automation Loop"
+          centerSubtitle="Automation Loop"
           pillars={testAutomationPillars}
         />
       </Section>

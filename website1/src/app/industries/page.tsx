@@ -86,9 +86,9 @@ export default function IndustriesPage() {
         <CircularProcessGraph
           sectionEyebrow="Domain-Specific Engineering"
           sectionTitle="INDUSTRY VALIDATION STRATEGY"
-          sectiondescription="Targeted automation testing adapted to the unique regulatory, transactional, and architectural challenges of each sector."
+          sectionSubtitle="Targeted automation testing adapted to the unique regulatory, transactional, and architectural challenges of each sector."
           centerTitle="QAQuad"
-          centerdescription="Domain Core"
+          centerSubtitle="Domain Core"
           pillars={industryStrategyPillars}
         />
       </Section>

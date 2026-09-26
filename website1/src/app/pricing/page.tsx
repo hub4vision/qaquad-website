@@ -166,9 +166,9 @@ export default function PricingPage() {
         <CircularProcessGraph
           sectionEyebrow="Transparent Commitment"
           sectionTitle="OUR ENGAGEMENT STRATEGY"
-          sectiondescription="Quality engineering priced with predictable milestones, complete IP handover, and evidence-backed deliverables."
+          sectionSubtitle="Quality engineering priced with predictable milestones, complete IP handover, and evidence-backed deliverables."
           centerTitle="QAQuad"
-          centerdescription="Value Model"
+          centerSubtitle="Value Model"
           pillars={pricingStrategyPillars}
         />
       </Section>

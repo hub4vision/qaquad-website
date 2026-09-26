@@ -67,7 +67,7 @@ export default function StackComparisonPage() {
     }
   };
 
-  const activeData = comparisonData[selectedStack];
+  const activeData = comparisonData[selectedStack as keyof typeof comparisonData];
 
   return (
     <div className="min-h-screen bg-white pt-24 pb-16">

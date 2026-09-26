@@ -40,7 +40,7 @@ export default function SelfHealingDemoPage() {
       <Section>
         <div className="text-center mb-12">
           <SectionHeading
-            title={<span className="text-white">Self-Healing Locator Simulator</span>}
+            title="Self-Healing Locator Simulator"
             description="Watch how QA Quad's AI agent handles dynamic DOM changes that break traditional automation."
             align="center"
           />

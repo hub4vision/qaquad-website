@@ -125,9 +125,9 @@ export default function ResourcesPage() {
         <CircularProcessGraph
           sectionEyebrow="Knowledge Framework"
           sectionTitle="QA ENGINEERING PLAYBOOKS"
-          sectiondescription="Curated architecture guides, code templates, and automation patterns derived from production QA deployments."
+          sectionSubtitle="Curated architecture guides, code templates, and automation patterns derived from production QA deployments."
           centerTitle="QAQuad"
-          centerdescription="Knowledge Hub"
+          centerSubtitle="Knowledge Hub"
           pillars={resourceStrategyPillars}
         />
       </Section>

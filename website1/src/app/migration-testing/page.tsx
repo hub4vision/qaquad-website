@@ -144,9 +144,9 @@ export default function MigrationTestingPage() {
         <CircularProcessGraph
           sectionEyebrow="Legacy-to-New Transformation Strategy"
           sectionTitle="OUR MIGRATION STRATEGY"
-          sectiondescription="Ensuring no business logic, data rules, or calculations are silently dropped during replatforming."
+          sectionSubtitle="Ensuring no business logic, data rules, or calculations are silently dropped during replatforming."
           centerTitle="QAQuad"
-          centerdescription="Migration Core"
+          centerSubtitle="Migration Core"
           pillars={migrationStrategyPillars}
         />
       </Section>

@@ -103,9 +103,9 @@ export default function AboutPage() {
         <CircularProcessGraph
           sectionEyebrow="Engineering Philosophy"
           sectionTitle="OUR CORE STRATEGY & VALUES"
-          sectiondescription="How disciplined QA engineering, evidence-backed verification, and intelligent AI combine to protect software releases."
+          sectionSubtitle="How disciplined QA engineering, evidence-backed verification, and intelligent AI combine to protect software releases."
           centerTitle="QAQuad"
-          centerdescription="Core Values"
+          centerSubtitle="Core Values"
           pillars={aboutPhilosophyPillars}
         />
       </Section>

@@ -88,9 +88,9 @@ export default function HowItWorksPage() {
         <CircularProcessGraph
           sectionEyebrow="Delivery Methodology"
           sectionTitle="OUR DELIVERY STRATEGY"
-          sectiondescription="Connecting agile development, intelligent exploration, and multi-layer verification into one continuous feedback loop."
+          sectionSubtitle="Connecting agile development, intelligent exploration, and multi-layer verification into one continuous feedback loop."
           centerTitle="QAQuad"
-          centerdescription="Delivery Loop"
+          centerSubtitle="Delivery Loop"
           pillars={deliveryStrategyPillars}
         />
       </Section>

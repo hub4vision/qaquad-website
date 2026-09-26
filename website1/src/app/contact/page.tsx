@@ -111,9 +111,9 @@ export default function ContactPage() {
         <CircularProcessGraph
           sectionEyebrow="Safe & Transparent"
           sectionTitle="OUR ASSESSMENT STRATEGY"
-          sectiondescription="A seamless, zero-risk pathway to discovering hidden functional gaps, measuring test coverage, and reviewing empirical bug evidence."
+          sectionSubtitle="A seamless, zero-risk pathway to discovering hidden functional gaps, measuring test coverage, and reviewing empirical bug evidence."
           centerTitle="QAQuad"
-          centerdescription="Assessment"
+          centerSubtitle="Assessment"
           pillars={assessmentPillars}
         />
       </Section>

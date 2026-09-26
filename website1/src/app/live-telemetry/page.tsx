@@ -50,11 +50,13 @@ export default function LiveTelemetryPage() {
         const now = new Date();
         const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
         
-        setLogs(prev => [...prev, { id: Date.now(), time: timeStr, type: event.type as any, message: event.message }]);
-        
-        if (event.type === 'success') setStats(s => ({ ...s, passed: s.passed + 1 }));
-        if (event.type === 'error') setStats(s => ({ ...s, failed: s.failed + 1 }));
-        if (event.type === 'warning') setStats(s => ({ ...s, healed: s.healed + 1 }));
+        if (event) {
+          setLogs(prev => [...prev, { id: Date.now(), time: timeStr, type: event.type as any, message: event.message }]);
+          
+          if (event.type === 'success') setStats(s => ({ ...s, passed: s.passed + 1 }));
+          if (event.type === 'error') setStats(s => ({ ...s, failed: s.failed + 1 }));
+          if (event.type === 'warning') setStats(s => ({ ...s, healed: s.healed + 1 }));
+        }
         
         setProgress(prev => prev + 1);
       }, Math.random() * 800 + 400); // Random delay between 400-1200ms

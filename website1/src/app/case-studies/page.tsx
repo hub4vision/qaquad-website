@@ -132,9 +132,9 @@ export default function CaseStudiesPage() {
         <CircularProcessGraph
           sectionEyebrow="Evidence-Driven"
           sectionTitle="CASE STUDY VALIDATION STRATEGY"
-          sectiondescription="How we evaluate client architectures, trace defects to root causes, and measure regression impact."
+          sectionSubtitle="How we evaluate client architectures, trace defects to root causes, and measure regression impact."
           centerTitle="QAQuad"
-          centerdescription="Validation Lab"
+          centerSubtitle="Validation Lab"
           pillars={caseStudyStrategyPillars}
         />
       </Section>

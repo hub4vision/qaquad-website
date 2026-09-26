@@ -111,9 +111,9 @@ export default function AiQaAgentPage() {
         <CircularProcessGraph
           sectionEyebrow="Multi-Agent Orchestration"
           sectionTitle="AGENT COORDINATION ARCHITECTURE"
-          sectiondescription="Specialized AI agents work in concert — discovering UI, validating APIs, verifying database transactions, and compiling evidence."
+          sectionSubtitle="Specialized AI agents work in concert — discovering UI, validating APIs, verifying database transactions, and compiling evidence."
           centerTitle="QAQuad"
-          centerdescription="Multi-Agent Hub"
+          centerSubtitle="Multi-Agent Hub"
           pillars={multiAgentPillars}
         />
       </Section>
