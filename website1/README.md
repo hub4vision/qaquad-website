@@ -101,14 +101,34 @@ Recommended before launch:
 
 ## Deployment (Vercel)
 
-1. Code has been pushed to GitHub (`hub4vision/qaquad-website.git`).
-2. If not already done, import the repository into your Vercel Dashboard.
-3. Set the environment variables below in Vercel Project Settings → Environment Variables.
-4. Vercel will automatically build and deploy the Next.js app on every push to the `main` branch.
-5. Point your domain at the Vercel project and update `NEXT_PUBLIC_SITE_URL` to match.
+The standard deployment process for this project follows a strict 4-step workflow: **Build > Publish > Push to GitHub > Deploy to Vercel**.
 
-Any other Node.js host that supports Next.js (`next build` + `next start`)
-works too.
+If you are deploying from your local Windows machine, you can run the following sequence:
+
+1. **Build locally** to ensure there are no TypeScript or Lint errors:
+   ```bash
+   npm run build
+   ```
+
+2. **Publish (Copy)** the updated files to your `Publish_Package` directory (e.g., if you maintain a separate Git repo for publishing):
+   ```bash
+   xcopy "d:\Testing\Website\website1\*" "d:\Testing\Website\Publish_Package\website1\" /S /Y
+   ```
+
+3. **Push to GitHub** from your Publish directory:
+   ```bash
+   cd D:\Testing\Website\Publish_Package
+   git add .
+   git commit -m "Deploy update"
+   git push
+   ```
+
+4. **Deploy to Vercel** to make the site live instantly:
+   ```bash
+   npx vercel --prod --yes
+   ```
+
+Once Vercel finishes the build process, the site will be live at your production URL (`https://www.qaquad.com/`).
 
 ## Testing
 

@@ -218,6 +218,18 @@ This codebase has been completely installed, built, and tested against live brow
 - [ ] Real Lighthouse / Core Web Vitals run against a deployed build
 - [ ] Bundle-size check (`next build` output) once installable
 
+## Deployment Process (Build > Publish > Push > Vercel)
+
+The live production deployment follows this strict 4-step sequence from a local Windows environment:
+
+1. **Build**: Run `npm run build` locally to verify there are no TypeScript or compilation errors.
+2. **Publish**: Copy the validated build files to the separate Publish directory:
+   `xcopy "d:\Testing\Website\website1\*" "d:\Testing\Website\Publish_Package\website1\" /S /Y`
+3. **Push to GitHub**: Commit the copied files and push them to the remote repository:
+   `git -C D:\Testing\Website\Publish_Package add . && git -C D:\Testing\Website\Publish_Package commit -m "Deploy" && git -C D:\Testing\Website\Publish_Package push`
+4. **Deploy to Vercel**: Run the Vercel CLI to push the site live instantly:
+   `npx vercel --prod --yes`
+
 ## Launch checklist (from the brief, annotated)
 
 - [x] Code pushed to GitHub (`hub4vision/qaquad-website.git`) and deployed to Vercel.
