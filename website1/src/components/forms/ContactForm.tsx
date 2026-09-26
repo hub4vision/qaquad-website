@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   companyTypeOptions,
   contactFormSchema,
@@ -29,11 +30,31 @@ const initialValues: ContactFormValues = {
 };
 
 export function ContactForm() {
+  return (
+    <Suspense fallback={<div className="h-[600px] animate-pulse rounded-xl bg-slate-100"></div>}>
+      <ContactFormInner />
+    </Suspense>
+  );
+}
+
+function ContactFormInner() {
+  const searchParams = useSearchParams();
+  const interest = searchParams?.get("interest");
+
   const [values, setValues] = useState<ContactFormValues>(initialValues);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [serverError, setServerError] = useState<string | null>(null);
   const hasStartedRef = useRef(false);
+
+  useEffect(() => {
+    if (interest) {
+      setValues((prev) => ({
+        ...prev,
+        message: `I am interested in: ${interest}\n\n`,
+      }));
+    }
+  }, [interest]);
 
   function handleFirstInteraction() {
     if (hasStartedRef.current) return;

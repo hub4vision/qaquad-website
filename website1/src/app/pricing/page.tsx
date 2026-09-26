@@ -152,6 +152,9 @@ export default function PricingPage() {
                   </li>
                 ))}
               </ul>
+              <div className="mt-6 border-t border-slate-700/50 pt-4">
+                <a href={`/contact?interest=${encodeURIComponent(pkg.name)}`} className="text-sm font-semibold text-cyan-400 hover:text-cyan-300">Request Quote &rarr;</a>
+              </div>
             </div>
           ))}
         </div>
