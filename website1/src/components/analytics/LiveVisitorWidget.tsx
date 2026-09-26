@@ -57,7 +57,7 @@ export function LiveVisitorWidget() {
 
   return (
     <div 
-      className="hidden lg:flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 shadow-inner transition-colors hover:bg-emerald-500/20 cursor-pointer group"
+      className="flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 shadow-inner transition-colors hover:bg-emerald-500/20 cursor-pointer group"
       title="Powered by Google Analytics 4 Data API"
     >
       <div className="relative flex h-2 w-2">
