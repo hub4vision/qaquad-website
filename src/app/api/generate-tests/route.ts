@@ -60,11 +60,11 @@ interface TestReportPayload {
 }
 
 const QA_SYSTEM_INSTRUCTION = `You are the QAQuad Autonomous QA & Test Execution Engine.
-Given a user's test scenario prompt or website URL (e.g., 'makemytrip.com flight booking', 'Stripe checkout flow', 'Healthcare portal HIPAA login'):
+Given a user's test scenario prompt or website URL (e.g., 'makemytrip.com flight booking', 'fedex.com tracking', 'amazon.com checkout', 'salesforce.com lead conversion', 'stripe.com payment'):
 You generate a comprehensive, multi-layer QA Evidence Dossier formatted strictly as a JSON object adhering to the specified schema.
 
 Follow these strict QA engineering principles:
-1. Target Analysis: Extract the clean URL, host domain, industry category (e.g. Travel OTA, E-Commerce, FinTech, Healthcare, Enterprise SaaS, CRM), and specific workflow name.
+1. Target Analysis: Extract the clean URL, host domain, industry category (e.g. Travel OTA, E-Commerce, FinTech, Healthcare, Enterprise SaaS, CRM, Logistics, Hospitality), and specific workflow name.
 2. Step-by-Step Timeline: Generate 6 to 9 realistic browser automation steps with real CSS/XPath/role selectors, step durations in ms, action types, and notes on self-healing fallback selectors.
 3. Network & API Telemetry: Generate 3 to 5 realistic REST/GraphQL network calls with HTTP method, realistic endpoint URLs, latency (ms), JSON payload summary, and schema validation flags.
 4. Database & State Integrity: Generate 2 to 3 backend SQL verification queries with expected vs actual state values proving zero state drift.
@@ -156,15 +156,44 @@ function generateSyntheticQADossier(cleanPrompt: string): TestReportPayload {
   if (
     lowerPrompt.includes("makemytrip") ||
     lowerPrompt.includes("flight") ||
-    lowerPrompt.includes("hotel") ||
     lowerPrompt.includes("travel") ||
-    lowerPrompt.includes("booking") ||
     lowerPrompt.includes("ticket")
   ) {
     category = "Travel & OTA (Online Travel Agency)";
     contextName = "Flight Search, Fare Calculation & Booking Engine";
     currencySymbol = lowerPrompt.includes("del") || lowerPrompt.includes("bom") || lowerPrompt.includes(".in") ? "₹" : "$";
     defaultFlow = "Travel Itinerary Reservation";
+  } else if (
+    lowerPrompt.includes("booking.com") ||
+    lowerPrompt.includes("airbnb") ||
+    lowerPrompt.includes("hotel") ||
+    lowerPrompt.includes("stay")
+  ) {
+    category = "Hospitality & Travel Technology";
+    contextName = "Dynamic Room Inventory, Date Matrix & Tax Quote";
+    defaultFlow = "Hotel Reservation Flow";
+  } else if (
+    lowerPrompt.includes("fedex") ||
+    lowerPrompt.includes("dhl") ||
+    lowerPrompt.includes("tracking") ||
+    lowerPrompt.includes("waybill") ||
+    lowerPrompt.includes("shipment") ||
+    lowerPrompt.includes("logistics")
+  ) {
+    category = "Supply Chain & Logistics";
+    contextName = "Real-Time Waybill Tracking & Warehouse Dispatch Sync";
+    defaultFlow = "Logistics Milestone Audit";
+  } else if (
+    lowerPrompt.includes("salesforce") ||
+    lowerPrompt.includes("hubspot") ||
+    lowerPrompt.includes("crm") ||
+    lowerPrompt.includes("lead") ||
+    lowerPrompt.includes("pipeline") ||
+    lowerPrompt.includes("opportunity")
+  ) {
+    category = "ERP & CRM Systems";
+    contextName = "Lead Capture, Opportunity Progression & Ledger Audit";
+    defaultFlow = "Sales Pipeline Progression";
   } else if (
     lowerPrompt.includes("cart") ||
     lowerPrompt.includes("checkout") ||
@@ -189,16 +218,19 @@ function generateSyntheticQADossier(cleanPrompt: string): TestReportPayload {
     contextName = "Payment Authorization, Idempotency & Ledger Audit";
     defaultFlow = "Financial Transaction";
   } else if (
+    lowerPrompt.includes("jira") ||
+    lowerPrompt.includes("atlassian") ||
+    lowerPrompt.includes("slack") ||
     lowerPrompt.includes("auth") ||
     lowerPrompt.includes("login") ||
     lowerPrompt.includes("signup") ||
-    lowerPrompt.includes("rbac") ||
-    lowerPrompt.includes("permission")
+    lowerPrompt.includes("sso")
   ) {
-    category = "Identity & Access Management (IAM)";
-    contextName = "Authentication, MFA & Role-Based Access Control";
-    defaultFlow = "User Authentication";
+    category = "SaaS & Cloud Platforms";
+    contextName = "Multi-Tenant Authentication & SAML SSO Workspace";
+    defaultFlow = "User Access & Provisioning";
   } else if (
+    lowerPrompt.includes("practo") ||
     lowerPrompt.includes("patient") ||
     lowerPrompt.includes("health") ||
     lowerPrompt.includes("doctor") ||
@@ -354,58 +386,131 @@ function generateSyntheticQADossier(cleanPrompt: string): TestReportPayload {
         passed: true,
       }
     );
-  } else if (category.startsWith("Healthcare")) {
+  } else if (category.startsWith("Supply Chain")) {
     steps.push(
       {
         id: "step-1",
         stepNumber: 1,
-        title: "Access Patient Telehealth Portal",
+        title: "Access Global Waybill Tracking Portal",
         action: "NAVIGATE",
         locator: `page.goto('${displayUrl}')`,
-        durationMs: 310,
+        durationMs: 290,
         status: "PASSED",
-        details: `Loaded ${targetHost}. Verified TLS 1.3 encryption and HSTS headers.`,
+        details: `Resolved ${targetHost}. Tracking console ready.`,
       },
       {
         id: "step-2",
         stepNumber: 2,
-        title: "Acknowledge HIPAA Privacy & Telehealth Consent Modal",
-        action: "CLICK",
-        locator: `input[name="hipaa_consent"], [data-testid="hipaa-agree"]`,
-        durationMs: 180,
+        title: "Input Tracking Barcode / Master Air Waybill (AWB)",
+        action: "INPUT",
+        locator: `input[name="trackingNumber"], #trackingInput, [placeholder*="Tracking"]`,
+        durationMs: 380,
         status: "PASSED",
-        details: "Explicit consent registered with timestamp and IP fingerprint.",
-        selfHealingUsed: true,
+        details: "Entered AWB: '794648529124'. Verified format check against carrier regex standard.",
       },
       {
         id: "step-3",
         stepNumber: 3,
-        title: "Select Medical Specialty & Provider Schedule",
+        title: "Query Transit Milestones & Telemetry Feed",
         action: "CLICK",
-        locator: `.specialty-card:has-text("Cardiology"), [data-provider-id="doc_889"]`,
-        durationMs: 290,
+        locator: `button[type="submit"], #btnTrack, button:has-text("Track")`,
+        durationMs: 470,
         status: "PASSED",
-        details: "Filtered by Board Certified Specialists. Available consultation slots loaded.",
+        details: "Dispatched query. Intercepted carrier telemetry feed with 4 transit checkpoints.",
       },
       {
         id: "step-4",
         stepNumber: 4,
-        title: "Verify Insurance Eligibility & Co-Pay Calculation",
-        action: "API_INTERCEPT",
-        locator: `/api/v1/insurance/verify-eligibility`,
-        durationMs: 240,
+        title: "Assert Estimated Delivery Date & Proof of Custody",
+        action: "ASSERTION",
+        locator: `.delivery-status__banner, [data-status="IN_TRANSIT"]`,
+        durationMs: 160,
         status: "PASSED",
-        details: "Eligibility verified with payer gateway. Co-Pay calculated to exact $30.00 tier.",
+        details: "Delivery window calculated. Verified signature confirmation requirements.",
       },
       {
         id: "step-5",
         stepNumber: 5,
-        title: "Confirm Appointment Slot & Encrypted Video Link",
-        action: "ASSERTION",
-        locator: `.appointment-confirmation, [data-status="SCHEDULED"]`,
+        title: "Verify Warehouse Inventory Sync via Event Webhook",
+        action: "API_INTERCEPT",
+        locator: `/api/v1/shipments/events`,
         durationMs: 190,
         status: "PASSED",
-        details: "Encounter booked. Telehealth room token generated with end-to-end WebRTC encryption.",
+        details: "Event dispatched: 'CUSTOMS_CLEARED'. Warehouse inventory queue synchronized.",
+      }
+    );
+
+    networkLogs.push(
+      {
+        id: "net-1",
+        method: "GET",
+        url: `${displayUrl}/api/v2/tracking/794648529124`,
+        status: 200,
+        latencyMs: 195,
+        payloadSummary: '{"awb":"794648529124","status":"IN_TRANSIT","destination":"ORD","eta":"2026-09-29T16:00:00Z"}',
+        schemaValid: true,
+      },
+      {
+        id: "net-2",
+        method: "POST",
+        url: `${displayUrl}/api/v1/webhooks/carrier-event`,
+        status: 200,
+        latencyMs: 140,
+        payloadSummary: '{"event":"SCAN_ARRIVAL","facility":"MEM_HUB","temperature":"21C"}',
+        schemaValid: true,
+      }
+    );
+
+    dbChecks.push(
+      {
+        table: "shipment_milestones",
+        query: "SELECT awb, last_scan_location, transit_status FROM shipment_milestones WHERE awb = '794648529124';",
+        expected: "794648529124 | MEM_HUB | IN_TRANSIT",
+        actual: "794648529124 | MEM_HUB | IN_TRANSIT",
+        passed: true,
+      }
+    );
+  } else if (category.startsWith("ERP")) {
+    steps.push(
+      {
+        id: "step-1",
+        stepNumber: 1,
+        title: "Load CRM Workspace & Authenticate Session",
+        action: "NAVIGATE",
+        locator: `page.goto('${displayUrl}')`,
+        durationMs: 310,
+        status: "PASSED",
+        details: `Loaded ${targetHost}. Session token verified.`,
+      },
+      {
+        id: "step-2",
+        stepNumber: 2,
+        title: "Capture Inbound Lead & Validate Enrichment Fields",
+        action: "INPUT",
+        locator: `input[name="lead_company"], input[name="lead_email"]`,
+        durationMs: 420,
+        status: "PASSED",
+        details: "Entered lead data for Acme Corp. Auto-enrichment populated ARR estimate ($120k).",
+      },
+      {
+        id: "step-3",
+        stepNumber: 3,
+        title: "Advance Opportunity Stage to 'Closed-Won'",
+        action: "CLICK",
+        locator: `[data-stage="Closed-Won"], button:has-text("Convert Lead")`,
+        durationMs: 510,
+        status: "PASSED",
+        details: "Triggered state machine transition. Validated mandatory closing notes & contract upload.",
+      },
+      {
+        id: "step-4",
+        stepNumber: 4,
+        title: "Assert Automated Invoice & ERP General Ledger Update",
+        action: "API_INTERCEPT",
+        locator: `/api/v2/erp/ledger/post-entry`,
+        durationMs: 230,
+        status: "PASSED",
+        details: "Invoice #INV-2026-901 generated. Accounts Receivable debited $120,000.00 without rounding errors.",
       }
     );
 
@@ -413,34 +518,99 @@ function generateSyntheticQADossier(cleanPrompt: string): TestReportPayload {
       {
         id: "net-1",
         method: "POST",
-        url: `${displayUrl}/api/v1/insurance/verify-eligibility`,
+        url: `${displayUrl}/api/v1/leads/convert`,
         status: 200,
-        latencyMs: 240,
-        payloadSummary: '{"memberId":"MBR-90412","payerCode":"BCBS","coPay":30.00,"status":"ELIGIBLE"}',
+        latencyMs: 310,
+        payloadSummary: '{"leadId":"lead_992","convertedAccountId":"acc_441","dealValue":120000.00}',
         schemaValid: true,
       },
       {
         id: "net-2",
         method: "POST",
-        url: `${displayUrl}/api/v1/appointments/schedule`,
+        url: `${displayUrl}/api/v2/erp/ledger/post-entry`,
         status: 201,
-        latencyMs: 190,
-        payloadSummary: '{"appointmentId":"apt_99182","providerId":"doc_889","slot":"2026-09-28T10:00:00Z"}',
+        latencyMs: 185,
+        payloadSummary: '{"journalEntryId":"je_7881","account":"1100-AR","amount":120000.00,"currency":"USD"}',
         schemaValid: true,
       }
     );
 
     dbChecks.push(
       {
-        table: "encounters",
-        query: "SELECT encounter_id, patient_id, copay_amount, status FROM encounters WHERE encounter_id = 'apt_99182';",
-        expected: "apt_99182 | pt_4401 | 30.00 | CONFIRMED",
-        actual: "apt_99182 | pt_4401 | 30.00 | CONFIRMED",
+        table: "crm_opportunities",
+        query: "SELECT opp_id, stage, deal_amount, is_closed FROM opportunities WHERE opp_id = 'opp_acme_2026';",
+        expected: "opp_acme_2026 | Closed-Won | 120000.00 | TRUE",
+        actual: "opp_acme_2026 | Closed-Won | 120000.00 | TRUE",
+        passed: true,
+      }
+    );
+  } else if (category.startsWith("Hospitality")) {
+    steps.push(
+      {
+        id: "step-1",
+        stepNumber: 1,
+        title: "Connect to Hotel Booking Engine",
+        action: "NAVIGATE",
+        locator: `page.goto('${displayUrl}')`,
+        durationMs: 270,
+        status: "PASSED",
+        details: `Resolved ${targetHost}. Localization & currency set.`,
+      },
+      {
+        id: "step-2",
+        stepNumber: 2,
+        title: "Query Destination & Check-in / Check-out Dates",
+        action: "INPUT",
+        locator: `input[name="destination"], [data-calendar-picker]`,
+        durationMs: 390,
+        status: "PASSED",
+        details: "Destination: 'London (Central)'. Stay: 3 Nights (2 Adults).",
+      },
+      {
+        id: "step-3",
+        stepNumber: 3,
+        title: "Filter by 'Free Cancellation' & 'Breakfast Included'",
+        action: "CLICK",
+        locator: `input[data-filter="free_cancellation"], [data-filter="breakfast"]`,
+        durationMs: 220,
+        status: "PASSED",
+        details: "Applied amenity filters. 28 matching properties returned.",
+      },
+      {
+        id: "step-4",
+        stepNumber: 4,
+        title: "Assert Room Tax Math: Nightly Rate * 3 + City Tax",
+        action: "API_INTERCEPT",
+        locator: `/api/v3/hotels/price-summary`,
+        durationMs: 170,
+        status: "PASSED",
+        details: "Verified exact VAT and municipality tax breakdown with zero discrepancies.",
+      }
+    );
+
+    networkLogs.push(
+      {
+        id: "net-1",
+        method: "POST",
+        url: `${displayUrl}/api/v3/hotels/search`,
+        status: 200,
+        latencyMs: 380,
+        payloadSummary: '{"city":"London","nights":3,"guests":2,"resultsCount":28}',
+        schemaValid: true,
+      }
+    );
+
+    dbChecks.push(
+      {
+        table: "hotel_reservations",
+        query: "SELECT booking_id, nights, total_with_tax, status FROM reservations WHERE booking_id = 'bk_lon_992';",
+        expected: "bk_lon_992 | 3 | 540.00 | HELD",
+        actual: "bk_lon_992 | 3 | 540.00 | HELD",
         passed: true,
       }
     );
   } else {
-    // General E-Commerce or Enterprise Workflow
+    // E-Commerce / SaaS / FinTech Default
     steps.push(
       {
         id: "step-1",

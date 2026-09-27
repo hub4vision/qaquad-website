@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Section } from "@/components/ui/Section";
-import { SectionHeading } from "@/components/ui/SectionHeading";
 import { 
   Play, 
   Code, 
@@ -13,20 +12,18 @@ import {
   Activity, 
   Globe, 
   Database, 
-  Terminal, 
   Copy, 
   Check, 
   Download, 
   Cpu, 
   Layers, 
   Sparkles, 
-  Clock, 
   Zap, 
   RefreshCw,
-  ExternalLink,
-  Sliders,
   CheckCircle,
-  AlertTriangle
+  AlertTriangle,
+  Building2,
+  Briefcase
 } from "lucide-react";
 
 interface TestStep {
@@ -88,24 +85,52 @@ interface TestReportData {
 
 const PRESETS = [
   {
-    label: "✈️ MakeMyTrip Flight Search & Fare",
-    category: "Travel OTA",
+    label: "✈️ MakeMyTrip (Travel OTA)",
+    brand: "MakeMyTrip.com",
+    category: "Travel Technology",
     prompt: "Test makemytrip.com flight booking workflow from Delhi (DEL) to Mumbai (BOM) for tomorrow, verify non-stop filter, intercept fare quote API, and assert price calculation without currency drift."
   },
   {
-    label: "🛒 E-Commerce Checkout & Promo",
-    category: "Retail",
-    prompt: "Navigate to demo-store.example.com, add 'Wireless Noise-Canceling Headphones' to cart, apply coupon 'WELCOME20', and verify subtotal, taxes, and grand total in checkout."
+    label: "🛒 Amazon (E-Commerce Retail)",
+    brand: "Amazon.com",
+    category: "E-Commerce & Retail",
+    prompt: "Navigate to amazon.com, search for 'Wireless Noise-Canceling Headphones', add product to cart, apply coupon discount code, and verify subtotal, sales tax, and 1-Click checkout pipeline."
   },
   {
-    label: "🔐 SaaS Multi-Tenant Authentication",
-    category: "Enterprise IAM",
-    prompt: "Test user authentication and SSO login flow on app.enterprise-saas.com, verify MFA SMS challenge, check role-based permissions, and inspect JWT session token expiry."
+    label: "💳 Stripe (FinTech Payments)",
+    brand: "Stripe.com",
+    category: "FinTech & Payments",
+    prompt: "Execute payment gateway transaction on pay.stripe.com for $250.00, test idempotency headers, simulate 3D-Secure biometric challenge, and assert double-entry ledger audit log in SQL database."
   },
   {
-    label: "💳 FinTech Payment Transfer Flow",
-    category: "FinTech",
-    prompt: "Execute payment gateway transaction on pay.fintech-platform.io for $250.00, test idempotency headers, simulate 3D-Secure challenge, and assert ledger audit log in SQL database."
+    label: "☁️ Atlassian Jira (Cloud SaaS)",
+    brand: "Atlassian.net",
+    category: "SaaS & Cloud Platforms",
+    prompt: "Test user authentication and SAML SSO login on company.atlassian.net, verify MFA SMS challenge, check role-based permissions, and inspect JWT session token expiry across workspaces."
+  },
+  {
+    label: "📊 Salesforce (CRM & Pipeline)",
+    brand: "Salesforce.com",
+    category: "ERP & CRM Systems",
+    prompt: "Test lead capture and opportunity conversion on app.salesforce.com, verify stage progression from 'Prospecting' to 'Closed-Won', and assert SQL database triggers on account balance."
+  },
+  {
+    label: "🚚 FedEx (Supply Chain & Logistics)",
+    brand: "FedEx.com",
+    category: "Logistics & Supply Chain",
+    prompt: "Test real-time shipment waybill tracking on fedex.com for tracking number '794648529124', verify transit milestone timestamps, validate webhook event dispatch, and check warehouse inventory sync."
+  },
+  {
+    label: "🏥 Practo (Healthcare & Telehealth)",
+    brand: "Practo.com",
+    category: "Healthcare & Telehealth",
+    prompt: "Test doctor consultation scheduling on practo.com, verify HIPAA consent modal, select Cardiology slot, check insurance eligibility API response, and assert $30 co-pay calculation."
+  },
+  {
+    label: "🏨 Booking.com (Hospitality & Hotels)",
+    brand: "Booking.com",
+    category: "Hospitality & Travel",
+    prompt: "Test hotel reservation workflow on booking.com for 3 nights in London, apply free cancellation filter, verify dynamic room availability state, and assert local tourist tax calculations."
   }
 ];
 
@@ -201,7 +226,7 @@ export default function AiSandboxPage() {
             AI Test Sandbox &amp; Real-Time Report Generator
           </h1>
           <p className="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed max-w-3xl mx-auto">
-            Give any application URL or user story (e.g. <strong className="text-cyan-300 font-semibold">makemytrip.com</strong>, e-commerce stores, or SaaS tools). Watch the QAQuad autonomous engine generate executable Playwright tests, execute multi-layer verification, and produce a full QA Evidence Dossier in seconds.
+            Test any application URL or user story across major industries (<strong className="text-cyan-300 font-semibold">Travel, E-Commerce, FinTech, SaaS, CRM, Logistics, Healthcare</strong>). Watch QAQuad generate executable Playwright tests, execute multi-layer verification, and produce a complete QA Evidence Dossier in real-time.
           </p>
         </div>
 
@@ -224,9 +249,13 @@ export default function AiSandboxPage() {
           <div className="p-6 sm:p-8 space-y-6">
             {/* Presets Selector */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">
-                Quick-Test Presets (Click to Load):
-              </label>
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                  <Building2 size={15} className="text-cyan-400" />
+                  <span>Industry Presets (Click any big-brand sample to load):</span>
+                </label>
+                <span className="text-[11px] text-slate-400">8 Top Industries Supported</span>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
                 {PRESETS.map((preset, idx) => (
                   <button
@@ -235,12 +264,12 @@ export default function AiSandboxPage() {
                     onClick={() => setPrompt(preset.prompt)}
                     className={`text-left p-3 rounded-xl border text-xs transition-all duration-200 ${
                       prompt === preset.prompt
-                        ? "border-cyan-500 bg-cyan-950/50 text-cyan-200 shadow-md shadow-cyan-500/20"
+                        ? "border-cyan-500 bg-cyan-950/60 text-cyan-200 shadow-md shadow-cyan-500/25 ring-1 ring-cyan-500/50"
                         : "border-slate-800 bg-slate-950/50 text-slate-300 hover:border-slate-700 hover:bg-slate-800/60"
                     }`}
                   >
-                    <div className="font-bold truncate">{preset.label}</div>
-                    <div className="text-[11px] text-slate-400 mt-1">{preset.category}</div>
+                    <div className="font-bold truncate text-white">{preset.label}</div>
+                    <div className="text-[11px] text-cyan-400/90 font-mono mt-1">{preset.brand}</div>
                   </button>
                 ))}
               </div>
@@ -248,8 +277,9 @@ export default function AiSandboxPage() {
 
             {/* Prompt Textarea */}
             <div>
-              <label htmlFor="prompt-input" className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-                Your Test Scenario or Target URL Prompt:
+              <label htmlFor="prompt-input" className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2 flex items-center justify-between">
+                <span>Test Scenario Prompt or Target URL:</span>
+                <span className="text-[11px] text-slate-400 font-normal">Custom natural language supported</span>
               </label>
               <div className="relative">
                 <textarea
