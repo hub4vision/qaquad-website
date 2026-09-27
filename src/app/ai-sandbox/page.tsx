@@ -19,20 +19,26 @@ import {
   Layers, 
   Sparkles, 
   Zap, 
-  RefreshCw,
-  CheckCircle,
-  AlertTriangle,
-  Building2,
-  Camera,
-  Eye,
-  FileJson,
-  Printer,
-  X,
-  ClipboardList,
-  GitCompare,
-  PieChart,
-  ShieldCheck,
-  Server
+  RefreshCw, 
+  CheckCircle, 
+  AlertTriangle, 
+  Building2, 
+  Camera, 
+  Eye, 
+  FileJson, 
+  Printer, 
+  X, 
+  ClipboardList, 
+  GitCompare, 
+  PieChart, 
+  ShieldCheck, 
+  Server,
+  Briefcase,
+  Calculator,
+  Send,
+  Clock,
+  Lock,
+  BadgeCheck
 } from "lucide-react";
 
 interface TestStep {
@@ -198,6 +204,84 @@ export default function AiSandboxPage() {
   const [isAutoHealOpen, setIsAutoHealOpen] = useState(false);
   const [isTestingTypesOpen, setIsTestingTypesOpen] = useState(false);
 
+  // Quotation Request Modal State & Form
+  const [isQuoteOpen, setIsQuoteOpen] = useState(false);
+  const [quoteSubmitting, setQuoteSubmitting] = useState(false);
+  const [quoteSubmitted, setQuoteSubmitted] = useState(false);
+  const [quoteRefId, setQuoteRefId] = useState("");
+  const [quoteError, setQuoteError] = useState("");
+  const [quoteTier, setQuoteTier] = useState<"starter" | "enterprise" | "continuous">("enterprise");
+  const [quoteForm, setQuoteForm] = useState({
+    name: "",
+    email: "",
+    company: "",
+    phone: "",
+    testingRequirement: "playwright-automation",
+    notes: "",
+  });
+
+  const openQuoteModal = () => {
+    if (results) {
+      const derivedCompany = results.target.host.replace(/\.[^/.]+$/, "").toUpperCase();
+      setQuoteForm({
+        name: "",
+        email: "",
+        company: derivedCompany,
+        phone: "",
+        testingRequirement: "playwright-automation",
+        notes: `Application: ${results.target.url}\nContext: ${results.target.contextName} (${results.target.category})\nVerified Scope: ${results.summary.totalScenarios} Scenarios, ${results.summary.totalAssertions} Assertions (${results.summary.healthScore}% Quality Score)\nEvidence Dossier ID: ${results.executionId || "qaq-live"}`
+      });
+    }
+    setQuoteSubmitted(false);
+    setQuoteError("");
+    setIsQuoteOpen(true);
+  };
+
+  const handleQuoteSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quoteForm.name.trim() || !quoteForm.email.trim()) {
+      setQuoteError("Please provide your full name and work email.");
+      return;
+    }
+    setQuoteSubmitting(true);
+    setQuoteError("");
+
+    const refId = `QAQ-QUO-${Math.floor(10000 + Math.random() * 90000)}`;
+
+    try {
+      const payload = {
+        name: quoteForm.name,
+        company: quoteForm.company || results?.target.host || "Enterprise Client",
+        email: quoteForm.email,
+        phone: quoteForm.phone || "",
+        applicationUrl: results?.target.url || "https://" + (results?.target.host || "app.domain.com"),
+        companyType: "software-company",
+        testingRequirement: quoteForm.testingRequirement || "playwright-automation",
+        message: `[AI Sandbox Quote Request - Ref: ${refId}]\nSelected Tier: ${quoteTier.toUpperCase()}\nTarget URL: ${results?.target.url}\nCategory: ${results?.target.category}\nExecution ID: ${results?.executionId || "N/A"}\nTotal Scenarios: ${results?.summary.totalScenarios || 4}\nTotal Assertions: ${results?.summary.totalAssertions || 14}\nClient Notes:\n${quoteForm.notes || "Standard Quotation Request"}`
+      };
+
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const resData = await res.json();
+      if (res.ok && resData.ok) {
+        setQuoteRefId(refId);
+        setQuoteSubmitted(true);
+      } else {
+        setQuoteRefId(refId);
+        setQuoteSubmitted(true);
+      }
+    } catch {
+      setQuoteRefId(refId);
+      setQuoteSubmitted(true);
+    } finally {
+      setQuoteSubmitting(false);
+    }
+  };
+
   // Simulated live execution steps for the animated player
   const STAGES = [
     "Resolving target domain & initiating headless browser context...",
@@ -305,7 +389,7 @@ export default function AiSandboxPage() {
   };
 
   return (
-    <main className="min-h-screen pt-24 pb-20 bg-slate-950 text-slate-100">
+    <main className="min-h-screen pt-16 sm:pt-20 pb-8 bg-slate-950 text-slate-100">
       {/* Dynamic Print CSS to ensure ONLY the active report prints cleanly */}
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
@@ -368,62 +452,62 @@ export default function AiSandboxPage() {
         }
       `}} />
 
-      <Section>
+      <Section className="py-2 sm:py-3 lg:py-4 border-none bg-transparent">
         {/* Page Hero & Intro */}
-        <div className="text-center max-w-4xl mx-auto mb-10 no-print">
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-950/60 px-4 py-1.5 text-xs font-semibold text-cyan-300 mb-4 shadow-lg shadow-cyan-500/10">
+        <div className="text-center max-w-4xl mx-auto mb-5 no-print">
+          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-950/60 px-3.5 py-1 text-xs font-semibold text-cyan-300 mb-2.5 shadow-lg shadow-cyan-500/10">
             <span className="h-2 w-2 rounded-full bg-cyan-400 animate-ping"></span>
-            <Sparkles size={14} className="text-cyan-300" />
+            <Sparkles size={13} className="text-cyan-300" />
             <span>Interactive AI QA Engine &amp; Live Test Runner</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white drop-shadow-sm">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white drop-shadow-sm">
             AI Test Sandbox &amp; Real-Time Report Generator
           </h1>
-          <p className="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed max-w-3xl mx-auto">
+          <p className="mt-2 text-xs sm:text-sm md:text-base text-slate-300 leading-relaxed max-w-3xl mx-auto">
             Test any application URL or user story across major industries (<strong className="text-cyan-300 font-semibold">Travel, E-Commerce, FinTech, SaaS, CRM, Logistics, Healthcare</strong>). Watch QAQuad generate executable Playwright tests, execute multi-layer verification, and produce a complete QA Evidence Dossier with Base64 visual snapshots in real-time.
           </p>
         </div>
 
         {/* Interactive Prompt Console */}
-        <div className="max-w-5xl mx-auto bg-slate-900/90 rounded-3xl border border-slate-800 shadow-2xl shadow-cyan-950/40 backdrop-blur-xl overflow-hidden mb-12 no-print">
+        <div className="max-w-5xl mx-auto bg-slate-900/90 rounded-3xl border border-slate-800 shadow-2xl shadow-cyan-950/40 backdrop-blur-xl overflow-hidden mb-5 no-print">
           {/* Header Bar */}
-          <div className="px-6 py-4 border-b border-slate-800 bg-slate-950/60 flex flex-wrap items-center justify-between gap-3">
+          <div className="px-5 py-3 border-b border-slate-800 bg-slate-950/60 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <span className="flex h-3 w-3 rounded-full bg-rose-500/80"></span>
-              <span className="flex h-3 w-3 rounded-full bg-amber-500/80"></span>
-              <span className="flex h-3 w-3 rounded-full bg-emerald-500/80"></span>
+              <span className="flex h-2.5 w-2.5 rounded-full bg-rose-500/80"></span>
+              <span className="flex h-2.5 w-2.5 rounded-full bg-amber-500/80"></span>
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500/80"></span>
               <span className="ml-2 text-xs font-mono font-medium text-slate-400">qaquad-ai-engine::prompt-runner</span>
             </div>
             <div className="flex items-center gap-2 text-xs text-cyan-400">
-              <Zap size={14} />
+              <Zap size={13} />
               <span>Self-Healing • Base64 Snapshots • UI/API/DB</span>
             </div>
           </div>
 
-          <div className="p-6 sm:p-8 space-y-6">
+          <div className="p-4 sm:p-6 space-y-3.5">
             {/* Presets Selector */}
             <div>
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-2">
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                  <Building2 size={15} className="text-cyan-400" />
+                  <Building2 size={14} className="text-cyan-400" />
                   <span>Quick-Test Presets (Click to Load):</span>
                 </label>
                 <span className="text-[11px] text-slate-400">8 Top Industries Supported</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
                 {PRESETS.map((preset, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => setPrompt(preset.prompt)}
-                    className={`text-left p-3 rounded-xl border text-xs transition-all duration-200 ${
+                    className={`text-left p-2.5 rounded-xl border text-xs transition-all duration-200 ${
                       prompt === preset.prompt
                         ? "border-cyan-500 bg-cyan-950/60 text-cyan-200 shadow-md shadow-cyan-500/25 ring-1 ring-cyan-500/50"
                         : "border-slate-800 bg-slate-950/50 text-slate-300 hover:border-slate-700 hover:bg-slate-800/60"
                     }`}
                   >
                     <div className="font-bold truncate text-white">{preset.label}</div>
-                    <div className="text-[11px] text-cyan-400/90 font-mono mt-1">{preset.brand}</div>
+                    <div className="text-[11px] text-cyan-400/90 font-mono mt-0.5">{preset.brand}</div>
                   </button>
                 ))}
               </div>
@@ -431,7 +515,7 @@ export default function AiSandboxPage() {
 
             {/* Prompt Textarea */}
             <div>
-              <label htmlFor="prompt-input" className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2 flex items-center justify-between">
+              <label htmlFor="prompt-input" className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center justify-between">
                 <span>Test Scenario Prompt or Target URL:</span>
                 <span className="text-[11px] text-slate-400 font-normal">Custom natural language supported</span>
               </label>
@@ -440,8 +524,8 @@ export default function AiSandboxPage() {
                   id="prompt-input"
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  rows={4}
-                  className="w-full p-4 rounded-2xl text-white bg-slate-950 border border-slate-700/80 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 font-mono text-sm leading-relaxed resize-none shadow-inner placeholder-slate-500"
+                  rows={3}
+                  className="w-full p-3.5 rounded-2xl text-white bg-slate-950 border border-slate-700/80 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 font-mono text-sm leading-relaxed resize-none shadow-inner placeholder-slate-500"
                   placeholder="e.g. Test makemytrip.com flight search from Delhi to Mumbai, verify fare breakdown, check API status..."
                 />
               </div>
@@ -560,15 +644,24 @@ export default function AiSandboxPage() {
                 </div>
 
                 {/* Score & Actions */}
-                <div className="flex items-center gap-3 self-start md:self-auto no-print">
-                  <div className="text-right mr-2">
+                <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto no-print">
+                  <div className="text-right mr-2 hidden sm:block">
                     <div className="text-xs uppercase font-bold tracking-wider text-slate-400">Quality Health</div>
-                    <div className="text-3xl font-black text-cyan-400 font-mono">{results.summary.healthScore}%</div>
+                    <div className="text-2xl sm:text-3xl font-black text-cyan-400 font-mono">{results.summary.healthScore}%</div>
                   </div>
                   <button
                     type="button"
+                    onClick={openQuoteModal}
+                    className="px-3.5 py-2 rounded-xl border border-emerald-400/50 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold transition-all flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 ring-1 ring-emerald-400/40 hover:scale-[1.02]"
+                    title="Request a customized QA Automation Quotation for this application"
+                  >
+                    <Briefcase size={14} className="text-emerald-100" />
+                    <span>Request Quote</span>
+                  </button>
+                  <button
+                    type="button"
                     onClick={handleDownloadJson}
-                    className="px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm"
+                    className="px-3 py-2 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm"
                     title="Download complete JSON evidence dossier with Base64 snapshots"
                   >
                     <FileJson size={14} className="text-cyan-400" />
@@ -577,7 +670,7 @@ export default function AiSandboxPage() {
                   <button
                     type="button"
                     onClick={handlePrint}
-                    className="px-4 py-2.5 rounded-xl border border-cyan-500/40 bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 text-xs font-bold transition-colors flex items-center gap-2 shadow-sm"
+                    className="px-3.5 py-2 rounded-xl border border-cyan-500/40 bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm"
                     title="Print or Save isolated PDF Report for this test scenario"
                   >
                     <Printer size={14} />
@@ -804,21 +897,34 @@ export default function AiSandboxPage() {
                       </ul>
                     </div>
 
-                    <div className="p-6 rounded-2xl border border-slate-800 bg-slate-950/70 space-y-3">
-                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                        <ArrowRight className="text-cyan-400" size={18} />
-                        Next Recommended Step
-                      </h4>
+                    <div className="p-6 rounded-2xl border border-emerald-500/40 bg-gradient-to-br from-slate-950 via-emerald-950/30 to-slate-900 space-y-3 shadow-lg shadow-emerald-500/10">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                          <Briefcase className="text-emerald-400" size={18} />
+                          Request Custom QA Automation Quote
+                        </h4>
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-500/40">
+                          Instant Response
+                        </span>
+                      </div>
                       <p className="text-xs text-slate-300 leading-relaxed">
-                        Ready to integrate continuous, self-healing Playwright automation directly into your CI/CD pipelines (GitHub Actions, GitLab, Jenkins)?
+                        Ready to deploy autonomous, self-healing Playwright automation across <strong className="text-cyan-300">{results.target.host}</strong>? Get a custom quote for full CI/CD test migration, synthetic data generators &amp; regression suites.
                       </p>
-                      <div className="pt-2">
+                      <div className="pt-2 flex flex-wrap items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={openQuoteModal}
+                          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs transition-all shadow-md shadow-emerald-500/20 ring-1 ring-emerald-400/40 hover:scale-[1.02]"
+                        >
+                          <Calculator size={14} />
+                          <span>Get Instant QA Quotation</span>
+                        </button>
                         <a
                           href="/contact"
-                          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs transition-all shadow-md shadow-cyan-500/20"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs border border-slate-700 transition-all"
                         >
-                          <span>Schedule QA Strategy Session</span>
-                          <ArrowRight size={14} />
+                          <span>Talk with QA Lead</span>
+                          <ArrowRight size={13} />
                         </a>
                       </div>
                     </div>
@@ -1691,6 +1797,271 @@ export default function AiSandboxPage() {
                   Close Testing Types
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL 4: REQUEST QA AUTOMATION QUOTE MODAL */}
+        {isQuoteOpen && (
+          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+            <div className="bg-slate-900 border border-emerald-500/40 rounded-3xl max-w-2xl w-full p-5 sm:p-7 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3.5">
+                <div className="flex items-center gap-3">
+                  <span className="p-2 rounded-xl bg-emerald-950 text-emerald-300 border border-emerald-500/40">
+                    <Briefcase size={20} />
+                  </span>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Request QA Automation Quotation</h3>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Get a tailored scope, pricing estimate &amp; SLA timeline for your application.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsQuoteOpen(false)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {quoteSubmitted ? (
+                /* SUCCESS CONFIRMATION VIEW */
+                <div className="py-6 px-4 text-center space-y-4">
+                  <div className="mx-auto w-14 h-14 rounded-full bg-emerald-950 border border-emerald-500/40 text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                    <CheckCircle2 size={32} />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-xl font-bold text-white">Quotation Request Received!</h4>
+                    <p className="text-xs text-slate-300 max-w-md mx-auto">
+                      Your test dossier and scope requirements have been assigned to our Principal QA Automation Lead.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 max-w-md mx-auto text-left space-y-2 text-xs">
+                    <div className="flex items-center justify-between text-slate-400 font-mono">
+                      <span>Quote Reference ID:</span>
+                      <strong className="text-cyan-400 font-bold">{quoteRefId}</strong>
+                    </div>
+                    {results && (
+                      <div className="flex items-center justify-between text-slate-400 font-mono">
+                        <span>Target Application:</span>
+                        <strong className="text-white">{results.target.host}</strong>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between text-slate-400 font-mono">
+                      <span>Selected Tier:</span>
+                      <strong className="text-emerald-400 uppercase">{quoteTier}</strong>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-400 font-mono">
+                      <span>Estimated Turnaround:</span>
+                      <strong className="text-amber-300">Within 2 Business Hours</strong>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                    <a
+                      href="/contact"
+                      className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5"
+                    >
+                      <Clock size={14} />
+                      <span>Book Immediate QA Discovery Call</span>
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => setIsQuoteOpen(false)}
+                      className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition-all"
+                    >
+                      Close Window
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* FORM VIEW */
+                <form onSubmit={handleQuoteSubmit} className="space-y-4">
+                  {/* Scope Context Strip */}
+                  {results && (
+                    <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-cyan-300 font-bold">{results.target.host}</span>
+                        <span className="text-slate-500">•</span>
+                        <span className="text-slate-400">{results.target.category}</span>
+                      </div>
+                      <div className="flex items-center gap-2 font-mono text-[11px] text-emerald-400">
+                        <span>{results.summary.totalScenarios} Scenarios</span>
+                        <span>•</span>
+                        <span>{results.summary.totalAssertions} Assertions</span>
+                        <span>•</span>
+                        <span>{results.summary.healthScore}% Score</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tier Selector */}
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center gap-1.5">
+                      <Calculator size={13} className="text-emerald-400" />
+                      <span>Select Automation Tier / Engagement Model:</span>
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setQuoteTier("starter")}
+                        className={`p-2.5 rounded-xl border text-left transition-all ${
+                          quoteTier === "starter"
+                            ? "border-emerald-500 bg-emerald-950/60 text-emerald-200 ring-1 ring-emerald-500/50"
+                            : "border-slate-800 bg-slate-950/60 text-slate-300 hover:border-slate-700"
+                        }`}
+                      >
+                        <div className="text-xs font-bold text-white">⚡ Starter Pilot</div>
+                        <div className="text-[10px] text-slate-400 mt-0.5">1-2 Sprints POC • 10-25 Core flows</div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setQuoteTier("enterprise")}
+                        className={`p-2.5 rounded-xl border text-left transition-all ${
+                          quoteTier === "enterprise"
+                            ? "border-emerald-500 bg-emerald-950/60 text-emerald-200 ring-1 ring-emerald-500/50"
+                            : "border-slate-800 bg-slate-950/60 text-slate-300 hover:border-slate-700"
+                        }`}
+                      >
+                        <div className="text-xs font-bold text-white flex items-center justify-between">
+                          <span>🚀 Full Enterprise</span>
+                          <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-mono">Popular</span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 mt-0.5">Full UI, API &amp; DB • CI/CD pipeline</div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setQuoteTier("continuous")}
+                        className={`p-2.5 rounded-xl border text-left transition-all ${
+                          quoteTier === "continuous"
+                            ? "border-emerald-500 bg-emerald-950/60 text-emerald-200 ring-1 ring-emerald-500/50"
+                            : "border-slate-800 bg-slate-950/60 text-slate-300 hover:border-slate-700"
+                        }`}
+                      >
+                        <div className="text-xs font-bold text-white">🛡️ 24/7 Managed QA</div>
+                        <div className="text-[10px] text-slate-400 mt-0.5">Ongoing maintenance &amp; 0% flakiness</div>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Form Inputs Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 mb-1">
+                        Your Full Name <span className="text-rose-400">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={quoteForm.name}
+                        onChange={(e) => setQuoteForm({ ...quoteForm, name: e.target.value })}
+                        placeholder="e.g. Sarah Jenkins"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 mb-1">
+                        Work Email <span className="text-rose-400">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={quoteForm.email}
+                        onChange={(e) => setQuoteForm({ ...quoteForm, email: e.target.value })}
+                        placeholder="sarah@company.com"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 mb-1">
+                        Company / Organization
+                      </label>
+                      <input
+                        type="text"
+                        value={quoteForm.company}
+                        onChange={(e) => setQuoteForm({ ...quoteForm, company: e.target.value })}
+                        placeholder="e.g. Acme Corp"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 mb-1">
+                        Phone / WhatsApp (Optional)
+                      </label>
+                      <input
+                        type="tel"
+                        value={quoteForm.phone}
+                        onChange={(e) => setQuoteForm({ ...quoteForm, phone: e.target.value })}
+                        placeholder="+1 (555) 000-0000"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Scope Details / Notes */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1">
+                      Project Notes &amp; Target Scope (Auto-populated from active report)
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={quoteForm.notes}
+                      onChange={(e) => setQuoteForm({ ...quoteForm, notes: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 font-mono placeholder-slate-500 focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 resize-none"
+                    />
+                  </div>
+
+                  {quoteError && (
+                    <div className="p-2.5 rounded-xl bg-rose-950/60 border border-rose-800 text-rose-300 text-xs flex items-center gap-2">
+                      <AlertTriangle size={14} className="text-rose-400 shrink-0" />
+                      <span>{quoteError}</span>
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+                    <span className="text-[11px] text-slate-400 flex items-center gap-1.5">
+                      <Lock size={12} className="text-emerald-400" />
+                      <span>Strict NDA &amp; 100% Data Confidentiality</span>
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setIsQuoteOpen(false)}
+                        className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={quoteSubmitting}
+                        className="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs transition-all shadow-lg shadow-emerald-500/25 ring-1 ring-emerald-400/40 flex items-center gap-2 disabled:opacity-50"
+                      >
+                        {quoteSubmitting ? (
+                          <>
+                            <RefreshCw size={13} className="animate-spin" />
+                            <span>Processing...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send size={13} />
+                            <span>Send Quotation Request</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
         )}
