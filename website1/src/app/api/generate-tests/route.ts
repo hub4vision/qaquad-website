@@ -914,6 +914,16 @@ Feature: ${contextName}
   };
 }
 
+function escapeXml(str: string): string {
+  if (!str) return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
 function generateStepSnapshotBase64(
   targetHost: string,
   stepNum: number,
@@ -924,25 +934,27 @@ function generateStepSnapshotBase64(
 ): string {
   const isPassed = status === "PASSED";
   const statusColor = isPassed ? "#10b981" : "#f59e0b";
-  const safeTitle = title.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-  const safeLocator = locator.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-  const safeHost = targetHost.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const safeTitle = escapeXml(title);
+  const safeLocator = escapeXml(locator);
+  const safeHost = escapeXml(targetHost);
+  const safeStatus = escapeXml(status);
+  const safeAction = escapeXml(action);
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420" fill="none">
     <defs>
-      <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="0">
+      <linearGradient id="headerGrad_${stepNum}" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0%" stop-color="#090d16"/>
         <stop offset="100%" stop-color="#111827"/>
       </linearGradient>
-      <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+      <linearGradient id="bodyGrad_${stepNum}" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#0b1120"/>
         <stop offset="100%" stop-color="#030712"/>
       </linearGradient>
     </defs>
     
     <!-- Window Frame -->
-    <rect width="720" height="420" rx="12" fill="url(#bodyGrad)" stroke="#1e293b" stroke-width="1.5"/>
-    <rect width="720" height="42" rx="12" fill="url(#headerGrad)"/>
+    <rect width="720" height="420" rx="12" fill="url(#bodyGrad_${stepNum})" stroke="#1e293b" stroke-width="1.5"/>
+    <rect width="720" height="42" rx="12" fill="url(#headerGrad_${stepNum})"/>
     <path d="M0 32h720v10H0z" fill="#090d16"/>
     <line x1="0" y1="42" x2="720" y2="42" stroke="#334155" stroke-width="1"/>
     
@@ -957,11 +969,11 @@ function generateStepSnapshotBase64(
     
     <!-- Status Tag -->
     <rect x="560" y="10" width="144" height="22" rx="6" fill="${statusColor}22" stroke="${statusColor}" stroke-width="1"/>
-    <text x="575" y="25" fill="${statusColor}" font-family="monospace" font-weight="bold" font-size="11">● ${status}</text>
+    <text x="575" y="25" fill="${statusColor}" font-family="monospace" font-weight="bold" font-size="11">● ${safeStatus}</text>
     
     <!-- Step Info Banner -->
     <rect x="24" y="60" width="672" height="66" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
-    <text x="42" y="86" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="14">Step ${stepNum} [${action}]: ${safeTitle}</text>
+    <text x="42" y="86" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="14">Step ${stepNum} [${safeAction}]: ${safeTitle}</text>
     <text x="42" y="110" fill="#94a3b8" font-family="monospace" font-size="11">Target Locator: ${safeLocator}</text>
     
     <!-- Target DOM Focus Area -->
