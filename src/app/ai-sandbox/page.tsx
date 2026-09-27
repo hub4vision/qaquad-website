@@ -27,7 +27,9 @@ import {
   Eye,
   FileJson,
   Printer,
-  X
+  X,
+  ImageIcon,
+  LayoutGrid
 } from "lucide-react";
 
 interface TestStep {
@@ -152,6 +154,7 @@ export default function AiSandboxPage() {
   const [copiedBdd, setCopiedBdd] = useState(false);
   const [selectedSnapshot, setSelectedSnapshot] = useState<{ stepNumber: number; title: string; locator: string; snapshotBase64: string } | null>(null);
   const [copiedSnapshot, setCopiedSnapshot] = useState(false);
+  const [showInlineThumbnails, setShowInlineThumbnails] = useState(true);
 
   // Simulated live execution steps for the animated player
   const STAGES = [
@@ -218,6 +221,28 @@ export default function AiSandboxPage() {
       setCopiedSnapshot(true);
       setTimeout(() => setCopiedSnapshot(false), 2000);
     }
+  };
+
+  const handleDownloadSnapshot = (snapshotBase64: string, stepNumber: number) => {
+    if (!results) return;
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1440;
+      canvas.height = 840;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, 1440, 840);
+        const pngUrl = canvas.toDataURL("image/png");
+        const downloadLink = document.createElement("a");
+        downloadLink.href = pngUrl;
+        downloadLink.download = `QAQuad_Snapshot_Step${stepNumber}_${results.target.host}.png`;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        downloadLink.remove();
+      }
+    };
+    img.src = snapshotBase64;
   };
 
   const handlePrint = () => {
@@ -638,6 +663,54 @@ export default function AiSandboxPage() {
                     </div>
                   </div>
 
+                  {/* Visual Proof Snapshot Gallery in Summary */}
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                        <Camera className="text-cyan-400" size={18} />
+                        Visual DOM Proof Gallery (Base64 Captures)
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("snapshots")}
+                        className="text-xs text-cyan-400 hover:text-cyan-300 font-bold flex items-center gap-1"
+                      >
+                        <span>View All {results.steps.length} Snapshots</span>
+                        <ArrowRight size={13} />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {results.steps.slice(0, 4).map((step) => (
+                        <div
+                          key={step.id}
+                          onClick={() => setSelectedSnapshot({
+                            stepNumber: step.stepNumber,
+                            title: step.title,
+                            locator: step.locator,
+                            snapshotBase64: step.snapshotBase64!
+                          })}
+                          className="group relative rounded-xl border border-slate-800 bg-slate-900 p-2 cursor-pointer hover:border-cyan-500/50 transition-all hover:scale-[1.02]"
+                        >
+                          <div className="text-[10px] font-bold text-white truncate mb-1">
+                            Step #{step.stepNumber}: {step.action}
+                          </div>
+                          {step.snapshotBase64 && (
+                            <img
+                              src={step.snapshotBase64}
+                              alt={`Step ${step.stepNumber}`}
+                              className="w-full h-auto rounded border border-slate-800"
+                            />
+                          )}
+                          <div className="mt-1 flex items-center justify-between text-[9px] text-slate-400">
+                            <span className="text-emerald-400 font-bold">● {step.status}</span>
+                            <span>{step.durationMs}ms</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Highlights */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="p-6 rounded-2xl border border-slate-800 bg-slate-950/70 space-y-3">
@@ -686,11 +759,22 @@ export default function AiSandboxPage() {
               {/* TAB 2: STEP-BY-STEP EXECUTION TABLE */}
               {activeTab === "steps" && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
                     <h3 className="text-sm font-bold text-white uppercase tracking-wider">
                       Granular Test Execution Timeline ({results.steps.length} Steps)
                     </h3>
-                    <span className="text-xs font-mono text-cyan-400">Total: {results.summary.executionDurationSec}s</span>
+                    <div className="flex items-center gap-4">
+                      <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
+                        <input
+                          type="checkbox"
+                          checked={showInlineThumbnails}
+                          onChange={(e) => setShowInlineThumbnails(e.target.checked)}
+                          className="rounded text-cyan-500 focus:ring-cyan-400 bg-slate-950 border-slate-700"
+                        />
+                        <span>Show Inline Snapshots</span>
+                      </label>
+                      <span className="text-xs font-mono text-cyan-400">Total: {results.summary.executionDurationSec}s</span>
+                    </div>
                   </div>
 
                   <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950">
@@ -702,7 +786,7 @@ export default function AiSandboxPage() {
                           <th className="py-3 px-4">Step Title &amp; Details</th>
                           <th className="py-3 px-4">Target / Locator</th>
                           <th className="py-3 px-4">Duration</th>
-                          <th className="py-3 px-4">Visual Snapshot</th>
+                          <th className="py-3 px-4">DOM Snapshot Proof</th>
                           <th className="py-3 px-4">Status</th>
                         </tr>
                       </thead>
@@ -736,19 +820,49 @@ export default function AiSandboxPage() {
                             <td className="py-3.5 px-4 text-slate-400">{step.durationMs}ms</td>
                             <td className="py-3.5 px-4">
                               {step.snapshotBase64 ? (
-                                <button
-                                  type="button"
-                                  onClick={() => setSelectedSnapshot({
-                                    stepNumber: step.stepNumber,
-                                    title: step.title,
-                                    locator: step.locator,
-                                    snapshotBase64: step.snapshotBase64!
-                                  })}
-                                  className="px-2.5 py-1 rounded-lg border border-cyan-500/40 bg-cyan-950/60 hover:bg-cyan-900 text-cyan-300 text-[11px] font-bold flex items-center gap-1 transition-colors"
-                                >
-                                  <Eye size={12} />
-                                  <span>View Snapshot</span>
-                                </button>
+                                <div className="space-y-1.5">
+                                  {showInlineThumbnails && (
+                                    <div 
+                                      onClick={() => setSelectedSnapshot({
+                                        stepNumber: step.stepNumber,
+                                        title: step.title,
+                                        locator: step.locator,
+                                        snapshotBase64: step.snapshotBase64!
+                                      })}
+                                      className="w-24 h-14 rounded-lg border border-slate-700 bg-slate-900 overflow-hidden cursor-pointer hover:border-cyan-400 transition-colors shadow"
+                                    >
+                                      <img
+                                        src={step.snapshotBase64}
+                                        alt={`Step ${step.stepNumber}`}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    </div>
+                                  )}
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => setSelectedSnapshot({
+                                        stepNumber: step.stepNumber,
+                                        title: step.title,
+                                        locator: step.locator,
+                                        snapshotBase64: step.snapshotBase64!
+                                      })}
+                                      className="px-2 py-0.5 rounded border border-cyan-500/40 bg-cyan-950/60 hover:bg-cyan-900 text-cyan-300 text-[10px] font-bold flex items-center gap-1 transition-colors"
+                                    >
+                                      <Eye size={11} />
+                                      <span>View</span>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleDownloadSnapshot(step.snapshotBase64!, step.stepNumber)}
+                                      className="px-2 py-0.5 rounded border border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-300 text-[10px] font-bold flex items-center gap-1 transition-colors"
+                                      title="Download Snapshot as PNG"
+                                    >
+                                      <Download size={11} />
+                                      <span>PNG</span>
+                                    </button>
+                                  </div>
+                                </div>
                               ) : (
                                 <span className="text-slate-500 text-[10px]">N/A</span>
                               )}
@@ -801,7 +915,7 @@ export default function AiSandboxPage() {
                               alt={`Step ${step.stepNumber} DOM Snapshot`}
                               className="w-full h-auto object-cover rounded-lg"
                             />
-                            <div className="absolute inset-0 bg-slate-950/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                            <div className="absolute inset-0 bg-slate-950/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2.5 p-4">
                               <button
                                 type="button"
                                 onClick={() => setSelectedSnapshot({
@@ -810,26 +924,45 @@ export default function AiSandboxPage() {
                                   locator: step.locator,
                                   snapshotBase64: step.snapshotBase64!
                                 })}
-                                className="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg"
+                                className="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition-all"
                               >
-                                <Eye size={14} /> Full View
+                                <Eye size={13} /> Full View
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDownloadSnapshot(step.snapshotBase64!, step.stepNumber)}
+                                className="px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition-all"
+                              >
+                                <Download size={13} /> Download (.png)
                               </button>
                               <button
                                 type="button"
                                 onClick={() => handleCopy(step.snapshotBase64!, "snapshot")}
-                                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 shadow-lg border border-slate-600"
+                                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 shadow-lg border border-slate-600 transition-all"
                               >
-                                <Copy size={14} /> Copy Base64
+                                <Copy size={13} /> Copy Base64
                               </button>
                             </div>
                           </div>
                         )}
 
-                        <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-1">
-                          <span className="truncate max-w-[240px] text-slate-400" title={step.locator}>
+                        <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400 font-mono pt-1">
+                          <span className="truncate max-w-[200px] text-slate-400" title={step.locator}>
                             Locator: {step.locator}
                           </span>
-                          <span className="text-cyan-400 font-bold shrink-0">{step.durationMs}ms</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-cyan-400 font-bold shrink-0">{step.durationMs}ms</span>
+                            {step.snapshotBase64 && (
+                              <button
+                                type="button"
+                                onClick={() => handleDownloadSnapshot(step.snapshotBase64!, step.stepNumber)}
+                                className="text-xs text-slate-300 hover:text-cyan-300 flex items-center gap-1"
+                              >
+                                <Download size={12} />
+                                <span>Save PNG</span>
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1188,7 +1321,15 @@ export default function AiSandboxPage() {
                 {selectedSnapshot.locator}
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-2">
+              <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => handleDownloadSnapshot(selectedSnapshot.snapshotBase64, selectedSnapshot.stepNumber)}
+                  className="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold flex items-center gap-2 transition-colors shadow-md"
+                >
+                  <Download size={14} />
+                  <span>Download Snapshot (.png)</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => handleCopy(selectedSnapshot.snapshotBase64, "snapshot")}
