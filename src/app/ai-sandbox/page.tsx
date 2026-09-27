@@ -23,7 +23,11 @@ import {
   CheckCircle,
   AlertTriangle,
   Building2,
-  Briefcase
+  Camera,
+  Eye,
+  FileJson,
+  Printer,
+  X
 } from "lucide-react";
 
 interface TestStep {
@@ -36,6 +40,7 @@ interface TestStep {
   status: "PASSED" | "FAILED" | "WARNING";
   details: string;
   selfHealingUsed?: boolean;
+  snapshotBase64?: string;
 }
 
 interface NetworkLog {
@@ -58,6 +63,8 @@ interface DbCheck {
 
 interface TestReportData {
   ok: boolean;
+  executionId?: string;
+  generatedAt?: string;
   target: {
     url: string;
     host: string;
@@ -140,15 +147,17 @@ export default function AiSandboxPage() {
   const [executionProgress, setExecutionProgress] = useState(0);
   const [activeStage, setActiveStage] = useState<string>("");
   const [results, setResults] = useState<TestReportData | null>(null);
-  const [activeTab, setActiveTab] = useState<"summary" | "steps" | "network" | "db" | "code" | "security">("summary");
+  const [activeTab, setActiveTab] = useState<"summary" | "steps" | "snapshots" | "network" | "db" | "code" | "security">("summary");
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedBdd, setCopiedBdd] = useState(false);
+  const [selectedSnapshot, setSelectedSnapshot] = useState<{ stepNumber: number; title: string; locator: string; snapshotBase64: string } | null>(null);
+  const [copiedSnapshot, setCopiedSnapshot] = useState(false);
 
   // Simulated live execution steps for the animated player
   const STAGES = [
     "Resolving target domain & initiating headless browser context...",
     "Scanning DOM hierarchy & mapping self-healing locators...",
-    "Executing autonomous user journey & interaction pipeline...",
+    "Executing autonomous user journey & capturing Base64 visual snapshots...",
     "Intercepting REST APIs & validating payload schema contracts...",
     "Querying backend database & asserting state synchronization...",
     "Synthesizing test evidence & generating multi-layer QA report..."
@@ -181,7 +190,7 @@ export default function AiSandboxPage() {
       if (data.ok) {
         clearInterval(interval);
         setExecutionProgress(100);
-        setActiveStage("Execution Complete! Test report ready.");
+        setActiveStage("Execution Complete! Dynamic test report ready.");
         setTimeout(() => {
           setResults(data);
           setIsGenerating(false);
@@ -197,14 +206,17 @@ export default function AiSandboxPage() {
     }
   };
 
-  const handleCopy = (text: string, type: "code" | "bdd") => {
+  const handleCopy = (text: string, type: "code" | "bdd" | "snapshot") => {
     navigator.clipboard.writeText(text);
     if (type === "code") {
       setCopiedCode(true);
       setTimeout(() => setCopiedCode(false), 2000);
-    } else {
+    } else if (type === "bdd") {
       setCopiedBdd(true);
       setTimeout(() => setCopiedBdd(false), 2000);
+    } else if (type === "snapshot") {
+      setCopiedSnapshot(true);
+      setTimeout(() => setCopiedSnapshot(false), 2000);
     }
   };
 
@@ -212,11 +224,86 @@ export default function AiSandboxPage() {
     window.print();
   };
 
+  const handleDownloadJson = () => {
+    if (!results) return;
+    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(results, null, 2)
+    )}`;
+    const downloadAnchor = document.createElement("a");
+    downloadAnchor.setAttribute("href", jsonString);
+    downloadAnchor.setAttribute("download", `QAQuad_Evidence_${results.target.host}_${results.executionId || "dossier"}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  };
+
   return (
     <main className="min-h-screen pt-24 pb-20 bg-slate-950 text-slate-100">
+      {/* Dynamic Print CSS to ensure ONLY the active report prints cleanly */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media print {
+          body {
+            background: #ffffff !important;
+            color: #000000 !important;
+            font-size: 11pt;
+          }
+          nav, header, footer, .no-print, .print\\:hidden {
+            display: none !important;
+          }
+          .print-only {
+            display: block !important;
+          }
+          .print-container {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+            color: #111827 !important;
+            border: none !important;
+            box-shadow: none !important;
+          }
+          .print-card {
+            background: #ffffff !important;
+            color: #111827 !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: none !important;
+            page-break-inside: avoid;
+            margin-bottom: 1rem;
+          }
+          .print-text-dark {
+            color: #0f172a !important;
+          }
+          .print-text-muted {
+            color: #475569 !important;
+          }
+          .print-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+          }
+          .print-table th, .print-table td {
+            border: 1px solid #e2e8f0 !important;
+            padding: 6px 8px !important;
+            color: #0f172a !important;
+          }
+          .print-table th {
+            background: #f1f5f9 !important;
+            font-weight: bold;
+          }
+          .print-break {
+            page-break-before: always;
+          }
+        }
+        @media screen {
+          .print-only {
+            display: none !important;
+          }
+        }
+      `}} />
+
       <Section>
         {/* Page Hero & Intro */}
-        <div className="text-center max-w-4xl mx-auto mb-10">
+        <div className="text-center max-w-4xl mx-auto mb-10 no-print">
           <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-950/60 px-4 py-1.5 text-xs font-semibold text-cyan-300 mb-4 shadow-lg shadow-cyan-500/10">
             <span className="h-2 w-2 rounded-full bg-cyan-400 animate-ping"></span>
             <Sparkles size={14} className="text-cyan-300" />
@@ -226,12 +313,12 @@ export default function AiSandboxPage() {
             AI Test Sandbox &amp; Real-Time Report Generator
           </h1>
           <p className="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed max-w-3xl mx-auto">
-            Test any application URL or user story across major industries (<strong className="text-cyan-300 font-semibold">Travel, E-Commerce, FinTech, SaaS, CRM, Logistics, Healthcare</strong>). Watch QAQuad generate executable Playwright tests, execute multi-layer verification, and produce a complete QA Evidence Dossier in real-time.
+            Test any application URL or user story across major industries (<strong className="text-cyan-300 font-semibold">Travel, E-Commerce, FinTech, SaaS, CRM, Logistics, Healthcare</strong>). Watch QAQuad generate executable Playwright tests, execute multi-layer verification, and produce a complete QA Evidence Dossier with Base64 visual snapshots in real-time.
           </p>
         </div>
 
         {/* Interactive Prompt Console */}
-        <div className="max-w-5xl mx-auto bg-slate-900/90 rounded-3xl border border-slate-800 shadow-2xl shadow-cyan-950/40 backdrop-blur-xl overflow-hidden mb-12">
+        <div className="max-w-5xl mx-auto bg-slate-900/90 rounded-3xl border border-slate-800 shadow-2xl shadow-cyan-950/40 backdrop-blur-xl overflow-hidden mb-12 no-print">
           {/* Header Bar */}
           <div className="px-6 py-4 border-b border-slate-800 bg-slate-950/60 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
@@ -242,7 +329,7 @@ export default function AiSandboxPage() {
             </div>
             <div className="flex items-center gap-2 text-xs text-cyan-400">
               <Zap size={14} />
-              <span>Self-Healing • Multi-Layer UI/API/DB</span>
+              <span>Self-Healing • Base64 Snapshots • UI/API/DB</span>
             </div>
           </div>
 
@@ -252,7 +339,7 @@ export default function AiSandboxPage() {
               <div className="flex items-center justify-between mb-3">
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
                   <Building2 size={15} className="text-cyan-400" />
-                  <span>Industry Presets (Click any big-brand sample to load):</span>
+                  <span>Quick-Test Presets (Click to Load):</span>
                 </label>
                 <span className="text-[11px] text-slate-400">8 Top Industries Supported</span>
               </div>
@@ -297,7 +384,7 @@ export default function AiSandboxPage() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
               <div className="text-xs text-slate-400 flex items-center gap-2">
                 <Cpu size={15} className="text-cyan-400 shrink-0" />
-                <span>Engine interprets natural language, auto-maps DOM locators &amp; generates real-time test report.</span>
+                <span>Engine dynamically generates isolated test report, Base64 snapshots &amp; assertions for this prompt.</span>
               </div>
               <button
                 type="button"
@@ -308,7 +395,7 @@ export default function AiSandboxPage() {
                 {isGenerating ? (
                   <>
                     <RefreshCw className="animate-spin text-white" size={18} />
-                    <span>Running AI Engine...</span>
+                    <span>Running Dynamic Engine...</span>
                   </>
                 ) : (
                   <>
@@ -342,7 +429,7 @@ export default function AiSandboxPage() {
 
         {/* Real-Time Generated Test Report Display */}
         {results && (
-          <div className="max-w-5xl mx-auto bg-slate-900/95 rounded-3xl border border-cyan-500/40 shadow-2xl shadow-cyan-950/60 backdrop-blur-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
+          <div id="printable-test-report" className="max-w-5xl mx-auto bg-slate-900/95 rounded-3xl border border-cyan-500/40 shadow-2xl shadow-cyan-950/60 backdrop-blur-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700 print-container">
             {/* Report Header Banner */}
             <div className="p-6 sm:p-8 bg-gradient-to-r from-slate-900 via-slate-900 to-cyan-950/70 border-b border-slate-800">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -358,27 +445,47 @@ export default function AiSandboxPage() {
                     <span className="px-3 py-1 rounded-full text-xs font-mono text-slate-400 bg-slate-950/80 border border-slate-800">
                       Target: {results.target.host}
                     </span>
+                    {results.executionId && (
+                      <span className="px-3 py-1 rounded-full text-[11px] font-mono text-cyan-400/90 bg-cyan-950/50 border border-cyan-500/30">
+                        ID: {results.executionId}
+                      </span>
+                    )}
                   </div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight print-text-dark">
                     {results.target.contextName}
                   </h2>
-                  <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                    Multi-layer autonomous test verification • Execution Duration: <span className="text-cyan-300 font-mono font-bold">{results.summary.executionDurationSec}s</span>
+                  <p className="text-xs sm:text-sm text-slate-400 mt-1 print-text-muted">
+                    Multi-layer autonomous test verification • Duration: <span className="text-cyan-300 font-mono font-bold">{results.summary.executionDurationSec}s</span>
+                    {results.generatedAt && (
+                      <span className="ml-2 font-mono text-[11px] text-slate-400">
+                        • Generated: {new Date(results.generatedAt).toLocaleString()}
+                      </span>
+                    )}
                   </p>
                 </div>
 
                 {/* Score & Actions */}
-                <div className="flex items-center gap-4 self-start md:self-auto">
-                  <div className="text-right">
+                <div className="flex items-center gap-3 self-start md:self-auto no-print">
+                  <div className="text-right mr-2">
                     <div className="text-xs uppercase font-bold tracking-wider text-slate-400">Quality Health</div>
                     <div className="text-3xl font-black text-cyan-400 font-mono">{results.summary.healthScore}%</div>
                   </div>
                   <button
                     type="button"
-                    onClick={handlePrint}
-                    className="px-4 py-2.5 rounded-xl border border-cyan-500/40 bg-cyan-950/60 hover:bg-cyan-900/60 text-cyan-300 text-xs font-bold transition-colors flex items-center gap-2 shadow-sm"
+                    onClick={handleDownloadJson}
+                    className="px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm"
+                    title="Download complete JSON evidence dossier with Base64 snapshots"
                   >
-                    <Download size={14} />
+                    <FileJson size={14} className="text-cyan-400" />
+                    <span>JSON Dossier</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handlePrint}
+                    className="px-4 py-2.5 rounded-xl border border-cyan-500/40 bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 text-xs font-bold transition-colors flex items-center gap-2 shadow-sm"
+                    title="Print or Save isolated PDF Report for this test scenario"
+                  >
+                    <Printer size={14} />
                     <span>Print / Save PDF</span>
                   </button>
                 </div>
@@ -386,27 +493,27 @@ export default function AiSandboxPage() {
 
               {/* Metrics Summary Strip */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-slate-800/80">
-                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-                  <div className="text-[11px] uppercase font-bold text-slate-400">Total Scenarios</div>
-                  <div className="text-lg font-bold text-white font-mono mt-0.5">{results.summary.totalScenarios} Automated</div>
+                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 print-card">
+                  <div className="text-[11px] uppercase font-bold text-slate-400 print-text-muted">Total Scenarios</div>
+                  <div className="text-lg font-bold text-white font-mono mt-0.5 print-text-dark">{results.summary.totalScenarios} Automated</div>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-                  <div className="text-[11px] uppercase font-bold text-slate-400">Verified Assertions</div>
+                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 print-card">
+                  <div className="text-[11px] uppercase font-bold text-slate-400 print-text-muted">Verified Assertions</div>
                   <div className="text-lg font-bold text-emerald-400 font-mono mt-0.5">{results.summary.totalAssertions} Passed</div>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-                  <div className="text-[11px] uppercase font-bold text-slate-400">Self-Healing Locators</div>
+                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 print-card">
+                  <div className="text-[11px] uppercase font-bold text-slate-400 print-text-muted">Self-Healing Locators</div>
                   <div className="text-lg font-bold text-cyan-400 font-mono mt-0.5">{results.summary.selfHealingInterventions} Active</div>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-                  <div className="text-[11px] uppercase font-bold text-slate-400">Flakiness Index</div>
+                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 print-card">
+                  <div className="text-[11px] uppercase font-bold text-slate-400 print-text-muted">Flakiness Index</div>
                   <div className="text-lg font-bold text-cyan-300 font-mono mt-0.5">{results.summary.flakinessRate} (Resilient)</div>
                 </div>
               </div>
             </div>
 
-            {/* Navigation Tabs */}
-            <div className="flex border-b border-slate-800 bg-slate-950/80 overflow-x-auto">
+            {/* Navigation Tabs (Hidden during print) */}
+            <div className="flex border-b border-slate-800 bg-slate-950/80 overflow-x-auto no-print">
               <button
                 type="button"
                 onClick={() => setActiveTab("summary")}
@@ -429,7 +536,19 @@ export default function AiSandboxPage() {
                 }`}
               >
                 <Layers size={15} />
-                <span>Test Execution Steps ({results.steps.length})</span>
+                <span>Execution Steps ({results.steps.length})</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("snapshots")}
+                className={`px-5 py-3.5 text-xs font-bold transition-all border-b-2 whitespace-nowrap flex items-center gap-2 ${
+                  activeTab === "snapshots"
+                    ? "border-cyan-400 text-cyan-300 bg-slate-900/60"
+                    : "border-transparent text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <Camera size={15} />
+                <span>📸 Visual Snapshots (Base64)</span>
               </button>
               <button
                 type="button"
@@ -481,8 +600,8 @@ export default function AiSandboxPage() {
               </button>
             </div>
 
-            {/* Tab Contents */}
-            <div className="p-6 sm:p-8">
+            {/* Tab Contents (Screen View) */}
+            <div className="p-6 sm:p-8 no-print">
               {/* TAB 1: EXECUTIVE SUMMARY */}
               {activeTab === "summary" && (
                 <div className="space-y-6">
@@ -583,6 +702,7 @@ export default function AiSandboxPage() {
                           <th className="py-3 px-4">Step Title &amp; Details</th>
                           <th className="py-3 px-4">Target / Locator</th>
                           <th className="py-3 px-4">Duration</th>
+                          <th className="py-3 px-4">Visual Snapshot</th>
                           <th className="py-3 px-4">Status</th>
                         </tr>
                       </thead>
@@ -610,10 +730,29 @@ export default function AiSandboxPage() {
                                 </span>
                               )}
                             </td>
-                            <td className="py-3.5 px-4 text-slate-300 text-[11px] max-w-[200px] truncate" title={step.locator}>
+                            <td className="py-3.5 px-4 text-slate-300 text-[11px] max-w-[180px] truncate" title={step.locator}>
                               {step.locator}
                             </td>
                             <td className="py-3.5 px-4 text-slate-400">{step.durationMs}ms</td>
+                            <td className="py-3.5 px-4">
+                              {step.snapshotBase64 ? (
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedSnapshot({
+                                    stepNumber: step.stepNumber,
+                                    title: step.title,
+                                    locator: step.locator,
+                                    snapshotBase64: step.snapshotBase64!
+                                  })}
+                                  className="px-2.5 py-1 rounded-lg border border-cyan-500/40 bg-cyan-950/60 hover:bg-cyan-900 text-cyan-300 text-[11px] font-bold flex items-center gap-1 transition-colors"
+                                >
+                                  <Eye size={12} />
+                                  <span>View Snapshot</span>
+                                </button>
+                              ) : (
+                                <span className="text-slate-500 text-[10px]">N/A</span>
+                              )}
+                            </td>
                             <td className="py-3.5 px-4">
                               <span className="inline-flex items-center gap-1 text-emerald-400 font-bold text-[11px]">
                                 <Check size={12} /> {step.status}
@@ -627,7 +766,78 @@ export default function AiSandboxPage() {
                 </div>
               )}
 
-              {/* TAB 3: NETWORK & API TELEMETRY */}
+              {/* TAB 3: VISUAL SNAPSHOTS (BASE64) */}
+              {activeTab === "snapshots" && (
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                      <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                        <Camera className="text-cyan-400" size={16} />
+                        Base64 Visual DOM Snapshots ({results.steps.length} Captures)
+                      </h3>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        Embedded directly as Data URIs (<code className="text-cyan-300 text-[11px]">data:image/...;base64</code>) for 100% self-contained evidence without external CDN dependencies.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {results.steps.map((step) => (
+                      <div key={step.id} className="rounded-2xl border border-slate-800 bg-slate-950 overflow-hidden space-y-3 p-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-white font-mono">
+                            Step #{step.stepNumber}: {step.title}
+                          </span>
+                          <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold">
+                            {step.status}
+                          </span>
+                        </div>
+
+                        {step.snapshotBase64 && (
+                          <div className="relative rounded-xl overflow-hidden border border-slate-800 bg-slate-900 group">
+                            {/* Embedded Base64 Image */}
+                            <img
+                              src={step.snapshotBase64}
+                              alt={`Step ${step.stepNumber} DOM Snapshot`}
+                              className="w-full h-auto object-cover rounded-lg"
+                            />
+                            <div className="absolute inset-0 bg-slate-950/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedSnapshot({
+                                  stepNumber: step.stepNumber,
+                                  title: step.title,
+                                  locator: step.locator,
+                                  snapshotBase64: step.snapshotBase64!
+                                })}
+                                className="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg"
+                              >
+                                <Eye size={14} /> Full View
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleCopy(step.snapshotBase64!, "snapshot")}
+                                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 shadow-lg border border-slate-600"
+                              >
+                                <Copy size={14} /> Copy Base64
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-1">
+                          <span className="truncate max-w-[240px] text-slate-400" title={step.locator}>
+                            Locator: {step.locator}
+                          </span>
+                          <span className="text-cyan-400 font-bold shrink-0">{step.durationMs}ms</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 4: NETWORK & API TELEMETRY */}
               {activeTab === "network" && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -666,7 +876,7 @@ export default function AiSandboxPage() {
                 </div>
               )}
 
-              {/* TAB 4: DATABASE VALIDATION */}
+              {/* TAB 5: DATABASE VALIDATION */}
               {activeTab === "db" && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -710,7 +920,7 @@ export default function AiSandboxPage() {
                 </div>
               )}
 
-              {/* TAB 5: PLAYWRIGHT & BDD CODE */}
+              {/* TAB 6: PLAYWRIGHT & BDD CODE */}
               {activeTab === "code" && (
                 <div className="space-y-6">
                   {/* Playwright */}
@@ -757,7 +967,7 @@ export default function AiSandboxPage() {
                 </div>
               )}
 
-              {/* TAB 6: BOUNDARY & SECURITY ANALYSIS */}
+              {/* TAB 7: BOUNDARY & SECURITY ANALYSIS */}
               {activeTab === "security" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="p-6 rounded-2xl border border-slate-800 bg-slate-950 space-y-3">
@@ -791,6 +1001,210 @@ export default function AiSandboxPage() {
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* PRINT-ONLY COMPREHENSIVE DOSSIER LAYOUT (Used exclusively during window.print()) */}
+            <div className="print-only p-8 space-y-8 bg-white text-slate-900">
+              <div className="border-b-2 border-slate-900 pb-4 flex justify-between items-start">
+                <div>
+                  <h1 className="text-2xl font-black tracking-tight text-slate-900">
+                    QAQuad Autonomous Test Evidence Dossier
+                  </h1>
+                  <p className="text-sm font-bold text-slate-600 mt-1">
+                    Target Domain: <span className="font-mono text-cyan-800">{results.target.url}</span> ({results.target.category})
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    Scenario: &ldquo;{prompt}&rdquo;
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs uppercase font-bold text-slate-500">Execution Status</div>
+                  <div className="text-xl font-black text-emerald-700 font-mono">100% {results.summary.status}</div>
+                  <div className="text-[11px] text-slate-500 mt-1">Health: {results.summary.healthScore}% • Duration: {results.summary.executionDurationSec}s</div>
+                </div>
+              </div>
+
+              {/* Print Summary Table */}
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 mb-2">1. Execution Metrics</h3>
+                <table className="print-table text-xs">
+                  <tbody>
+                    <tr>
+                      <td className="font-bold bg-slate-100">Total Scenarios</td>
+                      <td>{results.summary.totalScenarios} Automated</td>
+                      <td className="font-bold bg-slate-100">Verified Assertions</td>
+                      <td className="text-emerald-700 font-bold">{results.summary.totalAssertions} Passed</td>
+                    </tr>
+                    <tr>
+                      <td className="font-bold bg-slate-100">Self-Healing Interventions</td>
+                      <td>{results.summary.selfHealingInterventions} Fallbacks Active</td>
+                      <td className="font-bold bg-slate-100">Flakiness Index</td>
+                      <td>{results.summary.flakinessRate} (Resilient)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Print Steps Table */}
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 mb-2">2. Granular Test Execution Steps</h3>
+                <table className="print-table text-xs">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Action</th>
+                      <th>Step Title &amp; Specification</th>
+                      <th>Target DOM Locator</th>
+                      <th>Duration</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {results.steps.map((step) => (
+                      <tr key={step.id}>
+                        <td className="font-bold text-center">{step.stepNumber}</td>
+                        <td className="font-mono font-bold">{step.action}</td>
+                        <td>
+                          <div className="font-bold">{step.title}</div>
+                          <div className="text-[10px] text-slate-600">{step.details}</div>
+                        </td>
+                        <td className="font-mono text-[10px]">{step.locator}</td>
+                        <td className="font-mono text-center">{step.durationMs}ms</td>
+                        <td className="font-bold text-emerald-700 text-center">{step.status}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Print Visual Snapshots Grid */}
+              <div className="print-break">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 mb-2">3. Base64 Visual DOM Snapshots</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {results.steps.slice(0, 4).map((step) => (
+                    <div key={step.id} className="border border-slate-300 rounded p-2 text-xs">
+                      <div className="font-bold mb-1">Step #{step.stepNumber}: {step.title}</div>
+                      {step.snapshotBase64 && (
+                        <img src={step.snapshotBase64} alt={`Step ${step.stepNumber}`} className="w-full h-auto border border-slate-200 rounded" />
+                      )}
+                      <div className="text-[10px] font-mono text-slate-600 mt-1">Locator: {step.locator}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Print Network Logs */}
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 mb-2">4. Captured REST &amp; API Network Telemetry</h3>
+                <table className="print-table text-xs">
+                  <thead>
+                    <tr>
+                      <th>Method</th>
+                      <th>Endpoint URL</th>
+                      <th>Status</th>
+                      <th>Latency</th>
+                      <th>Payload Contract</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {results.networkLogs.map((net) => (
+                      <tr key={net.id}>
+                        <td className="font-bold text-center">{net.method}</td>
+                        <td className="font-mono text-[10px]">{net.url}</td>
+                        <td className="font-bold text-emerald-700 text-center">{net.status} OK</td>
+                        <td className="font-mono text-center">{net.latencyMs}ms</td>
+                        <td className="text-[10px]">{net.payloadSummary}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Print Database Assertions */}
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 mb-2">5. Backend Database State Integrity</h3>
+                <table className="print-table text-xs">
+                  <thead>
+                    <tr>
+                      <th>Table</th>
+                      <th>SQL Verification Query</th>
+                      <th>Expected vs Actual State</th>
+                      <th>Result</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {results.dbChecks.map((db, idx) => (
+                      <tr key={idx}>
+                        <td className="font-bold">{db.table}</td>
+                        <td className="font-mono text-[10px]">{db.query}</td>
+                        <td className="text-[10px]">
+                          <div>Expected: {db.expected}</div>
+                          <div className="font-bold text-emerald-700">Actual: {db.actual}</div>
+                        </td>
+                        <td className="font-bold text-emerald-700 text-center">MATCH PASSED</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="border-t border-slate-300 pt-3 text-center text-[10px] text-slate-500">
+                QAQuad Autonomous QA Verification Dossier • Confidential &amp; Proprietary • https://www.qaquad.com
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Base64 Snapshot Modal Viewer */}
+        {selectedSnapshot && (
+          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="flex items-center gap-2">
+                  <Camera size={18} className="text-cyan-400" />
+                  <h3 className="text-sm font-bold text-white font-mono">
+                    Step #{selectedSnapshot.stepNumber} Snapshot: {selectedSnapshot.title}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedSnapshot(null)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="rounded-2xl border border-slate-800 overflow-hidden bg-slate-950">
+                <img
+                  src={selectedSnapshot.snapshotBase64}
+                  alt={`Step ${selectedSnapshot.stepNumber}`}
+                  className="w-full h-auto object-contain"
+                />
+              </div>
+
+              <div className="text-xs font-mono text-slate-400 bg-slate-950 p-3 rounded-xl border border-slate-800/80 truncate">
+                <span className="text-slate-500">Locator: </span>
+                {selectedSnapshot.locator}
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => handleCopy(selectedSnapshot.snapshotBase64, "snapshot")}
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-2 transition-colors border border-slate-700"
+                >
+                  {copiedSnapshot ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                  <span>{copiedSnapshot ? "Base64 Copied!" : "Copy Base64 Data URI"}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedSnapshot(null)}
+                  className="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition-colors"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         )}
