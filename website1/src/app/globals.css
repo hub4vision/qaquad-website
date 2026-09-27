@@ -29,7 +29,6 @@
   h3,
   h4 {
     @apply font-semibold tracking-tight;
-    color: #ffffff;
   }
 
   /* Visible, high-contrast focus ring for keyboard navigation */

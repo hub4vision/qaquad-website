@@ -452,7 +452,7 @@ export default function AiSandboxPage() {
         }
       `}} />
 
-      <Section className="py-2 sm:py-3 lg:py-4 border-none bg-transparent">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 bg-white text-slate-900">
         {/* Page Hero & Intro */}
         <div className="text-center max-w-4xl mx-auto mb-5 no-print">
           <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300 bg-cyan-50/90 px-3.5 py-1 text-xs font-semibold text-cyan-800 mb-2.5 shadow-sm">
@@ -2065,7 +2065,7 @@ export default function AiSandboxPage() {
             </div>
           </div>
         )}
-      </Section>
+      </div>
     </main>
   );
 }
