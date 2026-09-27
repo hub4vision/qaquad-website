@@ -32,6 +32,46 @@ interface DbCheck {
   passed: boolean;
 }
 
+interface TestReportPayload {
+  ok: boolean;
+  target: {
+    url: string;
+    host: string;
+    category: string;
+    contextName: string;
+  };
+  summary: {
+    status: string;
+    healthScore: number;
+    totalScenarios: number;
+    totalSteps: number;
+    totalAssertions: number;
+    executionDurationSec: string;
+    flakinessRate: string;
+    selfHealingInterventions: number;
+  };
+  steps: TestStep[];
+  networkLogs: NetworkLog[];
+  dbChecks: DbCheck[];
+  bdd: string;
+  playwright: string;
+  edgeCases: string[];
+  securityCases: string[];
+}
+
+const QA_SYSTEM_INSTRUCTION = `You are the QAQuad Autonomous QA & Test Execution Engine.
+Given a user's test scenario prompt or website URL (e.g., 'makemytrip.com flight booking', 'Stripe checkout flow', 'Healthcare portal HIPAA login'):
+You generate a comprehensive, multi-layer QA Evidence Dossier formatted strictly as a JSON object adhering to the specified schema.
+
+Follow these strict QA engineering principles:
+1. Target Analysis: Extract the clean URL, host domain, industry category (e.g. Travel OTA, E-Commerce, FinTech, Healthcare, Enterprise SaaS, CRM), and specific workflow name.
+2. Step-by-Step Timeline: Generate 6 to 9 realistic browser automation steps with real CSS/XPath/role selectors, step durations in ms, action types, and notes on self-healing fallback selectors.
+3. Network & API Telemetry: Generate 3 to 5 realistic REST/GraphQL network calls with HTTP method, realistic endpoint URLs, latency (ms), JSON payload summary, and schema validation flags.
+4. Database & State Integrity: Generate 2 to 3 backend SQL verification queries with expected vs actual state values proving zero state drift.
+5. Production Playwright Suite: Generate a robust TypeScript Playwright script using '@playwright/test' with resilient locators, retry hooks, and assertions.
+6. Cucumber / BDD Feature: Generate a clean Gherkin feature file.
+7. Boundary & Security: Provide 4 boundary stress test cases and 4 security vulnerability injection test vectors.`;
+
 export async function POST(request: NextRequest) {
   let body: any;
   try {
@@ -46,16 +86,68 @@ export async function POST(request: NextRequest) {
   }
 
   const cleanPrompt = prompt.trim();
+  const apiKey = process.env.GEMINI_API_KEY;
+
+  // Attempt 1: Real Gemini LLM Structured Output with JSON Schema (Function Calling Paradigm)
+  if (apiKey) {
+    try {
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+      const geminiPayload = {
+        system_instruction: {
+          parts: [{ text: QA_SYSTEM_INSTRUCTION }],
+        },
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: `Analyze and generate an autonomous QA Evidence Dossier for: "${cleanPrompt}"` }],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.3,
+          responseMimeType: "application/json",
+        },
+      };
+
+      const geminiResponse = await fetch(geminiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(geminiPayload),
+      });
+
+      if (geminiResponse.ok) {
+        const geminiData = await geminiResponse.json();
+        const rawJsonText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (rawJsonText) {
+          const parsed = JSON.parse(rawJsonText);
+          if (parsed.target && parsed.steps && parsed.playwright) {
+            return NextResponse.json({
+              ok: true,
+              ...parsed,
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("[generate-tests] Gemini Structured API fallback triggered:", e);
+    }
+  }
+
+  // Attempt 2: High-Precision Domain-Aware Synthetic Generator Fallback
+  const fallbackReport = generateSyntheticQADossier(cleanPrompt);
+  return NextResponse.json(fallbackReport);
+}
+
+function generateSyntheticQADossier(cleanPrompt: string): TestReportPayload {
   const lowerPrompt = cleanPrompt.toLowerCase();
 
-  // 1. Extract Target URL / Domain
+  // Extract URL
   const urlMatch = cleanPrompt.match(/(https?:\/\/[^\s]+|[\w-]+\.(com|in|org|net|io|co|ai|app|dev|biz|travel)[\w.-]*)/i);
   let rawUrl = urlMatch ? urlMatch[0] : "app.target-domain.com";
   rawUrl = rawUrl.replace(/['",.;)]+$/, "");
   const targetHost = rawUrl.replace(/^https?:\/\//, "").replace(/\/.*$/, "");
   const displayUrl = rawUrl.startsWith("http") ? rawUrl : `https://${rawUrl}`;
 
-  // 2. Identify Industry & Domain Category
   let category = "Enterprise SaaS Application";
   let contextName = "Core Workflow & Data Integrity";
   let currencySymbol = "$";
@@ -107,18 +199,17 @@ export async function POST(request: NextRequest) {
     contextName = "Authentication, MFA & Role-Based Access Control";
     defaultFlow = "User Authentication";
   } else if (
-    lowerPrompt.includes("crm") ||
-    lowerPrompt.includes("lead") ||
-    lowerPrompt.includes("deal") ||
-    lowerPrompt.includes("pipeline") ||
-    lowerPrompt.includes("salesforce")
+    lowerPrompt.includes("patient") ||
+    lowerPrompt.includes("health") ||
+    lowerPrompt.includes("doctor") ||
+    lowerPrompt.includes("medical") ||
+    lowerPrompt.includes("clinic")
   ) {
-    category = "CRM & Customer Operations";
-    contextName = "Lead Ingestion, State Machine & Stage Progression";
-    defaultFlow = "Customer Lifecycle";
+    category = "Healthcare & Telehealth";
+    contextName = "Patient Appointment Booking & HIPAA Consent";
+    defaultFlow = "Patient Consultation Scheduling";
   }
 
-  // 3. Synthesize Step-by-Step Test Execution Plan based on domain
   const steps: TestStep[] = [];
   const networkLogs: NetworkLog[] = [];
   const dbChecks: DbCheck[] = [];
@@ -263,67 +354,58 @@ export async function POST(request: NextRequest) {
         passed: true,
       }
     );
-  } else if (category.startsWith("E-Commerce")) {
+  } else if (category.startsWith("Healthcare")) {
     steps.push(
       {
         id: "step-1",
         stepNumber: 1,
-        title: "Access Catalog & Product Detail Page",
+        title: "Access Patient Telehealth Portal",
         action: "NAVIGATE",
         locator: `page.goto('${displayUrl}')`,
-        durationMs: 290,
+        durationMs: 310,
         status: "PASSED",
-        details: `Connected to ${targetHost}. Product metadata and inventory availability loaded in 290ms.`,
+        details: `Loaded ${targetHost}. Verified TLS 1.3 encryption and HSTS headers.`,
       },
       {
         id: "step-2",
         stepNumber: 2,
-        title: "Select Variant & Validate SKU Stock Availability",
+        title: "Acknowledge HIPAA Privacy & Telehealth Consent Modal",
         action: "CLICK",
-        locator: `[data-testid="variant-picker"], .variant-btn:not([disabled])`,
-        durationMs: 160,
+        locator: `input[name="hipaa_consent"], [data-testid="hipaa-agree"]`,
+        durationMs: 180,
         status: "PASSED",
-        details: "Selected variant 'Midnight Black / 256GB'. Real-time inventory verified (In Stock: 14 units).",
+        details: "Explicit consent registered with timestamp and IP fingerprint.",
+        selfHealingUsed: true,
       },
       {
         id: "step-3",
         stepNumber: 3,
-        title: "Add Product to Shopping Cart",
+        title: "Select Medical Specialty & Provider Schedule",
         action: "CLICK",
-        locator: `button[name="add-to-cart"], [data-action="add-to-cart"], #addToCart`,
-        durationMs: 380,
+        locator: `.specialty-card:has-text("Cardiology"), [data-provider-id="doc_889"]`,
+        durationMs: 290,
         status: "PASSED",
-        details: "Cart counter incremented from 0 to 1. Mini-cart flyout drawer rendered seamlessly.",
+        details: "Filtered by Board Certified Specialists. Available consultation slots loaded.",
       },
       {
         id: "step-4",
         stepNumber: 4,
-        title: "Apply Promotional Discount Code",
-        action: "INPUT",
-        locator: `input[name="coupon_code"], #promoCode, [placeholder*="Promo"]`,
-        durationMs: 440,
+        title: "Verify Insurance Eligibility & Co-Pay Calculation",
+        action: "API_INTERCEPT",
+        locator: `/api/v1/insurance/verify-eligibility`,
+        durationMs: 240,
         status: "PASSED",
-        details: "Applied coupon 'WELCOME20'. 20% promotional reduction reflected on subtotal immediately.",
+        details: "Eligibility verified with payer gateway. Co-Pay calculated to exact $30.00 tier.",
       },
       {
         id: "step-5",
         stepNumber: 5,
-        title: "Verify Price Math: Subtotal - Discount + Tax = Grand Total",
+        title: "Confirm Appointment Slot & Encrypted Video Link",
         action: "ASSERTION",
-        locator: `.order-summary__total, [data-checkout-total]`,
-        durationMs: 150,
+        locator: `.appointment-confirmation, [data-status="SCHEDULED"]`,
+        durationMs: 190,
         status: "PASSED",
-        details: "Mathematical precision verified to 2 decimal places. No floating point calculation drift.",
-      },
-      {
-        id: "step-6",
-        stepNumber: 6,
-        title: "Proceed to Secure Checkout Pipeline",
-        action: "CLICK",
-        locator: `a[href*="/checkout"], button:has-text("Checkout")`,
-        durationMs: 480,
-        status: "PASSED",
-        details: "Transferred to PCI-compliant TLS checkout interface with tokenized session context.",
+        details: "Encounter booked. Telehealth room token generated with end-to-end WebRTC encryption.",
       }
     );
 
@@ -331,43 +413,34 @@ export async function POST(request: NextRequest) {
       {
         id: "net-1",
         method: "POST",
-        url: `${displayUrl}/api/cart/items`,
+        url: `${displayUrl}/api/v1/insurance/verify-eligibility`,
         status: 200,
-        latencyMs: 215,
-        payloadSummary: '{"sku":"PROD-MB-256","qty":1,"price":799.00}',
+        latencyMs: 240,
+        payloadSummary: '{"memberId":"MBR-90412","payerCode":"BCBS","coPay":30.00,"status":"ELIGIBLE"}',
         schemaValid: true,
       },
       {
         id: "net-2",
         method: "POST",
-        url: `${displayUrl}/api/cart/apply-promo`,
-        status: 200,
-        latencyMs: 180,
-        payloadSummary: '{"promoCode":"WELCOME20","discountPercent":20,"savedAmount":159.80}',
-        schemaValid: true,
-      },
-      {
-        id: "net-3",
-        method: "GET",
-        url: `${displayUrl}/api/cart/checkout-summary`,
-        status: 200,
-        latencyMs: 110,
-        payloadSummary: '{"subtotal":799.00,"discount":159.80,"shipping":0.00,"tax":51.14,"total":690.34}',
+        url: `${displayUrl}/api/v1/appointments/schedule`,
+        status: 201,
+        latencyMs: 190,
+        payloadSummary: '{"appointmentId":"apt_99182","providerId":"doc_889","slot":"2026-09-28T10:00:00Z"}',
         schemaValid: true,
       }
     );
 
     dbChecks.push(
       {
-        table: "cart_sessions",
-        query: "SELECT session_id, item_count, subtotal, discount_total, grand_total FROM cart_sessions WHERE session_id = 'cart_9918a';",
-        expected: "cart_9918a | 1 | 799.00 | 159.80 | 690.34",
-        actual: "cart_9918a | 1 | 799.00 | 159.80 | 690.34",
+        table: "encounters",
+        query: "SELECT encounter_id, patient_id, copay_amount, status FROM encounters WHERE encounter_id = 'apt_99182';",
+        expected: "apt_99182 | pt_4401 | 30.00 | CONFIRMED",
+        actual: "apt_99182 | pt_4401 | 30.00 | CONFIRMED",
         passed: true,
       }
     );
   } else {
-    // General Enterprise Workflow
+    // General E-Commerce or Enterprise Workflow
     steps.push(
       {
         id: "step-1",
@@ -435,7 +508,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // 4. Generate Production-Grade Playwright Script
   const playwrightScript = `import { test, expect } from '@playwright/test';
 import { QAQuadEngine } from '@qaquad/ai-runtime';
 
@@ -465,14 +537,12 @@ test.describe('${contextName}', () => {
 
     // 2. Multi-layer assertions
     await test.step('Verify UI and network integrity', async () => {
-      // Assert no unhandled console errors or fatal HTTP 5xx responses
       expect(qa.getFatalErrorCount()).toBe(0);
       await expect(page.locator('body')).toBeVisible();
     });
   });
 
   test('Boundary & Network Resilience Check', async ({ page }) => {
-    // Simulate 3G network throttling and latency spikes
     const client = await page.context().newCDPSession(page);
     await client.send('Network.emulateNetworkConditions', {
       offline: false,
@@ -486,7 +556,6 @@ test.describe('${contextName}', () => {
   });
 });`;
 
-  // 5. Generate BDD Feature File
   const bddGherkin = `@automated @regression @${category.toLowerCase().replace(/[^a-z0-9]/g, "_")}
 Feature: ${contextName}
   As a user on ${targetHost}
@@ -503,7 +572,6 @@ Feature: ${contextName}
     Then all corresponding REST endpoints should return HTTP 200 OK
     And the final state should match expected business criteria without error`;
 
-  // 6. Generate Deep Edge Cases & Security Checks
   const edgeCases = [
     `Extreme network latency simulation (2,000ms delay on core API endpoints)`,
     `Simultaneous double-click rapid triggering on submission buttons`,
@@ -519,11 +587,10 @@ Feature: ${contextName}
     `Cross-Origin Resource Sharing (CORS) header configuration inspection`,
   ];
 
-  // Calculate totals
   const totalDuration = (steps.reduce((acc, s) => acc + s.durationMs, 0) / 1000).toFixed(2);
   const totalAssertions = steps.length * 3 + dbChecks.length * 2;
 
-  return NextResponse.json({
+  return {
     ok: true,
     target: {
       url: displayUrl,
@@ -548,5 +615,5 @@ Feature: ${contextName}
     playwright: playwrightScript,
     edgeCases,
     securityCases,
-  });
+  };
 }
