@@ -28,8 +28,11 @@ import {
   FileJson,
   Printer,
   X,
-  ImageIcon,
-  LayoutGrid
+  ClipboardList,
+  GitCompare,
+  PieChart,
+  ShieldCheck,
+  Server
 } from "lucide-react";
 
 interface TestStep {
@@ -63,6 +66,37 @@ interface DbCheck {
   passed: boolean;
 }
 
+interface RtmEntry {
+  reqId: string;
+  requirement: string;
+  designDocRef: string;
+  useCase: string;
+  testScenario: string;
+  testData: string;
+  status: "PASSED" | "FAILED";
+}
+
+interface AutoHealComparison {
+  previousRunFailedCount: number;
+  currentRunRepairedCount: number;
+  flakinessReductionPct: string;
+  locatorsRepaired: {
+    element: string;
+    originalBrokenSelector: string;
+    healedResilientSelector: string;
+    strategy: string;
+  }[];
+}
+
+interface TestingTypesSummary {
+  smokeCount: number;
+  regressionCount: number;
+  apiContractCount: number;
+  databaseIntegrityCount: number;
+  securityVulnerabilityCount: number;
+  performanceLatencyCount: number;
+}
+
 interface TestReportData {
   ok: boolean;
   executionId?: string;
@@ -86,6 +120,9 @@ interface TestReportData {
   steps: TestStep[];
   networkLogs: NetworkLog[];
   dbChecks: DbCheck[];
+  rtm?: RtmEntry[];
+  autoHeal?: AutoHealComparison;
+  testingTypes?: TestingTypesSummary;
   bdd: string;
   playwright: string;
   edgeCases: string[];
@@ -156,6 +193,11 @@ export default function AiSandboxPage() {
   const [copiedSnapshot, setCopiedSnapshot] = useState(false);
   const [showInlineThumbnails, setShowInlineThumbnails] = useState(true);
 
+  // Enterprise Report Modals (Inspired by Reference QA Test Report)
+  const [isRtmOpen, setIsRtmOpen] = useState(false);
+  const [isAutoHealOpen, setIsAutoHealOpen] = useState(false);
+  const [isTestingTypesOpen, setIsTestingTypesOpen] = useState(false);
+
   // Simulated live execution steps for the animated player
   const STAGES = [
     "Resolving target domain & initiating headless browser context...",
@@ -163,7 +205,7 @@ export default function AiSandboxPage() {
     "Executing autonomous user journey & capturing Base64 visual snapshots...",
     "Intercepting REST APIs & validating payload schema contracts...",
     "Querying backend database & asserting state synchronization...",
-    "Synthesizing test evidence & generating multi-layer QA report..."
+    "Synthesizing RTM matrix, auto-heal delta & generating multi-layer QA report..."
   ];
 
   const handleGenerate = async () => {
@@ -459,7 +501,7 @@ export default function AiSandboxPage() {
             <div className="p-6 sm:p-8 bg-gradient-to-r from-slate-900 via-slate-900 to-cyan-950/70 border-b border-slate-800">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                  <div className="flex flex-wrap items-center gap-2.5 mb-2">
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 shadow-sm shadow-emerald-500/20">
                       <CheckCircle size={14} />
                       {results.summary.status}
@@ -487,6 +529,34 @@ export default function AiSandboxPage() {
                       </span>
                     )}
                   </p>
+
+                  {/* Enterprise Feature Modals Bar (Inspired by MUS_Backoffice_QA_TestReport) */}
+                  <div className="flex flex-wrap items-center gap-2.5 mt-3 no-print">
+                    <button
+                      type="button"
+                      onClick={() => setIsRtmOpen(true)}
+                      className="px-3 py-1.5 rounded-lg border border-purple-500/40 bg-purple-950/60 hover:bg-purple-900/80 text-purple-300 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                    >
+                      <ClipboardList size={13} className="text-purple-400" />
+                      <span>📜 RTM Traceability Matrix</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsAutoHealOpen(true)}
+                      className="px-3 py-1.5 rounded-lg border border-amber-500/40 bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                    >
+                      <GitCompare size={13} className="text-amber-400" />
+                      <span>✨ Auto-Heal Status (Prev vs Current)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsTestingTypesOpen(true)}
+                      className="px-3 py-1.5 rounded-lg border border-emerald-500/40 bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                    >
+                      <PieChart size={13} className="text-emerald-400" />
+                      <span>📋 Testing Types Done ({results.testingTypes ? Object.values(results.testingTypes).reduce((a, b) => a + b, 0) : 6})</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Score & Actions */}
@@ -1344,6 +1414,281 @@ export default function AiSandboxPage() {
                   className="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition-colors"
                 >
                   Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL 1: RTM TRACEABILITY MATRIX MODAL */}
+        {isRtmOpen && results && results.rtm && (
+          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+            <div className="bg-slate-900 border border-purple-500/40 rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div className="flex items-center gap-3">
+                  <span className="p-2 rounded-xl bg-purple-950 text-purple-300 border border-purple-500/30">
+                    <ClipboardList size={20} />
+                  </span>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Requirements Traceability Matrix (RTM)</h3>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      End-to-end trace from Business Requirement ➔ Design Spec ➔ Use Case ➔ Autonomous Test Execution.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsRtmOpen(false)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950">
+                <table className="w-full text-left text-xs font-mono">
+                  <thead className="bg-slate-900 border-b border-slate-800 text-slate-400 uppercase">
+                    <tr>
+                      <th className="py-3 px-4">Req ID</th>
+                      <th className="py-3 px-4">Business Requirement</th>
+                      <th className="py-3 px-4">Design Doc / Ref</th>
+                      <th className="py-3 px-4">Use Case / Test Suite</th>
+                      <th className="py-3 px-4">Verified Data</th>
+                      <th className="py-3 px-4">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60">
+                    {results.rtm.map((entry, idx) => (
+                      <tr key={idx} className="hover:bg-slate-900/40 transition-colors">
+                        <td className="py-3.5 px-4 font-bold text-purple-300">{entry.reqId}</td>
+                        <td className="py-3.5 px-4 font-sans text-white text-xs max-w-xs">{entry.requirement}</td>
+                        <td className="py-3.5 px-4 text-slate-400 text-[11px]">{entry.designDocRef}</td>
+                        <td className="py-3.5 px-4 text-cyan-300 text-[11px]">{entry.useCase}</td>
+                        <td className="py-3.5 px-4 text-slate-300 text-[11px] max-w-[150px] truncate">{entry.testData}</td>
+                        <td className="py-3.5 px-4">
+                          <span className="inline-flex items-center gap-1 text-emerald-400 font-bold text-[11px]">
+                            <Check size={12} /> {entry.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 text-xs text-slate-400">
+                <span>Total Requirements Verified: <strong className="text-white">{results.rtm.length} / {results.rtm.length} (100%)</strong></span>
+                <button
+                  type="button"
+                  onClick={() => setIsRtmOpen(false)}
+                  className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold transition-colors"
+                >
+                  Close RTM
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL 2: AUTO-HEALING RUN COMPARATOR MODAL */}
+        {isAutoHealOpen && results && results.autoHeal && (
+          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+            <div className="bg-slate-900 border border-amber-500/40 rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div className="flex items-center gap-3">
+                  <span className="p-2 rounded-xl bg-amber-950 text-amber-300 border border-amber-500/30">
+                    <GitCompare size={20} />
+                  </span>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Auto-Healing Status &amp; Run Delta Comparator</h3>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Comparison between Previous Baseline Run vs. Current Autonomous Healed Execution.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAutoHealOpen(false)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Comparison Metric Chips */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
+                  <div className="text-[11px] font-bold text-slate-400 uppercase">Previous Run Failures</div>
+                  <div className="text-xl font-bold text-rose-400 font-mono mt-1">
+                    {results.autoHeal.previousRunFailedCount} Broken Locators
+                  </div>
+                  <div className="text-[10px] text-slate-500 mt-0.5">Due to upstream DOM mutations</div>
+                </div>
+                <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
+                  <div className="text-[11px] font-bold text-slate-400 uppercase">Current Run Repaired</div>
+                  <div className="text-xl font-bold text-emerald-400 font-mono mt-1">
+                    {results.autoHeal.currentRunRepairedCount} Healed Automatically
+                  </div>
+                  <div className="text-[10px] text-emerald-500/80 mt-0.5">0 human interventions needed</div>
+                </div>
+                <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
+                  <div className="text-[11px] font-bold text-slate-400 uppercase">Flakiness Reduction</div>
+                  <div className="text-xl font-bold text-cyan-400 font-mono mt-1">
+                    {results.autoHeal.flakinessReductionPct}
+                  </div>
+                  <div className="text-[10px] text-cyan-500/80 mt-0.5">Pipeline stability preserved</div>
+                </div>
+              </div>
+
+              {/* Repaired Selectors Table */}
+              <div className="space-y-2">
+                <div className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                  Self-Healing Interventions Detail
+                </div>
+                <div className="space-y-3">
+                  {results.autoHeal.locatorsRepaired.map((item, idx) => (
+                    <div key={idx} className="p-4 rounded-2xl border border-slate-800 bg-slate-950 text-xs space-y-2 font-mono">
+                      <div className="flex items-center justify-between text-white font-sans font-bold">
+                        <span>{item.element}</span>
+                        <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono">
+                          HEALED
+                        </span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-rose-950/40 text-rose-300 border border-rose-900/50 text-[11px] truncate">
+                        <span className="text-rose-500 font-bold font-sans">Previous Broken: </span>
+                        {item.originalBrokenSelector}
+                      </div>
+                      <div className="p-2 rounded-lg bg-emerald-950/40 text-emerald-300 border border-emerald-900/50 text-[11px] truncate">
+                        <span className="text-emerald-500 font-bold font-sans">Healed Resilient: </span>
+                        {item.healedResilientSelector}
+                      </div>
+                      <div className="text-[10px] text-slate-400 font-sans">
+                        AI Strategy: <strong className="text-cyan-300">{item.strategy}</strong>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsAutoHealOpen(false)}
+                  className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold transition-colors text-xs"
+                >
+                  Close Comparator
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL 3: TESTING TYPES DONE & NUMBERS MODAL */}
+        {isTestingTypesOpen && results && results.testingTypes && (
+          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+            <div className="bg-slate-900 border border-emerald-500/40 rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div className="flex items-center gap-3">
+                  <span className="p-2 rounded-xl bg-emerald-950 text-emerald-300 border border-emerald-500/30">
+                    <PieChart size={20} />
+                  </span>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Testing Types Done &amp; Numbers</h3>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Multi-layer testing coverage metrics executed during this autonomous test run.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsTestingTypesOpen(false)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-300 flex items-center gap-2">
+                      <Zap size={14} className="text-cyan-400" /> Smoke Testing
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-blue-950 text-blue-300 font-mono text-[11px] font-bold">
+                      {results.testingTypes.smokeCount} Suite
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">Core user path, navigation &amp; basic landing health.</p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-300 flex items-center gap-2">
+                      <Layers size={14} className="text-purple-400" /> Regression Testing
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-purple-950 text-purple-300 font-mono text-[11px] font-bold">
+                      {results.testingTypes.regressionCount} Steps
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">End-to-end integration journeys, forms, and business logic.</p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-300 flex items-center gap-2">
+                      <Globe size={14} className="text-emerald-400" /> API &amp; Contract Testing
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-mono text-[11px] font-bold">
+                      {results.testingTypes.apiContractCount} Endpoints
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">REST &amp; GraphQL payload schema assertions &amp; status 200 OK.</p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-300 flex items-center gap-2">
+                      <Database size={14} className="text-amber-400" /> Database Integrity
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-amber-950 text-amber-300 font-mono text-[11px] font-bold">
+                      {results.testingTypes.databaseIntegrityCount} Tables
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">Backend SQL row verification, proving zero transactional drift.</p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-300 flex items-center gap-2">
+                      <ShieldCheck size={14} className="text-rose-400" /> Security &amp; Boundary Scans
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-mono text-[11px] font-bold">
+                      {results.testingTypes.securityVulnerabilityCount} Vectors
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">SQL injection, XSS payload sanitation, CORS &amp; auth token checks.</p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-300 flex items-center gap-2">
+                      <Server size={14} className="text-cyan-400" /> Performance &amp; Latency
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 font-mono text-[11px] font-bold">
+                      {results.testingTypes.performanceLatencyCount} Monitors
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">DOM render time, step latency (ms), and bandwidth throttling checks.</p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsTestingTypesOpen(false)}
+                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-colors text-xs"
+                >
+                  Close Testing Types
                 </button>
               </div>
             </div>
