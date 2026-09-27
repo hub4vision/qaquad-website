@@ -127,14 +127,14 @@ export default function AboutPage() {
             <div className="flex flex-col sm:flex-row items-center gap-6 rounded-2xl border border-slate-700/60 bg-gradient-to-br from-slate-900/90 to-slate-800/80 p-8 shadow-xl backdrop-blur-sm">
               <div className="flex-shrink-0">
                 <div className="h-32 w-32 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-500 flex items-center justify-center text-4xl font-bold text-white shadow-lg">
-                  JD
+                  QA
                 </div>
               </div>
               <div>
-                <h4 className="text-xl font-bold text-white">John Doe</h4>
-                <p className="text-cyan-400 font-medium">Founder & Head of QA Engineering</p>
+                <h4 className="text-xl font-bold text-white">QA Quad Leadership</h4>
+                <p className="text-cyan-400 font-medium">Quality Assurance &amp; Delivery</p>
                 <p className="mt-3 text-slate-300 text-sm leading-relaxed">
-                  With over 15 years of experience leading QA automation for enterprise SaaS and logistics platforms, John founded QAQuad to bridge the gap between AI hype and rigorous, evidence-backed software testing.
+                  With deep domain expertise in scalable test automation and continuous testing pipelines, the QAQuad management team drives precision engineering and transparent, evidence-based quality standards.
                 </p>
               </div>
             </div>
