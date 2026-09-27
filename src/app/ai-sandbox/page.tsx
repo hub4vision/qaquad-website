@@ -463,23 +463,23 @@ export default function AiSandboxPage() {
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 drop-shadow-xs">
             AI Test Sandbox &amp; Real-Time Report Generator
           </h1>
-          <p className="mt-2 text-xs sm:text-sm md:text-base text-slate-600 leading-relaxed max-w-3xl mx-auto">
-            Test any application URL or user story across major industries (<strong className="text-cyan-800 font-bold">Travel, E-Commerce, FinTech, SaaS, CRM, Logistics, Healthcare</strong>). Watch QAQuad generate executable Playwright tests, execute multi-layer verification, and produce a complete QA Evidence Dossier with Base64 visual snapshots in real-time.
+          <p className="mt-2 text-xs sm:text-sm md:text-base text-slate-700 leading-relaxed max-w-3xl mx-auto">
+            Test any application URL or user story across major industries (<strong className="text-cyan-900 font-bold">Travel, E-Commerce, FinTech, SaaS, CRM, Logistics, Healthcare</strong>). Watch QAQuad generate executable Playwright tests, execute multi-layer verification, and produce a complete QA Evidence Dossier with Base64 visual snapshots in real-time.
           </p>
         </div>
 
         {/* Interactive Prompt Console */}
-        <div className="max-w-5xl mx-auto bg-slate-50/90 rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 backdrop-blur-xl overflow-hidden mb-5 no-print">
+        <div className="max-w-5xl mx-auto bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden mb-5 no-print">
           {/* Header Bar */}
-          <div className="px-5 py-3 border-b border-slate-200 bg-slate-100/90 flex flex-wrap items-center justify-between gap-3">
+          <div className="px-5 py-3 border-b border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
               <span className="flex h-2.5 w-2.5 rounded-full bg-rose-500"></span>
               <span className="flex h-2.5 w-2.5 rounded-full bg-amber-500"></span>
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-              <span className="ml-2 text-xs font-mono font-medium text-slate-600">qaquad-ai-engine::prompt-runner</span>
+              <span className="ml-2 text-xs font-mono font-bold text-slate-800">qaquad-ai-engine::prompt-runner</span>
             </div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-cyan-700">
-              <Zap size={13} />
+            <div className="flex items-center gap-2 text-xs font-bold text-cyan-800">
+              <Zap size={13} className="text-cyan-600" />
               <span>Self-Healing • Base64 Snapshots • UI/API/DB</span>
             </div>
           </div>
@@ -488,11 +488,11 @@ export default function AiSandboxPage() {
             {/* Presets Selector */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
                   <Building2 size={14} className="text-cyan-600" />
                   <span>Quick-Test Presets (Click to Load):</span>
                 </label>
-                <span className="text-[11px] text-slate-500">8 Top Industries Supported</span>
+                <span className="text-[11px] text-slate-500 font-medium">8 Top Industries Supported</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
                 {PRESETS.map((preset, idx) => (
@@ -502,12 +502,12 @@ export default function AiSandboxPage() {
                     onClick={() => setPrompt(preset.prompt)}
                     className={`text-left p-2.5 rounded-xl border text-xs transition-all duration-200 ${
                       prompt === preset.prompt
-                        ? "border-cyan-600 bg-cyan-50 text-cyan-950 shadow-sm ring-2 ring-cyan-500/40"
-                        : "border-slate-200 bg-slate-50/70 text-slate-700 hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900"
+                        ? "border-cyan-600 bg-cyan-50/90 text-cyan-950 shadow-sm ring-2 ring-cyan-500/40"
+                        : "border-slate-200 bg-slate-50/80 text-slate-800 hover:border-cyan-400 hover:bg-cyan-50/40 hover:text-slate-900"
                     }`}
                   >
                     <div className="font-bold truncate text-slate-900">{preset.label}</div>
-                    <div className="text-[11px] text-cyan-700 font-mono mt-0.5">{preset.brand}</div>
+                    <div className="text-[11px] text-cyan-700 font-mono mt-0.5 font-semibold">{preset.brand}</div>
                   </button>
                 ))}
               </div>
@@ -515,9 +515,9 @@ export default function AiSandboxPage() {
 
             {/* Prompt Textarea */}
             <div>
-              <label htmlFor="prompt-input" className="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5 flex items-center justify-between">
+              <label htmlFor="prompt-input" className="block text-xs font-bold uppercase tracking-wider text-slate-900 mb-1.5 flex items-center justify-between">
                 <span>Test Scenario Prompt or Target URL:</span>
-                <span className="text-[11px] text-slate-500 font-normal">Custom natural language supported</span>
+                <span className="text-[11px] text-slate-500 font-medium">Custom natural language supported</span>
               </label>
               <div className="relative">
                 <textarea
@@ -525,7 +525,7 @@ export default function AiSandboxPage() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   rows={3}
-                  className="w-full p-3.5 rounded-2xl text-slate-900 bg-slate-50 border border-slate-300 focus:bg-white focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 font-mono text-sm leading-relaxed resize-none shadow-inner placeholder-slate-400"
+                  className="w-full p-3.5 rounded-2xl text-slate-900 bg-slate-50 border border-slate-300 focus:bg-white focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 font-mono text-sm leading-relaxed resize-none shadow-xs placeholder-slate-400"
                   placeholder="e.g. Test makemytrip.com flight search from Delhi to Mumbai, verify fare breakdown, check API status..."
                 />
               </div>
@@ -533,7 +533,7 @@ export default function AiSandboxPage() {
 
             {/* Action Bar */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-1">
-              <div className="text-xs text-slate-600 flex items-center gap-2">
+              <div className="text-xs text-slate-700 flex items-center gap-2 font-medium">
                 <Cpu size={15} className="text-cyan-600 shrink-0" />
                 <span>Engine dynamically generates isolated test report, Base64 snapshots &amp; assertions for this prompt.</span>
               </div>
