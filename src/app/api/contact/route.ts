@@ -123,8 +123,8 @@ async function sendViaSmtp(lead: LeadForDelivery) {
   const host = process.env.SMTP_HOST || "smtp.hostinger.com";
   const port = Number(process.env.SMTP_PORT) || 465;
   const secure = process.env.SMTP_SECURE === "true" || port === 465;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
+  const user = process.env.SMTP_USER || "info@QAQuad.com";
+  const pass = process.env.SMTP_PASS || "Lz5>fvir";
   const from = process.env.LEAD_NOTIFICATION_FROM_EMAIL || user;
   const to = process.env.LEAD_NOTIFICATION_TO_EMAIL || "info@QAQuad.com";
 
@@ -143,7 +143,7 @@ async function sendViaSmtp(lead: LeadForDelivery) {
   const htmlContent = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;">
       <div style="border-bottom: 2px solid #0284c7; padding-bottom: 16px; margin-bottom: 20px;">
-        <h2 style="color: #0f172a; margin: 0; font-size: 22px;">New QA Assessment Request</h2>
+        <h2 style="color: #0f172a; margin: 0; font-size: 22px;">New QA Assessment / Quotation Request</h2>
         <p style="color: #64748b; margin: 4px 0 0 0; font-size: 14px;">Submitted via QAQuad.com</p>
       </div>
       <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
@@ -154,25 +154,82 @@ async function sendViaSmtp(lead: LeadForDelivery) {
         ${lead.applicationUrl ? `<tr><td style="padding: 8px 0; color: #64748b; font-weight: 600;">Application URL:</td><td style="padding: 8px 0; color: #0f172a;"><a href="${escapeHtml(lead.applicationUrl)}">${escapeHtml(lead.applicationUrl)}</a></td></tr>` : ""}
         <tr><td style="padding: 8px 0; color: #64748b; font-weight: 600;">Company Type:</td><td style="padding: 8px 0; color: #0f172a;">${escapeHtml(lead.companyType)}</td></tr>
         <tr><td style="padding: 8px 0; color: #64748b; font-weight: 600;">Testing Requirement:</td><td style="padding: 8px 0; color: #0f172a;">${escapeHtml(lead.testingRequirement)}</td></tr>
-        <tr><td style="padding: 8px 0; color: #64748b; font-weight: 600;">Current QA Method:</td><td style="padding: 8px 0; color: #0f172a;">${escapeHtml(lead.currentQaMethod)}</td></tr>
-        <tr><td style="padding: 8px 0; color: #64748b; font-weight: 600;">Migration Project:</td><td style="padding: 8px 0; color: #0f172a;">${escapeHtml(lead.isMigrationProject)}</td></tr>
+        <tr><td style="padding: 8px 0; color: #64748b; font-weight: 600;">Current QA Method:</td><td style="padding: 8px 0; color: #0f172a;">${escapeHtml(lead.currentQaMethod || "Automated & AI Engine")}</td></tr>
+        <tr><td style="padding: 8px 0; color: #64748b; font-weight: 600;">Migration Project:</td><td style="padding: 8px 0; color: #0f172a;">${escapeHtml(lead.isMigrationProject || "No")}</td></tr>
         <tr><td style="padding: 8px 0; color: #64748b; font-weight: 600;">Submitted:</td><td style="padding: 8px 0; color: #64748b;">${escapeHtml(lead.submittedAt)}</td></tr>
       </table>
       <div style="margin-top: 20px; padding: 16px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #0284c7;">
-        <h4 style="margin: 0 0 8px 0; color: #0f172a; font-size: 14px;">Message:</h4>
+        <h4 style="margin: 0 0 8px 0; color: #0f172a; font-size: 14px;">Scope / Message:</h4>
         <p style="margin: 0; color: #334155; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(lead.message)}</p>
       </div>
     </div>
   `;
 
+  // 1. Send admin notification
   await transporter.sendMail({
     from: `"QAQuad Inquiries" <${from}>`,
     to,
     replyTo: lead.email,
-    subject: `New QA Assessment Request — ${lead.company} (${lead.name})`,
+    subject: `New QA Assessment / Quote Request — ${lead.company} (${lead.name})`,
     text: formattedText,
     html: htmlContent,
   });
+
+  // 2. Automatically send confirmation & quotation summary directly to the client's email
+  if (lead.email && lead.email.includes("@")) {
+    try {
+      const clientHtmlContent = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 650px; margin: 0 auto; padding: 28px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; color: #1e293b;">
+          <div style="border-bottom: 2px solid #0284c7; padding-bottom: 18px; margin-bottom: 22px;">
+            <h2 style="color: #0f172a; margin: 0; font-size: 22px; font-weight: 800;">QAQuad Quotation & Assessment Confirmation</h2>
+            <p style="color: #0284c7; margin: 4px 0 0 0; font-size: 13px; font-weight: 600;">Autonomous AI QA Automation & Continuous Reliability</p>
+          </div>
+
+          <p style="font-size: 14px; line-height: 1.6; color: #334155;">
+            Dear <strong>${escapeHtml(lead.name)}</strong>,
+          </p>
+          <p style="font-size: 14px; line-height: 1.6; color: #334155;">
+            Thank you for reaching out to <strong>QAQuad</strong>. We have received your QA automation details and our Principal QA Automation Lead has been assigned to your scope.
+          </p>
+
+          <div style="margin: 18px 0; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">
+            <h3 style="margin: 0 0 10px 0; color: #0f172a; font-size: 14px; font-weight: 700;">Submission Summary:</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+              <tr><td style="padding: 6px 0; color: #64748b; font-weight: 600; width: 160px;">Organization:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${escapeHtml(lead.company)}</td></tr>
+              ${lead.applicationUrl ? `<tr><td style="padding: 6px 0; color: #64748b; font-weight: 600;">Target Application:</td><td style="padding: 6px 0; color: #0284c7;"><a href="${escapeHtml(lead.applicationUrl)}">${escapeHtml(lead.applicationUrl)}</a></td></tr>` : ""}
+              <tr><td style="padding: 6px 0; color: #64748b; font-weight: 600;">Testing Type:</td><td style="padding: 6px 0; color: #0f172a;">${escapeHtml(lead.testingRequirement)}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b; font-weight: 600;">Estimated Turnaround:</td><td style="padding: 6px 0; color: #059669; font-weight: 700;">Within 2 Business Hours</td></tr>
+            </table>
+          </div>
+
+          <div style="margin: 18px 0; padding: 14px; background: #ecfdf5; border-left: 4px solid #059669; border-radius: 8px;">
+            <h4 style="margin: 0 0 4px 0; color: #065f46; font-size: 13px;">Scope & Notes:</h4>
+            <p style="margin: 0; color: #047857; font-size: 12px; line-height: 1.5; white-space: pre-wrap;">${escapeHtml(lead.message)}</p>
+          </div>
+
+          <p style="font-size: 13px; line-height: 1.6; color: #334155;">
+            If you need to schedule an immediate technical discovery call with our team, feel free to reply directly to this email or visit our website.
+          </p>
+
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 14px; margin-top: 20px; font-size: 12px; color: #94a3b8; text-align: center;">
+            <p style="margin: 0 0 2px 0;">QAQuad Inc. • Autonomous AI QA Automation</p>
+            <p style="margin: 0;">Email: <a href="mailto:info@QAQuad.com" style="color: #0284c7;">info@QAQuad.com</a> • Website: <a href="https://qaquad.com" style="color: #0284c7;">qaquad.com</a></p>
+          </div>
+        </div>
+      `;
+
+      await transporter.sendMail({
+        from: `"QAQuad Enterprise QA" <${from}>`,
+        to: lead.email,
+        replyTo: "info@QAQuad.com",
+        subject: `QAQuad Quotation & QA Assessment Scope Confirmation — ${lead.company}`,
+        text: `Dear ${lead.name},\n\nThank you for reaching out to QAQuad. We have received your QA automation details for ${lead.company}.\n\nScope Summary:\n${lead.message}\n\nOur team will be in touch within 2 business hours.\n\nBest regards,\nQAQuad Team\ninfo@QAQuad.com`,
+        html: clientHtmlContent,
+      });
+    } catch (clientMailErr) {
+      console.error("[contact] Failed to send client auto-confirmation email:", clientMailErr);
+    }
+  }
 }
 
 function escapeHtml(text: string): string {
