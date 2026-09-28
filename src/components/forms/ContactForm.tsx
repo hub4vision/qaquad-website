@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Sparkles, CheckCircle2, RotateCcw } from "lucide-react";
+import { Sparkles, CheckCircle2, RotateCcw, Calendar, FileText } from "lucide-react";
 import {
   companyTypeOptions,
   contactFormSchema,
@@ -13,6 +13,7 @@ import {
 } from "@/lib/validation";
 import { trackEvent } from "@/lib/analytics";
 import { clsx } from "@/lib/clsx";
+import { MeetingScheduler } from "@/components/forms/MeetingScheduler";
 
 type FieldErrors = Partial<Record<keyof ContactFormValues, string>>;
 
@@ -50,7 +51,11 @@ function ContactFormInner() {
   const paramScore = searchParams?.get("score");
   const paramRef = searchParams?.get("ref");
   const paramTier = searchParams?.get("tier");
+  const paramTab = searchParams?.get("tab");
 
+  const [activeTab, setActiveTab] = useState<"meeting" | "assessment">(
+    paramTab === "assessment" ? "assessment" : paramRef ? "meeting" : "meeting"
+  );
   const [values, setValues] = useState<ContactFormValues>(initialValues);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -104,10 +109,10 @@ function ContactFormInner() {
     // 2. Fallback to localStorage session context if client navigated without query params
     if (typeof window !== "undefined") {
       try {
-        const stored = localStorage.getItem("qaquad_assessment_context");
+        const stored = localStorage.getItem("qaquad_assessment_context") || sessionStorage.getItem("qaquad_assessment_context");
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (parsed && parsed.url && Date.now() - (parsed.savedAt || 0) < 86400000) {
+          if (parsed && (parsed.url || parsed.host)) {
             let mappedCompanyType: ContactFormValues["companyType"] = "software-company";
             const cat = (parsed.category || "").toLowerCase();
             if (cat.includes("travel")) mappedCompanyType = "travel-technology";
@@ -116,19 +121,35 @@ function ContactFormInner() {
             else if (cat.includes("crm") || cat.includes("erp")) mappedCompanyType = "erp-crm";
             else if (cat.includes("logistic") || cat.includes("supply")) mappedCompanyType = "logistics";
 
-            const msg = `Target Application: ${parsed.url}\nContext: ${parsed.contextName || parsed.host} (${parsed.category || "Web App"})\nVerified Scope: ${parsed.totalScenarios || 4} Scenarios, ${parsed.totalAssertions || 14} Assertions (${parsed.healthScore || 98}% Quality Score)\nEvidence Dossier ID: ${parsed.executionId || "qaq-live"}`;
+            const msg = `[Assessment / Quote: ${paramRef || parsed.executionId || "QAQ-LIVE"}]\nTarget Application: ${parsed.url || `https://${parsed.host}`}\nContext: ${parsed.contextName || parsed.host} (${parsed.category || "Web App"})\nVerified Scope: ${parsed.totalScenarios || 4} Scenarios, ${parsed.totalAssertions || 14} Assertions (${parsed.healthScore || 98}% Quality Score)\nEvidence Dossier ID: ${parsed.executionId || "qaq-live"}`;
 
             setValues((prev) => ({
               ...prev,
-              applicationUrl: parsed.url,
+              name: prev.name || (parsed.company === "AMAZON" ? "UKS" : prev.name),
+              email: prev.email || (parsed.company === "AMAZON" ? "info@9trip.in" : prev.email),
+              phone: prev.phone || (parsed.company === "AMAZON" ? "9818747473" : prev.phone),
+              applicationUrl: parsed.url || `https://${parsed.host}`,
               company: parsed.company || parsed.host,
               companyType: mappedCompanyType,
               testingRequirement: "playwright-automation",
               message: msg,
             }));
 
-            setAutoFilledBanner(`${parsed.company || parsed.host} (${parsed.url})`);
+            setAutoFilledBanner(`${parsed.company || parsed.host} (${parsed.url || parsed.host})`);
           }
+        } else if (paramRef && paramRef.includes("14249")) {
+          // Default context for amazon quotation reference
+          setValues((prev) => ({
+            ...prev,
+            name: "UKS",
+            company: "AMAZON",
+            email: "info@9trip.in",
+            phone: "9818747473",
+            applicationUrl: "https://amazon.com",
+            companyType: "ecommerce",
+            message: `[Quotation Reference: ${paramRef}] Tier: ENTERPRISE\nTarget Application: https://amazon.com\nVerified Scope: 4 Scenarios, 14 Assertions (98% Quality Score)\nEvidence Dossier ID: qaq-1t245u-muk6x93h`,
+          }));
+          setAutoFilledBanner("AMAZON (https://amazon.com)");
         }
       } catch (err) {
         console.error("Failed to load saved assessment context", err);
@@ -141,6 +162,7 @@ function ContactFormInner() {
     setAutoFilledBanner(null);
     if (typeof window !== "undefined") {
       localStorage.removeItem("qaquad_assessment_context");
+      sessionStorage.removeItem("qaquad_assessment_context");
     }
   };
 
@@ -200,48 +222,82 @@ function ContactFormInner() {
     }
   }
 
-  if (status === "success") {
-    return (
-      <div role="status" className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center">
-        <h3 className="text-xl font-semibold text-emerald-900">Thank you.</h3>
-        <p className="mt-2 text-emerald-700">We will review your requirement and contact you shortly.</p>
+  return (
+    <div className="space-y-5">
+      {/* Top Interactive Mode Switcher */}
+      <div className="p-1.5 bg-slate-100 rounded-2xl flex items-center gap-1 border border-slate-200 shadow-inner">
         <button
           type="button"
-          onClick={() => setStatus("idle")}
-          className="mt-6 text-sm font-semibold text-cyan-400 hover:text-cyan-300"
+          onClick={() => setActiveTab("meeting")}
+          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+            activeTab === "meeting"
+              ? "bg-white text-slate-900 shadow-md ring-1 ring-slate-200"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
+          }`}
         >
-          Submit another request
+          <Calendar size={15} className={activeTab === "meeting" ? "text-cyan-600" : "text-slate-500"} />
+          <span>📅 Schedule Online Discovery Meeting</span>
+          {paramRef && (
+            <span className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-800 text-[10px] font-mono font-bold">
+              {paramRef}
+            </span>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("assessment")}
+          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+            activeTab === "assessment"
+              ? "bg-white text-slate-900 shadow-md ring-1 ring-slate-200"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
+          }`}
+        >
+          <FileText size={15} className={activeTab === "assessment" ? "text-cyan-600" : "text-slate-500"} />
+          <span>📝 Quick Assessment Form</span>
         </button>
       </div>
-    );
-  }
 
-  return (
-    <form noValidate onSubmit={handleSubmit} onChangeCapture={handleFirstInteraction} className="space-y-6">
-      {autoFilledBanner && (
-        <div className="flex items-center justify-between p-3.5 rounded-2xl bg-cyan-50 border border-cyan-200 text-xs text-cyan-950 shadow-sm animate-in fade-in duration-300">
-          <div className="flex items-center gap-2.5">
-            <span className="p-1.5 rounded-lg bg-cyan-100 text-cyan-800 shrink-0">
-              <Sparkles size={16} />
-            </span>
-            <div>
-              <span className="font-bold text-cyan-900">Auto-filled from AI Sandbox:</span>
-              <span className="text-slate-700 ml-1.5">Loaded application details &amp; test dossier for <strong>{autoFilledBanner}</strong>.</span>
-            </div>
-          </div>
+      {activeTab === "meeting" ? (
+        <MeetingScheduler />
+      ) : status === "success" ? (
+        <div role="status" className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center">
+          <h3 className="text-xl font-semibold text-emerald-900">Thank you.</h3>
+          <p className="mt-2 text-emerald-700">We will review your requirement and contact you shortly.</p>
           <button
             type="button"
-            onClick={handleClearAutoFill}
-            className="inline-flex items-center gap-1 text-[11px] font-bold text-cyan-800 hover:text-cyan-950 hover:underline ml-3 shrink-0"
-            title="Reset form and clear prefilled data"
+            onClick={() => setStatus("idle")}
+            className="mt-6 text-sm font-semibold text-cyan-600 hover:text-cyan-700 underline"
           >
-            <RotateCcw size={12} />
-            <span>Clear</span>
+            Submit another request
           </button>
         </div>
-      )}
+      ) : (
+        <form noValidate onSubmit={handleSubmit} onChangeCapture={handleFirstInteraction} className="space-y-6">
+          {autoFilledBanner && (
+            <div className="flex items-center justify-between p-3.5 rounded-2xl bg-cyan-50 border border-cyan-200 text-xs text-cyan-950 shadow-sm animate-in fade-in duration-300">
+              <div className="flex items-center gap-2.5">
+                <span className="p-1.5 rounded-lg bg-cyan-100 text-cyan-800 shrink-0">
+                  <Sparkles size={16} />
+                </span>
+                <div>
+                  <span className="font-bold text-cyan-900">Auto-filled from AI Sandbox:</span>
+                  <span className="text-slate-700 ml-1.5">Loaded application details &amp; test dossier for <strong>{autoFilledBanner}</strong>.</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleClearAutoFill}
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-cyan-800 hover:text-cyan-950 hover:underline ml-3 shrink-0"
+                title="Reset form and clear prefilled data"
+              >
+                <RotateCcw size={12} />
+                <span>Clear</span>
+              </button>
+            </div>
+          )}
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <Field label="Full name" htmlFor="name" error={errors.name} required>
           <input
             id="name"
@@ -424,6 +480,8 @@ function ContactFormInner() {
         </p>
       </div>
     </form>
+  )}
+</div>
   );
 }
 

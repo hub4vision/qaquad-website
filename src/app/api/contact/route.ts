@@ -207,8 +207,14 @@ async function sendViaSmtp(lead: LeadForDelivery) {
             <p style="margin: 0; color: #047857; font-size: 12px; line-height: 1.5; white-space: pre-wrap;">${escapeHtml(lead.message)}</p>
           </div>
 
+          <div style="margin: 22px 0 14px 0; text-align: center;">
+            <a href="https://qaquad.com/contact?ref=QAQ-QU0-14249&company=${encodeURIComponent(lead.company)}&email=${encodeURIComponent(lead.email)}&name=${encodeURIComponent(lead.name)}&url=${encodeURIComponent(lead.applicationUrl || '')}" style="display: inline-block; padding: 12px 28px; background: #0284c7; color: #ffffff; text-decoration: none; font-weight: 700; font-size: 14px; border-radius: 10px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
+              📅 Schedule QA Discovery Call Online
+            </a>
+          </div>
+
           <p style="font-size: 13px; line-height: 1.6; color: #334155;">
-            If you need to schedule an immediate technical discovery call with our team, feel free to reply directly to this email or visit our website.
+            If you need to schedule an immediate technical discovery call with our team, feel free to click above, reply directly to this email, or visit our website.
           </p>
 
           <div style="border-top: 1px solid #e2e8f0; padding-top: 14px; margin-top: 20px; font-size: 12px; color: #94a3b8; text-align: center;">
