@@ -92,7 +92,7 @@ export function generateRecommendation(answers: Record<string, string>): Recomme
       title: "AI-Powered Migration Testing",
       description:
         "Our flagship migration testing compares business behavior — not just screenshots. We validate CRUD operations, business rules, workflows, and data integrity between legacy and new systems, classifying every result as PASS, PARTIAL, FAIL, or NOT FOUND.",
-      services: ["Legacy-to-New Comparison", "Business Rule Validation", "Data Migration Integrity", "Playwright Automation"],
+      services: ["Legacy-to-New Comparison", "Business Rule Validation", "Data Migration Integrity", "Playwright & Selenium Automation"],
       ctaLabel: "Book Free Migration Assessment",
       ctaHref: "/contact",
     };
@@ -115,8 +115,8 @@ export function generateRecommendation(answers: Record<string, string>): Recomme
     return {
       title: "Enterprise Test Automation Framework",
       description:
-        "We build maintainable, self-healing Playwright automation suites with dual API + database assertions. Our scripts auto-adapt to UI changes and integrate directly into your CI/CD pipeline.",
-      services: ["Playwright Framework Setup", "Self-Healing Locators", "CI/CD Integration", "Regression Suite Management"],
+        "We build maintainable, self-healing Playwright & Selenium automation suites with dual API + database assertions. Our scripts auto-adapt to UI changes and integrate directly into your CI/CD pipeline.",
+      services: ["Playwright & Selenium Setup", "Self-Healing Locators", "CI/CD Integration", "Regression Suite Management"],
       ctaLabel: "Book Automation Assessment",
       ctaHref: "/contact",
     };
@@ -160,7 +160,7 @@ export const quickReplies = [
 
 export const fallbackResponses: Record<string, string> = {
   services:
-    "QAQuad offers AI-powered functional testing, Playwright automation, API & database validation, migration testing, and regression suite management. Would you like to book a free assessment to discuss your specific needs?",
+    "QAQuad offers AI-powered functional testing, Playwright & Selenium automation, API & database validation, migration testing, and regression suite management. Would you like to book a free assessment to discuss your specific needs?",
   pricing:
     "We offer flexible engagement models — Fixed-Price Sprints for defined scope, Managed QA Retainers for ongoing coverage, and Staff Augmentation for embedding QA engineers in your team. Let's discuss what fits your budget on a quick call.",
   migration:
@@ -183,7 +183,7 @@ QAQuad provides AI-powered QA automation for faster, more reliable software rele
 ### Core Services
 1. **AI-Powered Functional Testing** — Multi-agent AI autonomously explores applications, generates test scenarios from real behavior, and validates across UI, API, and database layers.
 2. **Migration Testing** (Flagship) — Compares business behavior between legacy and new systems. Validates CRUD operations, business rules, workflows, permissions, and data integrity. Every result is classified: PASS, PARTIAL, FAIL, NOT FOUND, NOT TESTABLE, or NEEDS BUSINESS CONFIRMATION.
-3. **Playwright Test Automation** — Self-healing automation scripts with dual API + database assertions. Auto-adapts to UI changes. Full CI/CD integration.
+3. **Playwright & Selenium Test Automation** — Self-healing automation scripts with dual API + database assertions. Auto-adapts to UI changes. Full CI/CD integration.
 4. **API & Database Validation** — REST/GraphQL contract testing plus deep database assertion layers ensuring UI actions reflect correctly in the data store.
 5. **Regression Suite Management** — Maintainable, automated regression that scales with your application.
 6. **AI QA Agent** — Autonomous testing agent that discovers functionality, generates tests, detects defects, and builds regression automation.
@@ -205,7 +205,7 @@ QAQuad offers a free initial QA assessment that includes:
 - Work in isolated staging environments
 - AI journey discovery across high-traffic user flows
 - Executive findings report with real defect evidence
-- Tailored Playwright automation roadmap
+- Tailored Playwright & Selenium automation roadmap
 
 ## Your Behavior Rules
 1. Be warm, professional, and concise. Use short paragraphs.

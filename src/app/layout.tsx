@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     "AI QA automation",
     "AI software testing",
     "AI testing services",
-    "Playwright automation",
+    "Playwright & Selenium automation",
     "functional testing",
     "regression testing",
     "migration testing",

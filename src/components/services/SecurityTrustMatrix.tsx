@@ -5,7 +5,7 @@ const trustPillars = [
   {
     badge: "Confidentiality",
     title: "100% Client Code & IP Ownership",
-    description: "Every test suite, Playwright script, fixture library, and CI/CD configuration written for your project is committed directly to your repository under your company's full intellectual property rights.",
+    description: "Every test suite, Playwright/Selenium script, fixture library, and CI/CD configuration written for your project is committed directly to your repository under your company's full intellectual property rights.",
   },
   {
     badge: "Environment Isolation",

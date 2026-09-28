@@ -11,6 +11,7 @@ import { WorkflowDiagram } from "@/components/workflow/WorkflowDiagram";
 import type { WorkflowStep } from "@/lib/site-config";
 import { RoiCalculator } from "@/components/analytics/RoiCalculator";
 import { SecurityTrustMatrix } from "@/components/services/SecurityTrustMatrix";
+import { DualCurrencyPrice } from "@/components/pricing/DualCurrencyPrice";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Pricing & Engagement Strategy",
@@ -36,7 +37,7 @@ const pricingStrategyPillars: StrategyPillar[] = [
   {
     id: "turnkey-handoff",
     title: "Turnkey IP Ownership",
-    description: "All generated Playwright code, test repositories, and pipeline configs belong entirely to your team.",
+    description: "All generated Playwright & Selenium code, test repositories, and pipeline configs belong entirely to your team.",
     position: "bottom-left",
     badge: "100% IP",
   },
@@ -89,22 +90,31 @@ const onboardingSteps: WorkflowStep[] = [
 const packages = [
   {
     name: "AI QA Assessment",
-    target: "Indicative starting target: ₹25K–₹50K",
+    minInr: 25000,
+    maxInr: 50000,
+    target: "Indicative starting target",
     includes: ["Application discovery", "Coverage assessment", "Sample test scenarios", "Sample findings with evidence"],
   },
   {
     name: "QA Automation",
-    target: "Indicative starting target: ₹75K–₹2L+",
-    includes: ["Playwright + API + database automation", "Regression suite build-out", "Evidence-backed reporting"],
+    minInr: 75000,
+    maxInr: 200000,
+    target: "Indicative starting target",
+    includes: ["Playwright & Selenium + API + database automation", "Regression suite build-out", "Evidence-backed reporting"],
   },
   {
     name: "Migration QA",
-    target: "Indicative starting target: ₹2L–₹5L+",
+    minInr: 200000,
+    maxInr: 500000,
+    target: "Indicative starting target",
     includes: ["Old/new functional baseline", "Migration gap analysis", "Evidence for every finding", "Regression handoff"],
   },
   {
     name: "Managed QA Automation",
-    target: "Custom monthly",
+    minInr: 50000,
+    maxInr: 150000,
+    target: "Indicative starting target",
+    isMonthly: true,
     includes: ["Continuous regression execution", "Suite maintenance", "Release-by-release reporting", "Ongoing support"],
   },
 ];
@@ -143,7 +153,9 @@ export default function PricingPage() {
             <div key={pkg.name} className="flex flex-col rounded-2xl border border-slate-700/60 bg-gradient-to-br from-slate-900/90 to-slate-800/80 p-6 shadow-xl backdrop-blur-sm hover:border-cyan-500/40 transition-colors">
               <Badge tone="info">Indicative</Badge>
               <h3 className="mt-4 text-lg font-bold text-white">{pkg.name}</h3>
-              <p className="mt-1 text-sm text-cyan-300 font-medium">{pkg.target}</p>
+              <p className="mt-1 text-sm text-cyan-300 font-medium">
+                {pkg.target}: <DualCurrencyPrice minInr={pkg.minInr} maxInr={pkg.maxInr} suffix={pkg.isMonthly ? " /mo" : ""} />
+              </p>
               <ul className="mt-4 flex-1 space-y-2 text-sm text-slate-300">
                 {pkg.includes.map((item) => (
                   <li key={item} className="flex items-start gap-2">
@@ -152,13 +164,17 @@ export default function PricingPage() {
                   </li>
                 ))}
               </ul>
+              <div className="mt-6 border-t border-slate-700/50 pt-4">
+                <a href={`/contact?interest=${encodeURIComponent(`${pkg.name}\n${pkg.target}\n\nWhat's included:\n${pkg.includes.map((f: string) => `- ${f}`).join('\n')}`)}`} className="text-sm font-semibold text-cyan-400 hover:text-cyan-300">Request Quote &rarr;</a>
+              </div>
             </div>
           ))}
         </div>
-        <p className="mt-8 text-sm text-slate-400">
-          Figures above are placeholder business-planning targets for India-market launch, not a quote. Replace with
-          final commercial pricing after customer discovery, and add currency/region variants as you expand.
-        </p>
+        <div className="mt-12 flex justify-center">
+          <a href="/contact" className="inline-flex items-center justify-center rounded-xl bg-slate-800 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 transition-colors border border-slate-700">
+            Request a Custom Quote
+          </a>
+        </div>
       </Section>
 
       {/* Circular Value & Engagement Strategy */}

@@ -8,25 +8,25 @@ import { InteractiveTestInspector } from "@/components/evidence/InteractiveTestI
 import { IntegrationGrid } from "@/components/services/IntegrationGrid";
 
 const pageDescription =
-  "Playwright browser automation, REST/API validation, and SQL/database checks, built as maintainable regression automation and wired into CI/CD.";
+  "Playwright & Selenium browser automation, REST/API validation, and SQL/database checks, built as maintainable regression automation and wired into CI/CD.";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Playwright, API, and Database Test Automation",
+  title: "Playwright, Selenium, API, and Database Automation",
   description: pageDescription,
   path: "/test-automation",
 });
 
 const layers = [
   {
-    id: "playwright-automation",
-    name: "Playwright Automation",
+    id: "playwright-selenium-automation",
+    name: "Playwright & Selenium Automation",
     description:
       "Browser automation structured around real business workflows rather than brittle selectors, so suites stay useful release after release.",
     points: [
       "Page-object and workflow-based test architecture",
-      "Cross-browser execution (Chrome, Edge, Firefox, WebKit)",
+      "Cross-browser execution (Chrome, Edge, Firefox, WebKit, Safari)",
       "Data-driven and parameterized test design",
-      "Readable failures with screenshots and traces attached",
+      "Readable failures with screenshots and video traces attached",
     ],
   },
   {
@@ -83,7 +83,7 @@ const testAutomationPillars = [
   {
     id: "expertise",
     title: "Domain Expertise",
-    description: "Deep engineering knowledge across Playwright, contract testing, and relational database validation.",
+    description: "Deep engineering knowledge across Playwright, Selenium, contract testing, and relational database validation.",
     position: "top-left" as const,
     badge: "Specialized",
   },
@@ -129,7 +129,7 @@ export default function TestAutomationPage() {
     <>
       <StructuredData
         data={serviceJsonLd({
-          name: "Playwright, API, and Database Test Automation",
+          name: "Playwright, Selenium, API, and Database Automation",
           description: pageDescription,
           path: "/test-automation",
         })}
@@ -186,7 +186,7 @@ export default function TestAutomationPage() {
         <SectionHeading
           id="automation-inspector-heading"
           eyebrow="Live Test Console"
-          title="Playwright Execution & Self-Healing Telemetry"
+          title="Playwright & Selenium Execution & Self-Healing Telemetry"
           description="Test runs execute hermetically, auto-healing broken UI selectors and validating relational database transactions in parallel."
           align="center"
           className="mx-auto"

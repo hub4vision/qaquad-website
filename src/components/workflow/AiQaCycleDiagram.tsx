@@ -83,7 +83,7 @@ const steps: Step[] = [
     description:
       "As testing processes run, our system responds instantly to UI shifts. When locators or DOM trees change, AI self-heals selectors on-the-fly, preventing false failures and triggering real-time diagnostics back to your CI/CD pipeline.",
     bullets: [
-      "Auto-adapting Playwright selectors on DOM shifts",
+      "Auto-adapting Playwright & Selenium locators on DOM shifts",
       "Zero flaky false-negatives due to CSS/ID renames",
       "Instant telemetry stream to CI/CD and developer dashboards",
       "Full video, trace, and snapshot evidence attached to each run",

@@ -4,16 +4,20 @@ import { NavLink } from "@/components/navigation/NavLink";
 import { CtaButton } from "@/components/cta/CtaButton";
 import { Logo } from "@/components/ui/Logo";
 import { MobileNav } from "./MobileNav";
-
 import { MegaMenu } from "@/components/navigation/MegaMenu";
+
+import { LiveVisitorWidget } from "@/components/analytics/LiveVisitorWidget";
 
 export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-slate-700/60 bg-slate-950 shadow-xl shadow-black/40">
       <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2 group focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-lg" aria-label={`${siteConfig.name}.com home`}>
-          <Logo size="md" />
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/" className="flex items-center gap-2 group focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-lg" aria-label={`${siteConfig.name}.com home`}>
+            <Logo size="md" />
+          </Link>
+          <LiveVisitorWidget />
+        </div>
 
         <nav className="hidden md:flex md:items-center md:gap-7" aria-label="Primary">
           <MegaMenu />
@@ -26,7 +30,7 @@ export function Header() {
             ))}
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden md:flex items-center gap-4">
           <CtaButton
             href={siteConfig.primaryCta.href}
             trackAs="cta_click"

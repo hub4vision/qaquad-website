@@ -35,7 +35,7 @@ export function RoiCalculator() {
           QA ROI & Regression Savings Calculator
         </h2>
         <p className="mt-2 text-sm text-slate-300">
-          Estimate how much engineering time and release budget your team saves by moving from repetitive manual regression to QAQuad self-healing Playwright automation.
+          Estimate how much engineering time and release budget your team saves by moving from repetitive manual regression to QAQuad self-healing Playwright & Selenium automation.
         </p>
       </div>
 

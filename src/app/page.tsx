@@ -140,7 +140,7 @@ export default function HomePage() {
             steps={[
               { step: "01", title: "Discover", description: "AI explores your application's functionality." },
               { step: "02", title: "Generate", description: "Meaningful test scenarios are created from real behavior." },
-              { step: "03", title: "Execute", description: "Playwright, API, and database checks run the workflows." },
+              { step: "03", title: "Execute", description: "Playwright, Selenium, API, and database checks run the workflows." },
               { step: "04", title: "Automate", description: "Stable scenarios become reusable regression automation." },
             ]}
             columns={4}
@@ -168,7 +168,7 @@ export default function HomePage() {
           id="live-runner-heading"
           eyebrow="Interactive Artifact Studio"
           title="See Autonomous QA Execution In Action"
-          description="Explore how QAQuad executes Playwright tests, auto-heals broken locators in real time, and asserts dual API + database consistency."
+          description="Explore how QAQuad executes Playwright & Selenium tests, auto-heals broken locators in real time, and asserts dual API + database consistency."
           align="center"
           className="mx-auto"
           tone="dark"

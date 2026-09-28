@@ -57,7 +57,7 @@ const deliveryStrategyPillars: StrategyPillar[] = [
   {
     id: "zero-drift",
     title: "Continuous Regression",
-    description: "Converting confirmed scenarios into permanent, self-healing Playwright automation for CI/CD.",
+    description: "Converting confirmed scenarios into permanent, self-healing Playwright & Selenium automation for CI/CD.",
     position: "bottom-right",
     badge: "Automate",
   },

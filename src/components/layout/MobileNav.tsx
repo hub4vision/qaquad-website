@@ -373,7 +373,7 @@ export function MobileNav() {
                     {[
                       { label: "AI-QA Tool & Engine", href: "/ai-qa-tool" },
                       { label: "AI Functional Testing", href: "/ai-qa-automation" },
-                      { label: "Playwright Automation", href: "/test-automation" },
+                      { label: "Playwright & Selenium", href: "/test-automation" },
                       { label: "API Testing", href: "/test-automation#api-testing" },
                       { label: "Database Validation", href: "/test-automation#database-validation" },
                       { label: "AI QA Agent", href: "/ai-qa-agent" },

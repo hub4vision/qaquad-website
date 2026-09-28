@@ -6,7 +6,7 @@ import { VerticalFlow } from "@/components/workflow/WorkflowDiagram";
 const heroFlow = ["Application", "AI QA Agent", "Browser + API + SQL", "Test Execution", "Evidence", "Defect", "Regression"];
 
 const trustStrip = [
-  "⚡ Playwright Automation",
+  "⚡ Playwright & Selenium",
   "🛡️ Zero Flake Self-Healing",
   "🔄 REST & GraphQL Validation",
   "🗄️ SQL Database Parity",
@@ -40,8 +40,8 @@ export function Hero() {
             <p className="mb-4 inline-flex items-center rounded-full border border-cyan-400/40 bg-cyan-500/15 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-cyan-300 shadow-sm">
               ✨ AI-Powered QA Automation
             </p>
-            <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl drop-shadow-sm">
-              AI-Powered QA Automation for Faster, More Reliable Software Releases
+            <h1 className="text-4xl font-extrabold tracking-tight text-white lg:text-[2.75rem] xl:text-5xl leading-[1.15] drop-shadow-sm text-balance">
+              AI-Powered QA Automation for Faster, Reliable Releases
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300">
               Discover functionality, generate meaningful tests, validate UI + API + database behavior, find defects

@@ -8,7 +8,7 @@ export const siteConfig = {
   legalName: "QAQuad",
   tagline: "AI-powered QA automation for faster, more reliable software releases.",
   description:
-    "QAQuad provides AI-powered functional testing, Playwright automation, API and database validation, and legacy-to-new application migration testing for software, SaaS, travel technology, ERP/CRM, logistics, and e-commerce companies.",
+    "QAQuad provides AI-powered functional testing, Playwright & Selenium automation, API and database validation, and legacy-to-new application migration testing for software, SaaS, travel technology, ERP/CRM, logistics, and e-commerce companies.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://qaquad.com",
   contactEmail: "info@QAQuad.com",
   primaryCta: { label: "Book a Free QA Assessment", href: "/contact" },
@@ -27,9 +27,8 @@ export type NavItem = {
 export const primaryNav: NavItem[] = [
   { label: "Services", href: "/ai-qa-automation" },
   { label: "AI-QA Tool", href: "/ai-qa-tool" },
-  { label: "Migration Testing", href: "/migration-testing" },
-  { label: "How It Works", href: "/how-it-works" },
-  { label: "Industries", href: "/industries" },
+  { label: "Migration", href: "/migration-testing" },
+  { label: "AI Sandbox", href: "/ai-sandbox" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
@@ -37,7 +36,7 @@ export const primaryNav: NavItem[] = [
 export const servicesNav: NavItem[] = [
   { label: "AI-QA Tool & Engine", href: "/ai-qa-tool" },
   { label: "AI Functional Testing", href: "/ai-qa-automation" },
-  { label: "Playwright Automation", href: "/test-automation" },
+  { label: "Playwright & Selenium", href: "/test-automation" },
   { label: "API Testing", href: "/test-automation#api-testing" },
   { label: "Database Validation", href: "/test-automation#database-validation" },
   { label: "Migration Testing", href: "/migration-testing" },
@@ -85,7 +84,7 @@ export const servicesMegaMatrix: ServiceMatrixCategory[] = [
     title: "Full-Cycle Testing",
     items: [
       { label: "QA Consulting", href: "/contact", desc: "Strategy & architecture assessment" },
-      { label: "Test Automation", href: "/test-automation", desc: "Playwright & Cypress suites" },
+      { label: "Test Automation", href: "/test-automation", desc: "Playwright & Selenium suites" },
       { label: "Managed QA Testing", href: "/how-it-works", desc: "Dedicated high-velocity squads" },
       { label: "Migration Testing", href: "/migration-testing", badge: "Flagship", desc: "Legacy vs modern behavior diff" },
       { label: "Manual & Ad-hoc QA", href: "/how-it-works", desc: "Exploratory expert evaluation" },
@@ -205,6 +204,7 @@ export const footerLinks = {
   services: servicesNav,
   resources: [
     { label: "AI-QA Tool", href: "/ai-qa-tool" },
+    { label: "Testing Structure", href: "/testing-structure" },
     { label: "Resources", href: "/resources" },
     { label: "Blog", href: "/blog" },
     { label: "How It Works", href: "/how-it-works" },
@@ -247,10 +247,10 @@ export const services: Service[] = [
   {
     id: "playwright-automation",
     slug: "test-automation",
-    name: "Playwright Test Automation",
+    name: "Playwright & Selenium Test Automation",
     shortDescription: "Reliable, maintainable browser automation built for long-term regression coverage.",
     description:
-      "We build Playwright automation suites structured around real business workflows, not brittle selectors — designed to stay useful release after release instead of becoming a maintenance burden.",
+      "We build Playwright & Selenium automation suites structured around real business workflows, not brittle selectors — designed to stay useful release after release instead of becoming a maintenance burden.",
     priority: "P0",
     href: "/test-automation",
     capabilities: [
@@ -389,7 +389,7 @@ export const howItWorksSteps: WorkflowStep[] = [
   {
     step: "05",
     title: "Execute",
-    description: "Playwright, API, and database checks execute the workflows end to end.",
+    description: "Playwright, Selenium, API, and database checks execute the workflows end to end.",
   },
   {
     step: "06",

@@ -96,7 +96,7 @@ export const companyTypeOptions: { value: ContactFormValues["companyType"]; labe
 
 export const testingRequirementOptions: { value: ContactFormValues["testingRequirement"]; label: string }[] = [
   { value: "ai-functional-testing", label: "AI Functional Testing" },
-  { value: "playwright-automation", label: "Playwright Automation" },
+  { value: "playwright-automation", label: "Playwright & Selenium Automation" },
   { value: "api-testing", label: "API Testing" },
   { value: "database-validation", label: "Database Validation" },
   { value: "migration-testing", label: "Migration Testing" },

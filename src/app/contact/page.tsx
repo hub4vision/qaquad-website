@@ -46,7 +46,7 @@ const assessmentPillars: StrategyPillar[] = [
   {
     id: "playwright-blueprint",
     title: "Automation Blueprint",
-    description: "A tailored Playwright automation roadmap and locator strategy presented to your engineering leads.",
+    description: "A tailored Playwright & Selenium automation roadmap and locator strategy presented to your engineering leads.",
     position: "mid-right",
     badge: "Roadmap",
   },
@@ -99,7 +99,7 @@ export default function ContactPage() {
           </div>
 
           <div className="lg:col-span-7">
-            <div className="rounded-3xl border border-slate-700/60 bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-[#0f172a] p-6 shadow-2xl backdrop-blur-md sm:p-8">
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl sm:p-8">
               <ContactForm />
             </div>
           </div>

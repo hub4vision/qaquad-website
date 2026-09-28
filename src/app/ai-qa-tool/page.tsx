@@ -49,7 +49,7 @@ const toolStrategyPillars: StrategyPillar[] = [
   {
     id: "automated-rca",
     title: "Automated Root Cause Analysis",
-    description: "Extracts console logs, network traces, and visual snapshots into actionable Jira-ready bug packets with reproduction steps.",
+    description: "Extracts console logs, network traces, and visual snapshots into actionable Jira/Zoho-ready bug packets with reproduction steps.",
     position: "bottom-right",
     badge: "RCA Evidence",
   },

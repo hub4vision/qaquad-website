@@ -8,11 +8,12 @@ interface IntegrationItem {
 
 const integrations: IntegrationItem[] = [
   { name: "Playwright", category: "Framework", description: "Native TypeScript/Python test execution with trace capture" },
+  { name: "Selenium", category: "Framework", description: "Legacy enterprise browser automation support" },
   { name: "GitHub Actions", category: "CI/CD", description: "Trigger pull request tests and matrix regression jobs" },
   { name: "GitLab CI", category: "CI/CD", description: "Continuous testing stages with artifacts caching" },
   { name: "Jenkins", category: "CI/CD", description: "Distributed pipeline jobs with JUnit and Allure test reports" },
   { name: "Docker", category: "CI/CD", description: "Hermetic containerized test runners with reproducible environments" },
-  { name: "Jira / Atlassian", category: "Management", description: "Automated bug tickets with reproduction steps & video traces" },
+  { name: "Jira & Zoho", category: "Management", description: "Automated bug tickets with reproduction steps & video traces" },
   { name: "PostgreSQL & MySQL", category: "Cloud / DB", description: "Direct SQL transaction assertions and state rollbacks" },
   { name: "Slack & Teams", category: "Management", description: "Instant defect alerts with root-cause links to PR authors" },
 ];

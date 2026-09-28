@@ -10,7 +10,7 @@ interface TestTab {
 }
 
 const tabs: TestTab[] = [
-  { id: "console", label: "Live Test Runner", badge: "Playwright" },
+  { id: "console", label: "Live Test Runner", badge: "Playwright & Selenium" },
   { id: "selfheal", label: "Self-Healing Engine", badge: "AI Autonomic" },
   { id: "trace", label: "DOM & Visual Trace", badge: "Trace Viewer" },
   { id: "api", label: "API & SQL Contract Diff", badge: "Multi-Tier" },

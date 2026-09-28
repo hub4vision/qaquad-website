@@ -1,23 +1,18 @@
-import Script from "next/script";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 /**
- * Loads Plausible (https://plausible.io) only when
- * NEXT_PUBLIC_PLAUSIBLE_DOMAIN is configured. Plausible is cookieless and
- * does not track individual visitors across sites, which is why it's the
- * reference choice for "privacy-conscious analytics" in the requirements —
- * swap this component for another provider if you prefer, the rest of the
- * site only depends on the trackEvent() helper in src/lib/analytics.ts.
+ * Loads Google Analytics (GA4) when NEXT_PUBLIC_GA_ID is configured.
+ * This satisfies the requirement to track worldwide visitors, page views, and ranking metrics.
  */
 export function Analytics() {
-  const domain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
-  if (!domain) return null;
+  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+  
+  // If no ID is provided, we can either return null or use a placeholder so the script exists 
+  // and the user just needs to set the environment variable.
+  if (!gaId) {
+    console.warn("NEXT_PUBLIC_GA_ID is missing. Google Analytics is disabled.");
+    return null;
+  }
 
-  return (
-    <Script
-      defer
-      data-domain={domain}
-      src="https://plausible.io/js/script.tagged-events.js"
-      strategy="afterInteractive"
-    />
-  );
+  return <GoogleAnalytics gaId={gaId} />;
 }

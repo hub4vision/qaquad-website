@@ -285,14 +285,14 @@ export function GlobalChatbot() {
       {isOpen && (
         <div
           className={clsx(
-            "fixed z-[100] flex flex-col overflow-hidden border border-slate-700/60 bg-gradient-to-br from-slate-900/98 to-slate-800/95 shadow-2xl backdrop-blur-xl transition-all duration-300 ease-out",
+            "fixed z-[100] flex flex-col overflow-hidden border border-slate-200 bg-white shadow-2xl transition-all duration-300 ease-out",
             isMaximized
               ? "inset-0 m-0 rounded-none sm:inset-4 sm:rounded-2xl"
               : "bottom-6 right-6 w-[calc(100%-48px)] sm:w-[450px] rounded-2xl h-[min(calc(100vh-48px),650px)] origin-bottom-right"
           )}
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-700/60 bg-slate-900/80 px-4 py-3 shrink-0">
+          <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-3 shrink-0">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 text-sm font-bold text-white shadow-md">
@@ -301,14 +301,14 @@ export function GlobalChatbot() {
                 <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-slate-900 bg-emerald-400" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-white">QAQuad AI Advisor</h3>
-                <p className="text-[10px] text-slate-400">Online • Ready to help</p>
+                <h3 className="text-sm font-bold text-slate-900">QAQuad AI Advisor</h3>
+                <p className="text-[10px] text-slate-500">Online • Ready to help</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setIsMaximized(!isMaximized)}
-                className="rounded p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors hidden sm:block"
+                className="rounded p-1.5 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors hidden sm:block"
                 aria-label={isMaximized ? "Minimize" : "Maximize"}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -325,7 +325,7 @@ export function GlobalChatbot() {
               </button>
               <button
                 onClick={() => setIsOpen(false)}
-                className="rounded p-1.5 text-slate-400 hover:bg-slate-800 hover:text-pink-400 transition-colors"
+                className="rounded p-1.5 text-slate-500 hover:bg-slate-200 hover:text-pink-500 transition-colors"
                 aria-label="Close"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -337,8 +337,8 @@ export function GlobalChatbot() {
           </div>
 
           {/* Mode Toggle */}
-          <div className="bg-slate-900/50 p-2 shrink-0">
-            <div className="flex w-full items-center justify-center gap-1 rounded-full border border-slate-700/60 bg-slate-900 p-1">
+          <div className="bg-slate-50/50 border-b border-slate-100 p-2 shrink-0">
+            <div className="flex w-full items-center justify-center gap-1 rounded-full border border-slate-200 bg-slate-100 p-1">
               <button
                 type="button"
                 onClick={switchToGuided}
@@ -346,7 +346,7 @@ export function GlobalChatbot() {
                   "flex-1 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300",
                   mode === "guided"
                     ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/25"
-                    : "text-slate-400 hover:text-white"
+                    : "text-slate-500 hover:text-slate-900"
                 )}
               >
                 🎯 Guided Flow
@@ -358,7 +358,7 @@ export function GlobalChatbot() {
                   "flex-1 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300",
                   mode === "ai"
                     ? "bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-md shadow-purple-500/25"
-                    : "text-slate-400 hover:text-white"
+                    : "text-slate-500 hover:text-slate-900"
                 )}
               >
                 🤖 AI Chat
@@ -374,11 +374,11 @@ export function GlobalChatbot() {
                 {/* Progress Bar */}
                 {guidedPhase === "active" && (
                   <div className="mb-5 shrink-0">
-                    <div className="mb-1.5 flex items-center justify-between text-[10px] text-slate-400">
+                    <div className="mb-1.5 flex items-center justify-between text-[10px] text-slate-500">
                       <span>Step {currentStep + 1} of {guidedSteps.length}</span>
                       <span>{Math.round(((currentStep) / guidedSteps.length) * 100)}%</span>
                     </div>
-                    <div className="h-1 w-full overflow-hidden rounded-full bg-slate-800">
+                    <div className="h-1 w-full overflow-hidden rounded-full bg-slate-200">
                       <div
                         className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 transition-all duration-500 ease-out"
                         style={{ width: `${((currentStep) / guidedSteps.length) * 100}%` }}
@@ -390,11 +390,11 @@ export function GlobalChatbot() {
                 {/* Active Question */}
                 {guidedPhase === "active" && (
                   <div className="animate-fade-up flex-1 flex flex-col min-h-0 overflow-y-auto pr-1">
-                    <h3 className="text-lg font-bold text-white leading-tight shrink-0">
+                    <h3 className="text-lg font-bold text-slate-900 leading-tight shrink-0">
                       {guidedSteps[currentStep]!.question}
                     </h3>
                     {guidedSteps[currentStep]!.subtext && (
-                      <p className="mt-1 text-xs text-slate-400 shrink-0">
+                      <p className="mt-1 text-xs text-slate-500 shrink-0">
                         {guidedSteps[currentStep]!.subtext}
                       </p>
                     )}
@@ -404,15 +404,15 @@ export function GlobalChatbot() {
                           key={option.id}
                           type="button"
                           onClick={() => handleGuidedSelect(option)}
-                          className="group flex items-center gap-3 rounded-xl border border-slate-700/60 bg-slate-800/50 p-3 text-left transition-all duration-200 hover:border-cyan-500/50 hover:bg-slate-700/50 shrink-0"
+                          className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 text-left transition-all duration-200 hover:border-cyan-500 hover:bg-cyan-50/50 shrink-0 shadow-sm"
                         >
                           <span className="text-xl shrink-0" aria-hidden="true">{option.icon}</span>
                           <div className="flex-1 min-w-0">
-                            <span className="block text-sm font-semibold text-white group-hover:text-cyan-300 transition-colors truncate">
+                            <span className="block text-sm font-semibold text-slate-900 group-hover:text-cyan-600 transition-colors truncate">
                               {option.label}
                             </span>
                             {option.description && (
-                              <span className="mt-0.5 block text-[10px] text-slate-400 line-clamp-2 leading-tight">
+                              <span className="mt-0.5 block text-[10px] text-slate-500 line-clamp-2 leading-tight">
                                 {option.description}
                               </span>
                             )}
@@ -424,7 +424,7 @@ export function GlobalChatbot() {
                       <button
                         type="button"
                         onClick={() => setCurrentStep((prev) => prev - 1)}
-                        className="mt-4 pt-2 border-t border-slate-700/30 text-xs text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-1 shrink-0"
+                        className="mt-4 pt-2 border-t border-slate-200 text-xs text-slate-500 hover:text-cyan-600 transition-colors flex items-center gap-1 shrink-0"
                       >
                         <span>←</span> Back
                       </button>
@@ -438,17 +438,17 @@ export function GlobalChatbot() {
                     <div className="mb-3 inline-block rounded-full bg-cyan-500/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-cyan-400 self-start">
                       Recommendation
                     </div>
-                    <h3 className="text-xl font-extrabold text-white">
+                    <h3 className="text-xl font-extrabold text-slate-900">
                       {recommendation.title}
                     </h3>
-                    <p className="mt-2 text-xs leading-relaxed text-slate-300 flex-1 overflow-y-auto pr-1">
+                    <p className="mt-2 text-xs leading-relaxed text-slate-600 flex-1 overflow-y-auto pr-1">
                       {recommendation.description}
                     </p>
                     <div className="mt-4 flex flex-wrap gap-1.5 shrink-0">
                       {recommendation.services.map((service) => (
                         <span
                           key={service}
-                          className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-medium text-cyan-300"
+                          className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-medium text-cyan-700"
                         >
                           {service}
                         </span>
@@ -465,14 +465,14 @@ export function GlobalChatbot() {
                       <button
                         type="button"
                         onClick={() => setGuidedPhase("lead-capture")}
-                        className="flex w-full items-center justify-center rounded-xl border border-slate-600 px-4 py-2.5 text-sm font-semibold text-slate-300 transition-all hover:border-cyan-500/50 hover:text-white"
+                        className="flex w-full items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:border-cyan-500 hover:text-slate-900 hover:bg-slate-50"
                       >
                         📧 Get Report via Email
                       </button>
                       <button
                         type="button"
                         onClick={handleRestartGuided}
-                        className="mt-2 text-xs text-slate-400 hover:text-cyan-400 transition-colors text-center"
+                        className="mt-2 text-xs text-slate-500 hover:text-cyan-600 transition-colors text-center"
                       >
                         ↻ Start Over
                       </button>
@@ -483,15 +483,15 @@ export function GlobalChatbot() {
                 {/* Lead Capture */}
                 {guidedPhase === "lead-capture" && (
                   <div className="animate-fade-up h-full flex flex-col">
-                    <h3 className="text-lg font-bold text-white shrink-0">
+                    <h3 className="text-lg font-bold text-slate-900 shrink-0">
                       📧 Get Your Report
                     </h3>
-                    <p className="mt-1 text-xs text-slate-400 shrink-0">
+                    <p className="mt-1 text-xs text-slate-500 shrink-0">
                       We&#39;ll send you a detailed recommendation.
                     </p>
                     <form onSubmit={handleLeadSubmit} className="mt-4 flex flex-col gap-3 flex-1 overflow-y-auto">
                       <div>
-                        <label htmlFor="chatbot-name" className="block text-xs font-medium text-slate-300 mb-1">
+                        <label htmlFor="chatbot-name" className="block text-xs font-medium text-slate-700 mb-1">
                           Your Name
                         </label>
                         <input
@@ -501,11 +501,11 @@ export function GlobalChatbot() {
                           value={leadName}
                           onChange={(e) => setLeadName(e.target.value)}
                           placeholder="John Doe"
-                          className="w-full rounded-lg border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-white placeholder-slate-500 outline-none transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50"
+                          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 outline-none transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50"
                         />
                       </div>
                       <div>
-                        <label htmlFor="chatbot-email" className="block text-xs font-medium text-slate-300 mb-1">
+                        <label htmlFor="chatbot-email" className="block text-xs font-medium text-slate-700 mb-1">
                           Work Email
                         </label>
                         <input
@@ -515,7 +515,7 @@ export function GlobalChatbot() {
                           value={leadEmail}
                           onChange={(e) => setLeadEmail(e.target.value)}
                           placeholder="john@company.com"
-                          className="w-full rounded-lg border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-white placeholder-slate-500 outline-none transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50"
+                          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 outline-none transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50"
                         />
                       </div>
                       <button
@@ -534,7 +534,7 @@ export function GlobalChatbot() {
                     <button
                       type="button"
                       onClick={() => setGuidedPhase("recommendation")}
-                      className="mt-auto pt-4 text-xs text-slate-400 hover:text-cyan-400 transition-colors text-center shrink-0"
+                      className="mt-auto pt-4 text-xs text-slate-500 hover:text-cyan-600 transition-colors text-center shrink-0"
                     >
                       ← Back
                     </button>
@@ -547,10 +547,10 @@ export function GlobalChatbot() {
                     <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/20 text-2xl">
                       ✅
                     </div>
-                    <h3 className="text-xl font-extrabold text-white">All Set!</h3>
-                    <p className="mt-2 text-xs text-slate-300 max-w-xs">
+                    <h3 className="text-xl font-extrabold text-slate-900">All Set!</h3>
+                    <p className="mt-2 text-xs text-slate-600 max-w-xs">
                       We&#39;ve received your requirements and will email your recommendation to{" "}
-                      <strong className="text-cyan-400">{leadEmail}</strong>.
+                      <strong className="text-cyan-600">{leadEmail}</strong>.
                     </p>
                     <div className="mt-8 flex flex-col w-full gap-2">
                       <a
@@ -562,7 +562,7 @@ export function GlobalChatbot() {
                       <button
                         type="button"
                         onClick={handleRestartGuided}
-                        className="text-xs text-slate-400 hover:text-cyan-400 transition-colors p-2"
+                        className="text-xs text-slate-500 hover:text-cyan-600 transition-colors p-2"
                       >
                         Start New Evaluation
                       </button>
@@ -591,7 +591,7 @@ export function GlobalChatbot() {
                             "max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed break-words",
                             msg.role === "user"
                               ? "rounded-br-sm bg-gradient-to-r from-cyan-500 to-blue-600 text-white"
-                              : "rounded-bl-sm border border-slate-700/60 bg-slate-800/70 text-slate-200"
+                              : "rounded-bl-sm border border-slate-200 bg-slate-50 text-slate-700"
                           )}
                           dangerouslySetInnerHTML={{
                             __html: renderMarkdownLinks(msg.content),
@@ -603,7 +603,7 @@ export function GlobalChatbot() {
                     {/* Typing Indicator */}
                     {isTyping && (
                       <div className="flex animate-fade-up justify-start">
-                        <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm border border-slate-700/60 bg-slate-800/70 px-3.5 py-3">
+                        <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm border border-slate-200 bg-slate-50 px-3.5 py-3">
                           <span className="inline-block h-1.5 w-1.5 animate-bounce rounded-full bg-purple-400" style={{ animationDelay: "0ms" }} />
                           <span className="inline-block h-1.5 w-1.5 animate-bounce rounded-full bg-purple-400" style={{ animationDelay: "150ms" }} />
                           <span className="inline-block h-1.5 w-1.5 animate-bounce rounded-full bg-purple-400" style={{ animationDelay: "300ms" }} />
@@ -616,14 +616,14 @@ export function GlobalChatbot() {
 
                 {/* Quick Replies */}
                 {messages.length <= 2 && !isTyping && (
-                  <div className="border-t border-slate-700/40 bg-slate-900/50 px-3 py-2 shrink-0 overflow-x-auto whitespace-nowrap hide-scrollbar">
+                  <div className="border-t border-slate-200 bg-slate-50 px-3 py-2 shrink-0 overflow-x-auto whitespace-nowrap hide-scrollbar">
                     <div className="flex gap-2">
                       {quickReplies.map((qr) => (
                         <button
                           key={qr}
                           type="button"
                           onClick={() => sendMessage(qr)}
-                          className="inline-block rounded-full border border-slate-700/60 bg-slate-800/80 px-2.5 py-1 text-[11px] text-slate-300 transition-all hover:border-purple-500/50 hover:bg-purple-500/10 hover:text-purple-300 shrink-0"
+                          className="inline-block rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] text-slate-600 transition-all hover:border-purple-500/50 hover:bg-purple-50 hover:text-purple-600 shrink-0"
                         >
                           {qr}
                         </button>
@@ -633,7 +633,7 @@ export function GlobalChatbot() {
                 )}
 
                 {/* Input Area */}
-                <div className="border-t border-slate-700/60 bg-slate-900/80 p-3 shrink-0">
+                <div className="border-t border-slate-200 bg-white p-3 shrink-0">
                   <div className="flex items-end gap-2">
                     <textarea
                       ref={inputRef as unknown as React.RefObject<HTMLTextAreaElement>}
@@ -649,7 +649,7 @@ export function GlobalChatbot() {
                       placeholder="Ask about our QA services..."
                       disabled={isTyping}
                       rows={1}
-                      className="flex-1 resize-none rounded-xl border border-slate-700 bg-slate-800/60 px-3 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition-colors focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 disabled:opacity-50 min-h-[42px] max-h-[100px]"
+                      className="flex-1 resize-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-colors focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 disabled:opacity-50 min-h-[42px] max-h-[100px]"
                     />
                     <button
                       type="button"
@@ -659,7 +659,7 @@ export function GlobalChatbot() {
                         "flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-xl transition-all",
                         inputValue.trim() && !isTyping
                           ? "bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-xl"
-                          : "cursor-not-allowed bg-slate-800 text-slate-500"
+                          : "cursor-not-allowed bg-slate-100 text-slate-400"
                       )}
                       aria-label="Send message"
                     >
@@ -680,7 +680,7 @@ export function GlobalChatbot() {
                       </svg>
                     </button>
                   </div>
-                  <p className="mt-2 text-center text-[9px] text-slate-500">
+                  <p className="mt-2 text-center text-[9px] text-slate-400">
                     AI generated responses • Not legally binding
                   </p>
                 </div>
