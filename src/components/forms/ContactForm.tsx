@@ -1,6 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { Sparkles, CheckCircle2, RotateCcw } from "lucide-react";
 import {
   companyTypeOptions,
   contactFormSchema,
@@ -21,7 +23,7 @@ const initialValues: ContactFormValues = {
   phone: "",
   applicationUrl: "",
   companyType: "software-company",
-  testingRequirement: "not-sure",
+  testingRequirement: "playwright-automation",
   currentQaMethod: "manual",
   isMigrationProject: "not-sure",
   message: "",
@@ -29,11 +31,118 @@ const initialValues: ContactFormValues = {
 };
 
 export function ContactForm() {
+  return (
+    <Suspense fallback={<div className="h-[600px] animate-pulse rounded-xl bg-slate-100"></div>}>
+      <ContactFormInner />
+    </Suspense>
+  );
+}
+
+function ContactFormInner() {
+  const searchParams = useSearchParams();
+  const interest = searchParams?.get("interest");
+  const paramUrl = searchParams?.get("url") || searchParams?.get("applicationUrl");
+  const paramCompany = searchParams?.get("company");
+  const paramRequirement = searchParams?.get("requirement") || searchParams?.get("testingRequirement");
+  const paramCategory = searchParams?.get("category");
+  const paramScope = searchParams?.get("scope");
+  const paramEvidenceId = searchParams?.get("evidenceId");
+  const paramScore = searchParams?.get("score");
+  const paramRef = searchParams?.get("ref");
+  const paramTier = searchParams?.get("tier");
+
   const [values, setValues] = useState<ContactFormValues>(initialValues);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [serverError, setServerError] = useState<string | null>(null);
+  const [autoFilledBanner, setAutoFilledBanner] = useState<string | null>(null);
   const hasStartedRef = useRef(false);
+
+  useEffect(() => {
+    // 1. Check direct search parameters
+    if (paramUrl || paramCompany || interest || paramEvidenceId || paramRef) {
+      let mappedCompanyType: ContactFormValues["companyType"] = "software-company";
+      if (paramCategory) {
+        const cat = paramCategory.toLowerCase();
+        if (cat.includes("travel")) mappedCompanyType = "travel-technology";
+        else if (cat.includes("commerce") || cat.includes("retail")) mappedCompanyType = "ecommerce";
+        else if (cat.includes("saas") || cat.includes("cloud")) mappedCompanyType = "saas";
+        else if (cat.includes("crm") || cat.includes("erp")) mappedCompanyType = "erp-crm";
+        else if (cat.includes("logistic") || cat.includes("supply")) mappedCompanyType = "logistics";
+      }
+
+      let constructedMessage = "";
+      if (paramRef) {
+        constructedMessage += `[Quotation Reference: ${paramRef}] Tier: ${(paramTier || "Enterprise").toUpperCase()}\n`;
+      }
+      if (paramUrl) {
+        constructedMessage += `Target Application: ${paramUrl}\n`;
+      }
+      if (paramScope) {
+        constructedMessage += `Verified Scope: ${paramScope} (${paramScore ? `${paramScore}% Quality Score` : "Verified"})\n`;
+      }
+      if (paramEvidenceId) {
+        constructedMessage += `Evidence Dossier ID: ${paramEvidenceId}\n`;
+      }
+      if (interest && !constructedMessage.includes(interest)) {
+        constructedMessage += `\nRequirement Notes: ${interest}`;
+      }
+
+      setValues((prev) => ({
+        ...prev,
+        applicationUrl: paramUrl || prev.applicationUrl,
+        company: paramCompany || prev.company,
+        companyType: mappedCompanyType,
+        testingRequirement: (paramRequirement as ContactFormValues["testingRequirement"]) || "playwright-automation",
+        message: constructedMessage.trim() || prev.message,
+      }));
+
+      setAutoFilledBanner(paramCompany || paramUrl || "AI Sandbox Session");
+      return;
+    }
+
+    // 2. Fallback to localStorage session context if client navigated without query params
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("qaquad_assessment_context");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.url && Date.now() - (parsed.savedAt || 0) < 86400000) {
+            let mappedCompanyType: ContactFormValues["companyType"] = "software-company";
+            const cat = (parsed.category || "").toLowerCase();
+            if (cat.includes("travel")) mappedCompanyType = "travel-technology";
+            else if (cat.includes("commerce") || cat.includes("retail")) mappedCompanyType = "ecommerce";
+            else if (cat.includes("saas") || cat.includes("cloud")) mappedCompanyType = "saas";
+            else if (cat.includes("crm") || cat.includes("erp")) mappedCompanyType = "erp-crm";
+            else if (cat.includes("logistic") || cat.includes("supply")) mappedCompanyType = "logistics";
+
+            const msg = `Target Application: ${parsed.url}\nContext: ${parsed.contextName || parsed.host} (${parsed.category || "Web App"})\nVerified Scope: ${parsed.totalScenarios || 4} Scenarios, ${parsed.totalAssertions || 14} Assertions (${parsed.healthScore || 98}% Quality Score)\nEvidence Dossier ID: ${parsed.executionId || "qaq-live"}`;
+
+            setValues((prev) => ({
+              ...prev,
+              applicationUrl: parsed.url,
+              company: parsed.company || parsed.host,
+              companyType: mappedCompanyType,
+              testingRequirement: "playwright-automation",
+              message: msg,
+            }));
+
+            setAutoFilledBanner(`${parsed.company || parsed.host} (${parsed.url})`);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load saved assessment context", err);
+      }
+    }
+  }, [searchParams, interest, paramUrl, paramCompany, paramRequirement, paramCategory, paramScope, paramEvidenceId, paramScore, paramRef, paramTier]);
+
+  const handleClearAutoFill = () => {
+    setValues(initialValues);
+    setAutoFilledBanner(null);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("qaquad_assessment_context");
+    }
+  };
 
   function handleFirstInteraction() {
     if (hasStartedRef.current) return;
@@ -93,9 +202,9 @@ export function ContactForm() {
 
   if (status === "success") {
     return (
-      <div role="status" className="rounded-2xl border border-emerald-500/40 bg-emerald-950/40 p-8 text-center backdrop-blur-md">
-        <h3 className="text-xl font-semibold text-white">Thank you.</h3>
-        <p className="mt-2 text-slate-300">We will review your requirement and contact you shortly.</p>
+      <div role="status" className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center">
+        <h3 className="text-xl font-semibold text-emerald-900">Thank you.</h3>
+        <p className="mt-2 text-emerald-700">We will review your requirement and contact you shortly.</p>
         <button
           type="button"
           onClick={() => setStatus("idle")}
@@ -109,6 +218,29 @@ export function ContactForm() {
 
   return (
     <form noValidate onSubmit={handleSubmit} onChangeCapture={handleFirstInteraction} className="space-y-6">
+      {autoFilledBanner && (
+        <div className="flex items-center justify-between p-3.5 rounded-2xl bg-cyan-50 border border-cyan-200 text-xs text-cyan-950 shadow-sm animate-in fade-in duration-300">
+          <div className="flex items-center gap-2.5">
+            <span className="p-1.5 rounded-lg bg-cyan-100 text-cyan-800 shrink-0">
+              <Sparkles size={16} />
+            </span>
+            <div>
+              <span className="font-bold text-cyan-900">Auto-filled from AI Sandbox:</span>
+              <span className="text-slate-700 ml-1.5">Loaded application details &amp; test dossier for <strong>{autoFilledBanner}</strong>.</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleClearAutoFill}
+            className="inline-flex items-center gap-1 text-[11px] font-bold text-cyan-800 hover:text-cyan-950 hover:underline ml-3 shrink-0"
+            title="Reset form and clear prefilled data"
+          >
+            <RotateCcw size={12} />
+            <span>Clear</span>
+          </button>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <Field label="Full name" htmlFor="name" error={errors.name} required>
           <input
@@ -189,7 +321,7 @@ export function ContactForm() {
             className={inputClass(!!errors.companyType)}
           >
             {companyTypeOptions.map((option) => (
-              <option key={option.value} value={option.value} className="bg-slate-900 text-white">
+              <option key={option.value} value={option.value} className="bg-white text-slate-900">
                 {option.label}
               </option>
             ))}
@@ -205,7 +337,7 @@ export function ContactForm() {
             className={inputClass(!!errors.testingRequirement)}
           >
             {testingRequirementOptions.map((option) => (
-              <option key={option.value} value={option.value} className="bg-slate-900 text-white">
+              <option key={option.value} value={option.value} className="bg-white text-slate-900">
                 {option.label}
               </option>
             ))}
@@ -221,7 +353,7 @@ export function ContactForm() {
             className={inputClass(!!errors.currentQaMethod)}
           >
             {currentQaMethodOptions.map((option) => (
-              <option key={option.value} value={option.value} className="bg-slate-900 text-white">
+              <option key={option.value} value={option.value} className="bg-white text-slate-900">
                 {option.label}
               </option>
             ))}
@@ -238,7 +370,7 @@ export function ContactForm() {
           className={inputClass(!!errors.isMigrationProject)}
         >
           {migrationProjectOptions.map((option) => (
-            <option key={option.value} value={option.value} className="bg-slate-900 text-white">
+            <option key={option.value} value={option.value} className="bg-white text-slate-900">
               {option.label}
             </option>
           ))}
@@ -287,7 +419,7 @@ export function ContactForm() {
         >
           {status === "submitting" ? "Submitting..." : "Request Free QA Assessment"}
         </button>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           No credit card required. We treat your application access and data under strict confidentiality.
         </p>
       </div>
@@ -312,7 +444,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={htmlFor} className="block text-sm font-medium text-slate-200">
+      <label htmlFor={htmlFor} className="block text-sm font-medium text-slate-900">
         {label}
         {required ? <span className="text-rose-400"> *</span> : null}
         {hint ? <span className="ml-1 text-xs font-normal text-slate-400">({hint})</span> : null}
@@ -329,8 +461,8 @@ function Field({
 
 function inputClass(hasError: boolean) {
   return clsx(
-    "block w-full rounded-xl border bg-slate-900/80 px-3.5 py-2.5 text-sm text-white placeholder:text-slate-500 backdrop-blur-sm",
-    "focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400",
-    hasError ? "border-rose-500" : "border-slate-700",
+    "block w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400",
+    "focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500",
+    hasError ? "border-rose-500" : "border-slate-300",
   );
 }

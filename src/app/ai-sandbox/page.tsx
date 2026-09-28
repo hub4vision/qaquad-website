@@ -323,6 +323,27 @@ export default function AiSandboxPage() {
         setTimeout(() => {
           setResults(data);
           setIsGenerating(false);
+          if (typeof window !== "undefined" && data.target) {
+            try {
+              const assessmentContext = {
+                url: data.target.url,
+                host: data.target.host,
+                category: data.target.category,
+                contextName: data.target.contextName,
+                company: data.target.host.replace(/\.[^/.]+$/, "").toUpperCase(),
+                executionId: data.executionId || "qaq-live",
+                healthScore: data.summary?.healthScore || 98,
+                totalScenarios: data.summary?.totalScenarios || 4,
+                totalAssertions: data.summary?.totalAssertions || 14,
+                duration: data.summary?.executionDurationSec || "1.42",
+                savedAt: Date.now(),
+              };
+              localStorage.setItem("qaquad_assessment_context", JSON.stringify(assessmentContext));
+              sessionStorage.setItem("qaquad_assessment_context", JSON.stringify(assessmentContext));
+            } catch (err) {
+              console.error("Storage error:", err);
+            }
+          }
         }, 300);
       } else {
         clearInterval(interval);
@@ -920,7 +941,7 @@ export default function AiSandboxPage() {
                           <span>Get Instant QA Quotation</span>
                         </button>
                         <a
-                          href="/contact"
+                          href={results ? `/contact?company=${encodeURIComponent(results.target.host.replace(/\.[^/.]+$/, "").toUpperCase())}&url=${encodeURIComponent(results.target.url)}&category=${encodeURIComponent(results.target.category)}&scope=${encodeURIComponent(`${results.summary.totalScenarios} Scenarios, ${results.summary.totalAssertions} Assertions`)}&evidenceId=${encodeURIComponent(results.executionId || "qaq-live")}&score=${results.summary.healthScore}` : "/contact"}
                           className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 font-bold text-xs border border-slate-300 transition-all shadow-xs"
                         >
                           <span>Talk with QA Lead</span>
@@ -1803,8 +1824,8 @@ export default function AiSandboxPage() {
 
         {/* MODAL 4: REQUEST QA AUTOMATION QUOTE MODAL */}
         {isQuoteOpen && (
-          <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
-            <div className="bg-white border border-emerald-300 rounded-3xl max-w-2xl w-full p-5 sm:p-7 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto text-slate-900">
+          <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+            <div className="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full p-5 sm:p-7 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto text-slate-900">
               {/* Header */}
               <div className="flex items-center justify-between border-b border-slate-200 pb-3.5">
                 <div className="flex items-center gap-3">
@@ -1829,7 +1850,7 @@ export default function AiSandboxPage() {
 
               {quoteSubmitted ? (
                 /* SUCCESS CONFIRMATION VIEW */
-                <div className="py-6 px-4 text-center space-y-4">
+                <div className="py-6 px-4 text-center space-y-4 bg-white">
                   <div className="mx-auto w-14 h-14 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-700 flex items-center justify-center shadow-lg shadow-emerald-500/20">
                     <CheckCircle2 size={32} />
                   </div>
@@ -1863,7 +1884,7 @@ export default function AiSandboxPage() {
 
                   <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                     <a
-                      href="/contact"
+                      href={results ? `/contact?company=${encodeURIComponent(results.target.host.replace(/\.[^/.]+$/, "").toUpperCase())}&url=${encodeURIComponent(results.target.url)}&category=${encodeURIComponent(results.target.category)}&scope=${encodeURIComponent(`${results.summary.totalScenarios} Scenarios, ${results.summary.totalAssertions} Assertions`)}&evidenceId=${encodeURIComponent(results.executionId || "qaq-live")}&ref=${encodeURIComponent(quoteRefId)}&tier=${encodeURIComponent(quoteTier)}` : "/contact"}
                       className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5"
                     >
                       <Clock size={14} />
@@ -1872,7 +1893,7 @@ export default function AiSandboxPage() {
                     <button
                       type="button"
                       onClick={() => setIsQuoteOpen(false)}
-                      className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all border border-slate-300"
+                      className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-all border border-slate-300"
                     >
                       Close Window
                     </button>
@@ -1880,7 +1901,7 @@ export default function AiSandboxPage() {
                 </div>
               ) : (
                 /* FORM VIEW */
-                <form onSubmit={handleQuoteSubmit} className="space-y-4">
+                <form onSubmit={handleQuoteSubmit} className="space-y-4 bg-white">
                   {/* Scope Context Strip */}
                   {results && (
                     <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs">
@@ -1901,7 +1922,7 @@ export default function AiSandboxPage() {
 
                   {/* Tier Selector */}
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5 flex items-center gap-1.5">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-900 mb-1.5 flex items-center gap-1.5">
                       <Calculator size={13} className="text-emerald-600" />
                       <span>Select Automation Tier / Engagement Model:</span>
                     </label>
@@ -1912,7 +1933,7 @@ export default function AiSandboxPage() {
                         className={`p-2.5 rounded-xl border text-left transition-all ${
                           quoteTier === "starter"
                             ? "border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500/30"
-                            : "border-slate-200 bg-slate-50/70 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
+                            : "border-slate-200 bg-white text-slate-800 hover:border-slate-300 hover:bg-slate-50"
                         }`}
                       >
                         <div className="text-xs font-bold text-slate-900">⚡ Starter Pilot</div>
@@ -1925,7 +1946,7 @@ export default function AiSandboxPage() {
                         className={`p-2.5 rounded-xl border text-left transition-all ${
                           quoteTier === "enterprise"
                             ? "border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500/30"
-                            : "border-slate-200 bg-slate-50/70 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
+                            : "border-slate-200 bg-white text-slate-800 hover:border-slate-300 hover:bg-slate-50"
                         }`}
                       >
                         <div className="text-xs font-bold text-slate-900 flex items-center justify-between">
@@ -1941,7 +1962,7 @@ export default function AiSandboxPage() {
                         className={`p-2.5 rounded-xl border text-left transition-all ${
                           quoteTier === "continuous"
                             ? "border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500/30"
-                            : "border-slate-200 bg-slate-50/70 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
+                            : "border-slate-200 bg-white text-slate-800 hover:border-slate-300 hover:bg-slate-50"
                         }`}
                       >
                         <div className="text-xs font-bold text-slate-900">🛡️ 24/7 Managed QA</div>
@@ -1953,7 +1974,7 @@ export default function AiSandboxPage() {
                   {/* Form Inputs Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-slate-800 mb-1">
+                      <label className="block text-xs font-bold text-slate-900 mb-1">
                         Your Full Name <span className="text-rose-500">*</span>
                       </label>
                       <input
@@ -1962,12 +1983,12 @@ export default function AiSandboxPage() {
                         value={quoteForm.name}
                         onChange={(e) => setQuoteForm({ ...quoteForm, name: e.target.value })}
                         placeholder="e.g. Sarah Jenkins"
-                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-xs"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-xs"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-800 mb-1">
+                      <label className="block text-xs font-bold text-slate-900 mb-1">
                         Work Email <span className="text-rose-500">*</span>
                       </label>
                       <input
@@ -1976,12 +1997,12 @@ export default function AiSandboxPage() {
                         value={quoteForm.email}
                         onChange={(e) => setQuoteForm({ ...quoteForm, email: e.target.value })}
                         placeholder="sarah@company.com"
-                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-xs"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-xs"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-800 mb-1">
+                      <label className="block text-xs font-bold text-slate-900 mb-1">
                         Company / Organization
                       </label>
                       <input
@@ -1989,12 +2010,12 @@ export default function AiSandboxPage() {
                         value={quoteForm.company}
                         onChange={(e) => setQuoteForm({ ...quoteForm, company: e.target.value })}
                         placeholder="e.g. Acme Corp"
-                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-xs"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-xs"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-800 mb-1">
+                      <label className="block text-xs font-bold text-slate-900 mb-1">
                         Phone / WhatsApp (Optional)
                       </label>
                       <input
@@ -2002,14 +2023,14 @@ export default function AiSandboxPage() {
                         value={quoteForm.phone}
                         onChange={(e) => setQuoteForm({ ...quoteForm, phone: e.target.value })}
                         placeholder="+1 (555) 000-0000"
-                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-xs"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-xs"
                       />
                     </div>
                   </div>
 
                   {/* Scope Details / Notes */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-800 mb-1">
+                    <label className="block text-xs font-bold text-slate-900 mb-1">
                       Project Notes &amp; Target Scope (Auto-populated from active report)
                     </label>
                     <textarea
@@ -2037,7 +2058,7 @@ export default function AiSandboxPage() {
                       <button
                         type="button"
                         onClick={() => setIsQuoteOpen(false)}
-                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors border border-slate-300"
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors border border-slate-300"
                       >
                         Cancel
                       </button>
