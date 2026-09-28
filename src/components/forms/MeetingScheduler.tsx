@@ -444,32 +444,40 @@ export function MeetingScheduler() {
       </div>
 
       {/* Agenda & Custom Message */}
-      <div>
-        <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
-          <span className="flex items-center gap-1">
-            <FileText size={13} className="text-cyan-600" />
-            <span>Session Agenda &amp; Focus Topics</span>
-          </span>
-          <span className="text-[10px] text-slate-400">Included in calendar invitation</span>
-        </label>
-        <textarea
-          rows={2}
-          value={formData.agenda}
-          onChange={(e) => setFormData({ ...formData, agenda: e.target.value })}
-          className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 resize-none shadow-sm"
-        />
-      </div>
+      <div className="space-y-4">
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <FileText size={14} className="text-cyan-600" />
+              <span>Session Agenda &amp; Focus Topics</span> <span className="text-rose-500">*</span>
+            </span>
+            <span className="text-[11px] text-slate-500 font-medium">Included in calendar invitation</span>
+          </label>
+          <textarea
+            rows={4}
+            value={formData.agenda}
+            onChange={(e) => setFormData({ ...formData, agenda: e.target.value })}
+            placeholder="e.g. 1. AI QA Automation Blueprint Overview&#10;2. Self-Healing Locators & Multi-Layer Coverage Demo&#10;3. CI/CD Pipeline Integration & Timeline"
+            className="w-full min-h-[110px] p-3 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 resize-y shadow-sm leading-relaxed"
+          />
+        </div>
 
-      <div>
-        <label className="block text-xs font-bold text-slate-700 mb-1">
-          Personalized Note to Client (e.g. Solution pitch)
-        </label>
-        <textarea
-          rows={2}
-          value={formData.customMessage}
-          onChange={(e) => setFormData({ ...formData, customMessage: e.target.value })}
-          className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 resize-none shadow-sm"
-        />
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <Sparkles size={14} className="text-cyan-600" />
+              <span>Personalized Note to Client (e.g. Solution pitch)</span>
+            </span>
+            <span className="text-[11px] text-slate-500 font-medium">Personalized message</span>
+          </label>
+          <textarea
+            rows={4}
+            value={formData.customMessage}
+            onChange={(e) => setFormData({ ...formData, customMessage: e.target.value })}
+            placeholder="e.g. As per your interest and application challenges, QAQuad has synthesized a tailored QA solution. Please accept this meeting invitation to review the blueprint."
+            className="w-full min-h-[110px] p-3 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 resize-y shadow-sm leading-relaxed"
+          />
+        </div>
       </div>
 
       {errorMessage && (
