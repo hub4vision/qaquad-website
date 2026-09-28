@@ -162,6 +162,12 @@ async function sendViaSmtp(lead: LeadForDelivery) {
         <h4 style="margin: 0 0 8px 0; color: #0f172a; font-size: 14px;">Scope / Message:</h4>
         <p style="margin: 0; color: #334155; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(lead.message)}</p>
       </div>
+
+      <div style="margin: 22px 0 10px 0; text-align: center;">
+        <a href="https://qaquad.com/contact?tab=meeting&ref=QAQ-QU0-14249&company=${encodeURIComponent(lead.company)}&email=${encodeURIComponent(lead.email)}&name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone || '')}&url=${encodeURIComponent(lead.applicationUrl || '')}" style="display: inline-block; padding: 12px 26px; background: #0284c7; color: #ffffff; text-decoration: none; font-weight: 700; font-size: 14px; border-radius: 10px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
+          📅 Schedule Online Discovery Meeting with Client
+        </a>
+      </div>
     </div>
   `;
 
@@ -208,7 +214,7 @@ async function sendViaSmtp(lead: LeadForDelivery) {
           </div>
 
           <div style="margin: 22px 0 14px 0; text-align: center;">
-            <a href="https://qaquad.com/contact?ref=QAQ-QU0-14249&company=${encodeURIComponent(lead.company)}&email=${encodeURIComponent(lead.email)}&name=${encodeURIComponent(lead.name)}&url=${encodeURIComponent(lead.applicationUrl || '')}" style="display: inline-block; padding: 12px 28px; background: #0284c7; color: #ffffff; text-decoration: none; font-weight: 700; font-size: 14px; border-radius: 10px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
+            <a href="https://qaquad.com/contact?tab=meeting&ref=QAQ-QU0-14249&company=${encodeURIComponent(lead.company)}&email=${encodeURIComponent(lead.email)}&name=${encodeURIComponent(lead.name)}&phone=${encodeURIComponent(lead.phone || '')}&url=${encodeURIComponent(lead.applicationUrl || '')}" style="display: inline-block; padding: 12px 28px; background: #0284c7; color: #ffffff; text-decoration: none; font-weight: 700; font-size: 14px; border-radius: 10px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
               📅 Schedule QA Discovery Call Online
             </a>
           </div>

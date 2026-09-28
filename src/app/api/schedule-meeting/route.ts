@@ -17,8 +17,8 @@ export async function POST(request: NextRequest) {
       duration = "30 mins",
       platform = "Google Meet",
       agenda = "AI QA Automation Solution & Live Prototype Walkthrough",
-      quoteRefId = "QAQ-QU0-14249",
-      targetUrl = "https://amazon.com",
+      quoteRefId = "",
+      targetUrl = "",
       customMessage = "",
       scheduledBy = "QAQuad Admin",
     } = body;

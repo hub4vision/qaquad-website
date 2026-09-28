@@ -44,6 +44,9 @@ function ContactFormInner() {
   const interest = searchParams?.get("interest");
   const paramUrl = searchParams?.get("url") || searchParams?.get("applicationUrl");
   const paramCompany = searchParams?.get("company");
+  const paramName = searchParams?.get("name") || searchParams?.get("clientName");
+  const paramEmail = searchParams?.get("email") || searchParams?.get("clientEmail");
+  const paramPhone = searchParams?.get("phone") || searchParams?.get("whatsapp");
   const paramRequirement = searchParams?.get("requirement") || searchParams?.get("testingRequirement");
   const paramCategory = searchParams?.get("category");
   const paramScope = searchParams?.get("scope");
@@ -64,8 +67,8 @@ function ContactFormInner() {
   const hasStartedRef = useRef(false);
 
   useEffect(() => {
-    // 1. Check direct search parameters
-    if (paramUrl || paramCompany || interest || paramEvidenceId || paramRef) {
+    // 1. Check direct search parameters (e.g. from email links or cross-page buttons)
+    if (paramUrl || paramCompany || paramName || paramEmail || paramPhone || interest || paramEvidenceId || paramRef) {
       let mappedCompanyType: ContactFormValues["companyType"] = "software-company";
       if (paramCategory) {
         const cat = paramCategory.toLowerCase();
@@ -95,6 +98,9 @@ function ContactFormInner() {
 
       setValues((prev) => ({
         ...prev,
+        name: paramName || prev.name,
+        email: paramEmail || prev.email,
+        phone: paramPhone || prev.phone,
         applicationUrl: paramUrl || prev.applicationUrl,
         company: paramCompany || prev.company,
         companyType: mappedCompanyType,
@@ -102,11 +108,13 @@ function ContactFormInner() {
         message: constructedMessage.trim() || prev.message,
       }));
 
-      setAutoFilledBanner(paramCompany || paramUrl || "AI Sandbox Session");
+      if (paramCompany || paramUrl || paramName) {
+        setAutoFilledBanner(paramCompany || paramUrl || paramName || "Session Context");
+      }
       return;
     }
 
-    // 2. Fallback to localStorage session context if client navigated without query params
+    // 2. Fallback to localStorage session context only if client navigated from sandbox
     if (typeof window !== "undefined") {
       try {
         const stored = localStorage.getItem("qaquad_assessment_context") || sessionStorage.getItem("qaquad_assessment_context");
@@ -125,37 +133,26 @@ function ContactFormInner() {
 
             setValues((prev) => ({
               ...prev,
-              name: prev.name || (parsed.company === "AMAZON" ? "UKS" : prev.name),
-              email: prev.email || (parsed.company === "AMAZON" ? "info@9trip.in" : prev.email),
-              phone: prev.phone || (parsed.company === "AMAZON" ? "9818747473" : prev.phone),
-              applicationUrl: parsed.url || `https://${parsed.host}`,
-              company: parsed.company || parsed.host,
+              name: prev.name || parsed.name || "",
+              email: prev.email || parsed.email || "",
+              phone: prev.phone || parsed.phone || "",
+              applicationUrl: parsed.url || (parsed.host ? `https://${parsed.host}` : ""),
+              company: parsed.company || parsed.host || "",
               companyType: mappedCompanyType,
               testingRequirement: "playwright-automation",
               message: msg,
             }));
 
-            setAutoFilledBanner(`${parsed.company || parsed.host} (${parsed.url || parsed.host})`);
+            if (parsed.company || parsed.host) {
+              setAutoFilledBanner(`${parsed.company || parsed.host} (${parsed.url || parsed.host})`);
+            }
           }
-        } else if (paramRef && paramRef.includes("14249")) {
-          // Default context for amazon quotation reference
-          setValues((prev) => ({
-            ...prev,
-            name: "UKS",
-            company: "AMAZON",
-            email: "info@9trip.in",
-            phone: "9818747473",
-            applicationUrl: "https://amazon.com",
-            companyType: "ecommerce",
-            message: `[Quotation Reference: ${paramRef}] Tier: ENTERPRISE\nTarget Application: https://amazon.com\nVerified Scope: 4 Scenarios, 14 Assertions (98% Quality Score)\nEvidence Dossier ID: qaq-1t245u-muk6x93h`,
-          }));
-          setAutoFilledBanner("AMAZON (https://amazon.com)");
         }
       } catch (err) {
         console.error("Failed to load saved assessment context", err);
       }
     }
-  }, [searchParams, interest, paramUrl, paramCompany, paramRequirement, paramCategory, paramScope, paramEvidenceId, paramScore, paramRef, paramTier]);
+  }, [searchParams, interest, paramUrl, paramCompany, paramName, paramEmail, paramPhone, paramRequirement, paramCategory, paramScope, paramEvidenceId, paramScore, paramRef, paramTier]);
 
   const handleClearAutoFill = () => {
     setValues(initialValues);

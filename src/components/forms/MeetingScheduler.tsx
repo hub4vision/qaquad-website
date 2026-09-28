@@ -53,10 +53,10 @@ export function MeetingScheduler() {
   const paramRef = searchParams?.get("ref") || "";
   const paramCompany = searchParams?.get("company") || "";
   const paramUrl = searchParams?.get("url") || searchParams?.get("applicationUrl") || "";
-  const paramName = searchParams?.get("name") || "";
-  const paramEmail = searchParams?.get("email") || "";
-  const paramPhone = searchParams?.get("phone") || "";
-  const paramTier = searchParams?.get("tier") || "Enterprise";
+  const paramName = searchParams?.get("name") || searchParams?.get("clientName") || "";
+  const paramEmail = searchParams?.get("email") || searchParams?.get("clientEmail") || "";
+  const paramPhone = searchParams?.get("phone") || searchParams?.get("whatsapp") || "";
+  const paramTier = searchParams?.get("tier") || "";
 
   // Calculate default date (tomorrow or next business day)
   const tomorrow = new Date();
@@ -69,7 +69,7 @@ export function MeetingScheduler() {
     company: paramCompany,
     phone: paramPhone,
     targetUrl: paramUrl,
-    quoteRefId: paramRef || "QAQ-QU0-14249",
+    quoteRefId: paramRef,
     meetingDate: defaultDateStr,
     meetingTime: "11:30 AM",
     timezone: "IST (GMT+5:30)",
@@ -88,36 +88,43 @@ export function MeetingScheduler() {
   } | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  // Auto-populate from browser storage if context exists
+  // Auto-populate from URL search params (e.g. from email link) or session storage
   useEffect(() => {
+    // 1. If params exist in URL, populate dynamically
+    if (paramName || paramEmail || paramCompany || paramPhone || paramUrl || paramRef) {
+      setFormData((prev) => ({
+        ...prev,
+        clientName: paramName || prev.clientName,
+        clientEmail: paramEmail || prev.clientEmail,
+        company: paramCompany || prev.company,
+        phone: paramPhone || prev.phone,
+        targetUrl: paramUrl || prev.targetUrl,
+        quoteRefId: paramRef || prev.quoteRefId,
+      }));
+      return;
+    }
+
+    // 2. Check browser storage if client navigated from sandbox
     try {
       const stored = localStorage.getItem("qaquad_assessment_context") || sessionStorage.getItem("qaquad_assessment_context");
       if (stored) {
         const parsed = JSON.parse(stored);
-        setFormData((prev) => ({
-          ...prev,
-          company: prev.company || parsed.company || (parsed.host ? parsed.host.replace(/\.[^/.]+$/, "").toUpperCase() : "AMAZON"),
-          targetUrl: prev.targetUrl || parsed.url || (parsed.host ? `https://${parsed.host}` : "https://amazon.com"),
-          clientName: prev.clientName || (parsed.company === "AMAZON" ? "UKS" : prev.clientName || "Client"),
-          clientEmail: prev.clientEmail || (parsed.company === "AMAZON" ? "info@9trip.in" : prev.clientEmail || ""),
-        }));
-      } else if (!formData.company && !formData.clientEmail) {
-        // Fallback for demo quote
-        if (paramRef && paramRef.includes("14249")) {
+        if (parsed) {
           setFormData((prev) => ({
             ...prev,
-            company: "AMAZON",
-            targetUrl: "https://amazon.com",
-            clientName: "UKS",
-            clientEmail: "info@9trip.in",
-            phone: "9818747473",
+            company: prev.company || parsed.company || (parsed.host ? parsed.host.replace(/\.[^/.]+$/, "").toUpperCase() : ""),
+            targetUrl: prev.targetUrl || parsed.url || (parsed.host ? `https://${parsed.host}` : ""),
+            clientName: prev.clientName || parsed.name || "",
+            clientEmail: prev.clientEmail || parsed.email || "",
+            phone: prev.phone || parsed.phone || "",
+            quoteRefId: prev.quoteRefId || parsed.executionId || "",
           }));
         }
       }
     } catch {
       // ignore
     }
-  }, [paramRef]);
+  }, [paramRef, paramCompany, paramUrl, paramName, paramEmail, paramPhone]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -194,8 +201,10 @@ export function MeetingScheduler() {
             </div>
             <div>
               <span className="text-slate-500 font-semibold block">Client / Scope:</span>
-              <strong className="text-slate-900 text-sm">{formData.clientName} ({formData.company || "AMAZON"})</strong>
-              <div className="text-cyan-700 font-mono text-[11px] font-bold">Ref: {formData.quoteRefId}</div>
+              <strong className="text-slate-900 text-sm">{formData.clientName} {formData.company ? `(${formData.company})` : ""}</strong>
+              {formData.quoteRefId && (
+                <div className="text-cyan-700 font-mono text-[11px] font-bold">Ref: {formData.quoteRefId}</div>
+              )}
             </div>
           </div>
 
@@ -256,22 +265,26 @@ export function MeetingScheduler() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 text-slate-800">
-      {/* Scope Banner */}
-      <div className="p-3.5 rounded-2xl bg-cyan-50 border border-cyan-200 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <div className="flex items-center gap-2">
-          <span className="p-1.5 rounded-lg bg-cyan-600 text-white shadow-sm">
-            <Sparkles size={14} />
-          </span>
-          <div>
-            <span className="font-bold text-cyan-950">Active Scope Context: </span>
-            <strong className="text-cyan-800 font-extrabold">{formData.company || "AMAZON"}</strong>
-            <span className="text-slate-500 font-mono text-[11px] ml-1.5">({formData.quoteRefId})</span>
+      {/* Scope Banner: Only display when scope context or quotation reference exists */}
+      {(formData.company || formData.quoteRefId) && (
+        <div className="p-3.5 rounded-2xl bg-cyan-50 border border-cyan-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-cyan-600 text-white shadow-sm">
+              <Sparkles size={14} />
+            </span>
+            <div>
+              <span className="font-bold text-cyan-950">Active Scope Context: </span>
+              <strong className="text-cyan-800 font-extrabold">{formData.company || "Custom QA Scope"}</strong>
+              {formData.quoteRefId && (
+                <span className="text-slate-500 font-mono text-[11px] ml-1.5">({formData.quoteRefId})</span>
+              )}
+            </div>
           </div>
+          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+            Tailored Solution Ready
+          </span>
         </div>
-        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-          Tailored Solution Ready
-        </span>
-      </div>
+      )}
 
       {/* Participant Details */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -285,7 +298,7 @@ export function MeetingScheduler() {
             required
             value={formData.clientName}
             onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
-            placeholder="e.g. UKS / Sarah Jenkins"
+            placeholder="e.g. John Doe"
             className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 shadow-sm"
           />
         </div>
@@ -300,7 +313,7 @@ export function MeetingScheduler() {
             required
             value={formData.clientEmail}
             onChange={(e) => setFormData({ ...formData, clientEmail: e.target.value })}
-            placeholder="info@9trip.in"
+            placeholder="e.g. client@company.com"
             className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 shadow-sm"
           />
         </div>
@@ -314,7 +327,7 @@ export function MeetingScheduler() {
             type="text"
             value={formData.company}
             onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-            placeholder="e.g. AMAZON"
+            placeholder="e.g. Acme Corp"
             className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 shadow-sm"
           />
         </div>
@@ -328,7 +341,7 @@ export function MeetingScheduler() {
             type="tel"
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            placeholder="9818747473"
+            placeholder="e.g. +1 (555) 000-0000"
             className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 shadow-sm"
           />
         </div>
