@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { clsx } from "@/lib/clsx";
 
 export interface StrategyPillar {
@@ -127,8 +128,12 @@ export function CircularProcessGraph({
               {/* Orbit Ring 2 (Solid Inner Border) */}
               <div className="flex items-center justify-center h-44 w-44 sm:h-52 sm:w-52 rounded-full border-2 border-cyan-400/40 bg-gradient-to-b from-slate-900 via-[#070b14] to-slate-900 shadow-2xl shadow-cyan-900/50">
                 {/* Golden/Amber Accent Ring like QualiMatrix */}
-                <div className="flex flex-col items-center justify-center h-36 w-36 sm:h-44 sm:w-44 rounded-full border-2 border-amber-400/60 bg-[#060913] p-3 text-center">
-                  <div className="relative h-14 w-14 sm:h-16 sm:w-16 rounded-2xl bg-white/95 p-1.5 shadow-md shadow-cyan-500/30 ring-1 ring-white/20 mb-2">
+                <Link
+                  href="/"
+                  className="flex flex-col items-center justify-center h-36 w-36 sm:h-44 sm:w-44 rounded-full border-2 border-amber-400/60 bg-[#060913] p-3 text-center transition-transform hover:scale-105 group"
+                  aria-label="Visit QAQuad.com Homepage"
+                >
+                  <div className="relative h-14 w-14 sm:h-16 sm:w-16 rounded-2xl bg-white/95 p-1.5 shadow-md shadow-cyan-500/30 ring-1 ring-white/20 mb-2 group-hover:shadow-cyan-400/50">
                     <Image
                       src="/QAQuad_emblem.png"
                       alt="QAQuad Emblem"
@@ -137,13 +142,13 @@ export function CircularProcessGraph({
                       className="h-full w-full object-contain"
                     />
                   </div>
-                  <span className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white">
+                  <span className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white group-hover:text-cyan-300 transition-colors">
                     {centerTitle}
                   </span>
                   <span className="text-[10px] sm:text-[11px] font-semibold text-cyan-300">
                     {centerSubtitle}
                   </span>
-                </div>
+                </Link>
               </div>
             </div>
           </div>

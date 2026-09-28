@@ -11,9 +11,9 @@ export function Footer() {
       <Container className="py-14">
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
           <div className="col-span-2 sm:col-span-1">
-            <Link href="/" className="flex items-center gap-2 group" aria-label={`${siteConfig.name}.com home`}>
+            <div className="flex items-center gap-2">
               <Logo size="md" hoverPlacement="top" />
-            </Link>
+            </div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-400">{siteConfig.tagline}</p>
             <a href={`mailto:${siteConfig.contactEmail}`} className="mt-4 inline-block text-sm text-cyan-400 hover:text-cyan-300 font-semibold">
               {siteConfig.contactEmail}

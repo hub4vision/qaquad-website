@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface LogoProps {
   className?: string;
@@ -16,7 +17,7 @@ export function Logo({
   size = "md",
   hoverPlacement = "bottom",
 }: LogoProps) {
-  const [showPreview, setShowPreview] = React.useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   // Sizing matrix for emblem
   const iconDimensions = {
@@ -31,18 +32,17 @@ export function Logo({
     lg: "text-3xl tracking-tight",
   }[size];
 
-  const handleToggle = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setShowPreview((prev) => !prev);
-  };
-
   return (
     <div
-      onClick={handleToggle}
       className={`relative inline-flex items-center select-none group/logo group cursor-pointer ${className}`}
+      onMouseEnter={() => setShowPreview(true)}
+      onMouseLeave={() => setShowPreview(false)}
     >
-      <div className="inline-flex items-center gap-3">
+      <Link
+        href="/"
+        className="inline-flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-lg"
+        aria-label="QAQuad.com Homepage"
+      >
         {/* Official QAQuad Multi-Color Q Emblem */}
         <div
           className={`relative flex items-center justify-center shrink-0 ${iconDimensions.px} rounded-xl bg-white p-1 shadow-md shadow-cyan-500/20 ring-1 ring-white/20 transition-all duration-300 group-hover:scale-105 group-hover/logo:scale-105 group-hover:shadow-cyan-400/40`}
@@ -76,9 +76,9 @@ export function Logo({
             </span>
           </div>
         )}
-      </div>
+      </Link>
 
-      {/* Hover Card & Touch Click Popup: Shows full QAQuadLogo.png with all brand details */}
+      {/* Hover Card: Shows full QAQuadLogo.png and opens www.QAQuad.com when clicked */}
       <div
         className={`absolute ${
           hoverPlacement === "top" ? "bottom-full pb-3" : "top-full pt-3"
@@ -88,25 +88,12 @@ export function Logo({
             : "opacity-0 invisible -translate-y-2 pointer-events-none scale-95 group-hover:opacity-100 group-hover/logo:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover/logo:translate-y-0 group-hover:scale-100 group-hover/logo:scale-100 group-hover:pointer-events-auto group-hover/logo:pointer-events-auto"
         }`}
       >
-        <div className="relative overflow-hidden rounded-2xl border border-cyan-500/50 bg-slate-950/98 p-4 shadow-2xl shadow-cyan-950/80 backdrop-blur-2xl ring-1 ring-cyan-500/30">
-          {/* Mobile close tap icon */}
-          {showPreview && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowPreview(false);
-              }}
-              className="absolute top-2.5 right-2.5 z-10 p-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800 focus:outline-none"
-              aria-label="Close logo preview"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-              </svg>
-            </button>
-          )}
-
-          <div className="relative w-full aspect-square overflow-hidden rounded-xl bg-white p-2 shadow-inner">
+        <Link
+          href="/"
+          className="block relative overflow-hidden rounded-2xl border border-cyan-500/50 bg-slate-950/98 p-4 shadow-2xl shadow-cyan-950/80 backdrop-blur-2xl ring-1 ring-cyan-500/30 hover:border-cyan-400 transition-all cursor-pointer"
+          aria-label="Visit QAQuad.com Homepage"
+        >
+          <div className="relative w-full aspect-square overflow-hidden rounded-xl bg-white p-2 shadow-inner hover:scale-[1.02] transition-transform">
             <Image
               src="/QAQuadLogo.png"
               alt="QAQuad Full Logo and Capabilities"
@@ -122,9 +109,13 @@ export function Logo({
             <p className="mt-0.5 text-[11px] text-slate-300">
               UI • API • Database • Business Logic
             </p>
+            <p className="mt-1 text-[10px] font-mono text-cyan-400/80 hover:text-cyan-300">
+              www.QAQuad.com →
+            </p>
           </div>
-        </div>
+        </Link>
       </div>
     </div>
   );
 }
+
